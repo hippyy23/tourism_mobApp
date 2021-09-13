@@ -1,0 +1,7 @@
+{
+  "name": "mappaVerona",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "react"
+}

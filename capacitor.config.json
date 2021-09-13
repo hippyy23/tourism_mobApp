@@ -1,0 +1,6 @@
+{
+	"appId": "io.ionic.starter",
+	"appName": "mappaVerona",
+	"webDir": "build",
+	"bundledWebRuntime": false
+}
