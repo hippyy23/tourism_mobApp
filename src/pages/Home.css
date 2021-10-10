@@ -1,0 +1,67 @@
+ion-toolbar{
+  --padding-start: 0 !important;
+  --padding-end: 0 !important;
+  --padding-top: 0 !important;
+  --padding-bottom: 0 !important;
+}
+
+.my-action-sheet {
+  --backdrop-opacity: 0;
+}
+
+.my-scroll {
+  overscroll-behavior: auto;
+  margin-bottom: 50px;
+}
+
+.my-ion-fab-button[data-desc] {
+  position: relative;
+}
+
+.my-ion-fab-button-opacity[data-desc] {
+  position: relative;
+}
+
+.my-ion-fab-button[data-desc]::after {
+  position: absolute;
+  content: attr(data-desc);
+  z-index: 1;
+  right: 50px;
+  bottom: 6px;
+  background-color: rgba(255, 255, 255, 200);
+  padding: 5px;
+  border-radius: 5px;
+  box-shadow: 0 3px 5px -1px rgba(0, 0, 0, 0.2),
+    0 6px 10px 0 rgba(0, 0, 0, 0.14), 0 1px 18px 0 rgba(0, 0, 0, 0.12);
+  opacity: 1;
+}
+
+.my-ion-fab-button-opacity[data-desc]::after {
+  position: absolute;
+  content: attr(data-desc);
+  z-index: 1;
+  right: 50px;
+  bottom: 6px;
+  background-color: rgba(255, 255, 255, 200);
+  padding: 5px;
+  border-radius: 5px;
+  box-shadow: 0 3px 5px -1px rgba(0, 0, 0, 0.2),
+    0 6px 10px 0 rgba(0, 0, 0, 0.14), 0 1px 18px 0 rgba(0, 0, 0, 0.12);
+  opacity: 0.6;
+}
+
+.my-row{
+  white-space: pre-line !important;
+}
+
+.my-ion-img{
+  align-items: center;
+}
+
+.my-icon-opacity{
+  opacity: 0.6;
+}
+
+.ion-label-toolbar{
+  font-size: 120% !important;
+}
