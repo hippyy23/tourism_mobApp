@@ -17,6 +17,7 @@ import {
   IonToolbar,
 } from "@ionic/react";
 import { addCircle, removeCircle } from "ionicons/icons";
+import ReactHtmlParser from "react-html-parser";
 
 function POIModal(props: {
   openCondition: any;
@@ -25,8 +26,8 @@ function POIModal(props: {
   data: any;
   code: any;
 }) {
-  const [openTimeView, setOpenTimeView] = useState<boolean>(false); // TODO
-  const [ticketsView, setTicketsView] = useState<boolean>(false); // TODO
+  const [openTimeView, setOpenTimeView] = useState<boolean>(false); // Mostra o nascondi il testo relativo agli orari del punto di interesse
+  const [ticketsView, setTicketsView] = useState<boolean>(false); // Mostra o nascondi il testo relativo al prezzo dei biglietti del punto di interesse
 
   const open_time = () => {
     if (props.code == "it") return props.data.open_time;
@@ -89,9 +90,7 @@ function POIModal(props: {
 
                 {openTimeView && (
                   <IonCardContent class="my-row">
-                    {open_time()
-                      .replace(/<br\/><br\/>/g, "\n")
-                      .replace(/<br\/>/g, "\n")}
+                    {ReactHtmlParser(open_time())}
                   </IonCardContent>
                 )}
               </IonCard>
@@ -110,9 +109,7 @@ function POIModal(props: {
 
                 {ticketsView && (
                   <IonCardContent class="my-row">
-                    {tickets()
-                      .replace(/<br\/><br\/>/g, "\n")
-                      .replace(/<br\/>/g, "\n")}
+                    {ReactHtmlParser(tickets())}
                   </IonCardContent>
                 )}
               </IonCard>

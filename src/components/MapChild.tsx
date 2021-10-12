@@ -496,10 +496,9 @@ function MapChild() {
           <IonFabButton
             class={
               churchersFilter
-                ? "my-ion-fab-button ion-color ion-color-light md fab-button-in-list ion-activatable ion-focusable hydrated"
-                : "my-ion-fab-button-opacity ion-color ion-color-light md fab-button-in-list ion-activatable ion-focusable hydrated"
+                ? "my-ion-fab-button ion-color ion-color-success md fab-button-in-list ion-activatable ion-focusable hydrated"
+                : "my-ion-fab-button-opacity ion-color ion-color-danger md fab-button-in-list ion-activatable ion-focusable hydrated"
             }
-            color="light"
             onClick={() => {
               setChurchersFilter(!churchersFilter);
             }}
@@ -519,10 +518,9 @@ function MapChild() {
           <IonFabButton
             class={
               monumentsFilter
-                ? "my-ion-fab-button ion-color ion-color-light md fab-button-in-list ion-activatable ion-focusable hydrated"
-                : "my-ion-fab-button-opacity ion-color ion-color-light md fab-button-in-list ion-activatable ion-focusable hydrated"
+                ? "my-ion-fab-button ion-color ion-color-success md fab-button-in-list ion-activatable ion-focusable hydrated"
+                : "my-ion-fab-button-opacity ion-color ion-color-danger md fab-button-in-list ion-activatable ion-focusable hydrated"
             }
-            color="light"
             onClick={() => setMonumentsFilter(!monumentsFilter)}
             disabled={!dataObtained}
             data-desc={data[1]["category_" + languageCode]}
@@ -539,10 +537,9 @@ function MapChild() {
           <IonFabButton
             class={
               museumsFilter
-                ? "my-ion-fab-button ion-color ion-color-light md fab-button-in-list ion-activatable ion-focusable hydrated"
-                : "my-ion-fab-button-opacity ion-color ion-color-light md fab-button-in-list ion-activatable ion-focusable hydrated"
+                ? "my-ion-fab-button ion-color ion-color-success md fab-button-in-list ion-activatable ion-focusable hydrated"
+                : "my-ion-fab-button-opacity ion-color ion-color-danger md fab-button-in-list ion-activatable ion-focusable hydrated"
             }
-            color="light"
             onClick={() => setMuseumsFilter(!museumsFilter)}
             disabled={!dataObtained}
             data-desc={data[2]["category_" + languageCode]}
