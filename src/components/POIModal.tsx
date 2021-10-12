@@ -1,9 +1,12 @@
 import React, { Component, useState } from "react";
 import {
   IonButton,
+  IonCard,
+  IonCardContent,
   IonCol,
   IonContent,
   IonGrid,
+  IonIcon,
   IonImg,
   IonItem,
   IonLabel,
@@ -13,63 +16,119 @@ import {
   IonTitle,
   IonToolbar,
 } from "@ionic/react";
+import { addCircle, removeCircle } from "ionicons/icons";
 
-class POIModal extends Component<{
+function POIModal(props: {
   openCondition: any;
   onPresent: any;
   onDismissConditions: any;
   data: any;
   code: any;
-}> {
+}) {
+  const [openTimeView, setOpenTimeView] = useState<boolean>(false); // TODO
+  const [ticketsView, setTicketsView] = useState<boolean>(false); // TODO
 
-  render() {
-    return (
-      <IonModal
-        isOpen={this.props.openCondition}
-        onDidDismiss={() => {
-          this.props.onDismissConditions(false);
-        }}
-        onWillPresent={() => {
-          this.props.onPresent(false);
-        }}
-      >
-        <IonToolbar className="ion-padding">
-            <IonLabel>
-              {this.props.data["name_" + this.props.code] != null
-                ? this.props.data["name_" + this.props.code]
-                : this.props.data["name_en"]}
-            </IonLabel>
+  const open_time = () => {
+    if (props.code == "it") return props.data.open_time;
+    return props.data["open_time_" + props.code] != null
+      ? props.data["open_time_" + props.code]
+      : props.data["open_time_en"];
+  };
 
-            <IonButton
-              onClick={() => this.props.onDismissConditions(false)}
-              slot="end"
-            >
-              Close
-            </IonButton>
-        </IonToolbar>
-        {/*detailedData["descr_" + languageCode].replaceAll('\\n', "") */}
-        <IonContent>
-          <IonGrid fixed={true}>
-            <IonRow className="ion-align-items-center">
-              <IonCol>
-                <IonImg src={this.props.data.image_url} />
-              </IonCol>
-            </IonRow>
-            <IonRow class="my-row">
-              <IonText className="ion-margin">
-                {this.props.data["descr_" + this.props.code] != null
-                  ? this.props.data["descr_" + this.props.code].replace(
-                      /\\n/g,
-                      ""
-                    )
-                  : this.props.data["descr_en"].replace(/\\n/g, "")}
-              </IonText>
-            </IonRow>
-          </IonGrid>
-        </IonContent>
-      </IonModal>
-    );
-  }
+  const tickets = () => {
+    if (props.code == "it") return props.data.tickets;
+    return props.data["tickets_" + props.code] != null
+      ? props.data["tickets_" + props.code]
+      : props.data["tickets_en"];
+  };
+
+  const removeDoubleSlashN = (str : string) => {
+    return str.replace(/\\n/g, "");
+  };
+
+  return (
+    <IonModal
+      isOpen={props.openCondition}
+      onDidDismiss={() => {
+        props.onDismissConditions(false);
+      }}
+      onWillPresent={() => {
+        props.onPresent(false);
+        console.log(props.data);
+      }}
+    >
+      <IonToolbar className="ion-padding">
+        <IonLabel>
+          {props.data["name_" + props.code] != null
+            ? props.data["name_" + props.code]
+            : props.data["name_en"]}
+        </IonLabel>
+
+        <IonButton onClick={() => props.onDismissConditions(false)} slot="end">
+          Close
+        </IonButton>
+      </IonToolbar>
+      {/*detailedprops.Data["descr_" + languageCode].replaceAll('\\n', "") */}
+      <IonContent>
+        <IonGrid fixed={true}>
+          <IonRow className="ion-align-items-center">
+            <IonCol>
+              <IonImg src={props.data.image_url} />
+            </IonCol>
+          </IonRow>
+          <IonRow>
+            <IonCol>
+              <IonCard>
+                <IonItem onClick={() => setOpenTimeView(!openTimeView)}>
+                  <IonLabel>Orari:</IonLabel>
+                  <IonIcon
+                    slot="end"
+                    icon={openTimeView ? removeCircle : addCircle}
+                  />
+                </IonItem>
+
+                {openTimeView && (
+                  <IonCardContent class="my-row">
+                    {open_time()
+                      .replace(/<br\/><br\/>/g, "\n")
+                      .replace(/<br\/>/g, "\n")}
+                  </IonCardContent>
+                )}
+              </IonCard>
+            </IonCol>
+          </IonRow>
+          <IonRow>
+            <IonCol>
+              <IonCard>
+                <IonItem onClick={() => setTicketsView(!ticketsView)}>
+                  <IonLabel>Biglietti:</IonLabel>
+                  <IonIcon
+                    slot="end"
+                    icon={ticketsView ? removeCircle : addCircle}
+                  />
+                </IonItem>
+
+                {ticketsView && (
+                  <IonCardContent class="my-row">
+                    {tickets()
+                      .replace(/<br\/><br\/>/g, "\n")
+                      .replace(/<br\/>/g, "\n")}
+                  </IonCardContent>
+                )}
+              </IonCard>
+            </IonCol>
+          </IonRow>
+          <IonRow class="my-row">
+            <IonText className="ion-margin">
+              {removeDoubleSlashN(props.data["descr_" + props.code] != null
+                ? props.data["descr_" + props.code]
+                : props.data["descr_en"])}
+            </IonText>
+          </IonRow>
+        </IonGrid>
+      </IonContent>
+    </IonModal>
+  );
 }
 
 export default POIModal;
