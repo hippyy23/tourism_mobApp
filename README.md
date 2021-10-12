@@ -34,7 +34,7 @@
   <tr>
     <td>android/app/src/main</td>
     <td>AndroidManifest.xml</td>
-    <td>Aggiungi ad application android: usesCleartextTraffic="true"</td>
+    <td>Aggiungi ad <b>application</b> android:usesCleartextTraffic="true"</td>
     <td>Vedere le immagini su android</td>
   </tr>
   <tr>
