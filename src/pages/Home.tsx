@@ -2,7 +2,7 @@ import { IonContent, IonPage } from "@ionic/react";
 import "./Home.css";
 import { MapContainer } from "react-leaflet";
 import React from "react";
-import "../leaflet/leaflet.css";
+import "../assets/leaflet/leaflet.css";
 import MapChild from "../components/MapChild";
 
 

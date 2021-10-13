@@ -18,14 +18,14 @@ import {
 import { TileLayer, useMap, Marker, Popup } from "react-leaflet";
 import { useState } from "react";
 import L from "leaflet";
-import churchIcon from "../images/art_church.png"; // Icona chiesa
-import monumentIcon from "../images/art_monument.png"; // Icona monumento
-import museumIcon from "../images/art_museum.png"; // Icona museo
-import locationIcon from "../images/location-sharp.svg";
-import churchIconFilter from "../images/art_church.svg"; // Icona chiesa filtro
-import monumentIconFilter from "../images/art_monument.svg"; // Icona monumento filtro
-import museumIconFilter from "../images/art_museum.svg"; // Icona museo filtro
-import "../leaflet/leaflet.css";
+import churchIcon from "../assets/images/art_church.png"; // Icona chiesa
+import monumentIcon from "../assets/images/art_monument.png"; // Icona monumento
+import museumIcon from "../assets/images/art_museum.png"; // Icona museo
+import locationIcon from "../assets/images/location-sharp.svg";
+import churchIconFilter from "../assets/images/art_church.svg"; // Icona chiesa filtro
+import monumentIconFilter from "../assets/images/art_monument.svg"; // Icona monumento filtro
+import museumIconFilter from "../assets/images/art_museum.svg"; // Icona museo filtro
+import "../assets/leaflet/leaflet.css";
 import { ConnectionStatus, Network } from "@capacitor/network";
 import { Device } from "@capacitor/device";
 import { Storage } from "@capacitor/storage";
@@ -38,7 +38,18 @@ import {
 import POIModal from "./POIModal";
 import i18n from "i18next";
 import { useTranslation, initReactI18next } from "react-i18next";
-i18n.use(initReactI18next).init({resources: {en: { translation: {"simpleContent": "Welcome to React and react-i18next"}}},lng: "en", fallbackLng: "en", interpolation: { escapeValue: false }  });
+i18n
+  .use(initReactI18next)
+  .init({
+    resources: {
+      en: {
+        translation: { simpleContent: "Welcome to React and react-i18next" },
+      },
+    },
+    lng: "en",
+    fallbackLng: "en",
+    interpolation: { escapeValue: false },
+  });
 
 var jj =
   '{  "features": [    {      "properties": {  "classid": "44",   "open_time" : null,    "descr_it": "Detto anche di Cangrande",        "image_url": "http://www.turismoverona.eu/cache/cfx_imagecr3/11A53001AAADD23C941C7A2BDC95F35B.jpg",        "name_it": "Palazzo del Governo e della Prefettura"      }    }  ],  "numberReturned": 1}';
@@ -50,8 +61,6 @@ const textPosition: any = {
   fr: "Tu es ici",
   es: "Tú estás aquí",
 };
-
-
 
 const baseData = [
   {
@@ -166,7 +175,6 @@ function MapChild() {
   }
 
   useIonViewDidEnter(() => {
-
     map.invalidateSize();
 
     checkLocationPermission();
@@ -311,7 +319,7 @@ function MapChild() {
       />
       <IonAlert
         isOpen={chooseLanguage}
-        header={"Select language"}
+        header={t("simpleContent")}
         inputs={[
           {
             name: "it",
@@ -412,7 +420,7 @@ function MapChild() {
             iconSize: [40, 40], // size of the icon
           })}
         >
-          <Popup>{{t('simpleContent')}}</Popup>
+          <Popup>{t("simpleContent")}</Popup>
         </Marker>
       )}
 
