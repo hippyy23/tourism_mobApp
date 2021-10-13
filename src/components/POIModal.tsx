@@ -1,4 +1,5 @@
 import React, { Component, useState } from "react";
+import { Bar } from 'react-chartjs-2';
 import {
   IonButton,
   IonCard,
@@ -28,6 +29,29 @@ function POIModal(props: {
 }) {
   const [openTimeView, setOpenTimeView] = useState<boolean>(false); // Mostra o nascondi il testo relativo agli orari del punto di interesse
   const [ticketsView, setTicketsView] = useState<boolean>(false); // Mostra o nascondi il testo relativo al prezzo dei biglietti del punto di interesse
+  const [graphView, setGraphView] = useState<boolean>(false); // Mostra o nascondi il grafico della popolazione nel POI
+
+  // PROVA
+  const data = {
+    labels: ['Lunedì', 'Martedì', 'Mercoledì', 'Giovedì', 'Venerdì', 'Sabato', 'Domenica'],
+    datasets: [
+      {
+        label: 'Storico',
+        data: [12, 19, 3, 5, 2, 3],
+        backgroundColor: 'rgb(255, 99, 132)',
+      },
+      {
+        label: 'Reale',
+        data: [2, 3, 20, 5, 1, 4],
+        backgroundColor: 'rgb(54, 162, 235)',
+      },
+      {
+        label: 'Previsione',
+        data: [3, 10, 13, 15, 22, 30],
+        backgroundColor: 'rgb(75, 192, 192)',
+      },
+    ],
+  };
 
   const open_time = () => {
     if (props.code == "it") return props.data.open_time;
@@ -115,6 +139,26 @@ function POIModal(props: {
               </IonCard>
             </IonCol>
           </IonRow>
+          <IonRow>
+            <IonCol>
+              <IonCard>
+                <IonItem onClick={() => setGraphView(!graphView)}>
+                  <IonLabel>Grafico:</IonLabel>
+                    <IonIcon
+                      slot="end"
+                      icon={graphView ? removeCircle : addCircle}
+                    />
+                </IonItem>
+
+                {graphView && (
+                  <IonCardContent class="my-row">
+                    <Bar data={data}/>
+                  </IonCardContent>
+                )}
+              </IonCard>
+            </IonCol>
+          </IonRow>
+
           <IonRow class="my-row">
             <IonText className="ion-margin">
               {removeDoubleSlashN(props.data["descr_" + props.code] != null
