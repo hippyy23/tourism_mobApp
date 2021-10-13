@@ -36,6 +36,9 @@ import {
   getDetailsFromWebServer,
 } from "../components/Functions";
 import POIModal from "./POIModal";
+import i18n from "i18next";
+import { useTranslation, initReactI18next } from "react-i18next";
+i18n.use(initReactI18next).init({resources: {en: { translation: {"simpleContent": "Welcome to React and react-i18next"}}},lng: "en", fallbackLng: "en", interpolation: { escapeValue: false }  });
 
 var jj =
   '{  "features": [    {      "properties": {  "classid": "44",   "open_time" : null,    "descr_it": "Detto anche di Cangrande",        "image_url": "http://www.turismoverona.eu/cache/cfx_imagecr3/11A53001AAADD23C941C7A2BDC95F35B.jpg",        "name_it": "Palazzo del Governo e della Prefettura"      }    }  ],  "numberReturned": 1}';
@@ -47,6 +50,8 @@ const textPosition: any = {
   fr: "Tu es ici",
   es: "Tú estás aquí",
 };
+
+
 
 const baseData = [
   {
@@ -105,6 +110,7 @@ function MapChild() {
   const [permissionGranted, setPermissionGranted] = useState<boolean>(false); // Variabile che contiene se si ha il permesso di ottenere la posizione dell'utente
 
   const map = useMap();
+  const { t } = useTranslation();
 
   function setCenterPosition() {
     if (permissionGranted) {
@@ -406,7 +412,7 @@ function MapChild() {
             iconSize: [40, 40], // size of the icon
           })}
         >
-          <Popup>{textPosition[languageCode]}</Popup>
+          <Popup>{{t('simpleContent')}}</Popup>
         </Marker>
       )}
 
