@@ -37,28 +37,28 @@ function POIModal(props: {
   // PROVA
   const data = {
     labels: [
-      "Lunedì",
-      "Martedì",
-      "Mercoledì",
-      "Giovedì",
-      "Venerdì",
-      "Sabato",
-      "Domenica",
+      t("day_week_mon"),
+      t("day_week_tue"),
+      t("day_week_wed"),
+      t("day_week_thu"),
+      t("day_week_fri"),
+      t("day_week_sat"),
+      t("day_week_sun")
     ],
     datasets: [
       {
-        label: "Storico",
-        data: [12, 19, 3, 5, 2, 3],
+        label: t("historical"),
+        data: [12, 19, 3, 5, 2, 3, 4],
         backgroundColor: "rgb(255, 99, 132)",
       },
       {
-        label: "Reale",
-        data: [2, 3, 20, 5, 1, 4],
+        label: t("real"),
+        data: [2, 3, 20, 5, 1, 4, 6],
         backgroundColor: "rgb(54, 162, 235)",
       },
       {
-        label: "Previsione",
-        data: [3, 10, 13, 15, 22, 30],
+        label: t("expected"),
+        data: [3, 10, 13, 15, 22, 30, 18],
         backgroundColor: "rgb(75, 192, 192)",
       },
     ],
@@ -104,7 +104,6 @@ function POIModal(props: {
           {t("close")}
         </IonButton>
       </IonToolbar>
-      {/*detailedprops.Data["descr_" + languageCode].replaceAll('\\n', "") */}
       <IonContent>
         <IonGrid fixed={true}>
           <IonRow className="ion-align-items-center">
@@ -116,7 +115,7 @@ function POIModal(props: {
             <IonCol>
               <IonCard>
                 <IonItem onClick={() => setOpenTimeView(!openTimeView)}>
-                  <IonLabel>Orari:</IonLabel>
+                  <IonLabel>{t("open_time")}:</IonLabel>
                   <IonIcon
                     slot="end"
                     icon={openTimeView ? removeCircle : addCircle}
@@ -135,7 +134,7 @@ function POIModal(props: {
             <IonCol>
               <IonCard>
                 <IonItem onClick={() => setTicketsView(!ticketsView)}>
-                  <IonLabel>Biglietti:</IonLabel>
+                  <IonLabel>{t("tickets")}:</IonLabel>
                   <IonIcon
                     slot="end"
                     icon={ticketsView ? removeCircle : addCircle}
@@ -154,7 +153,7 @@ function POIModal(props: {
             <IonCol>
               <IonCard>
                 <IonItem onClick={() => setGraphView(!graphView)}>
-                  <IonLabel>Grafico:</IonLabel>
+                  <IonLabel>{t("chart")}:</IonLabel>
                   <IonIcon
                     slot="end"
                     icon={graphView ? removeCircle : addCircle}

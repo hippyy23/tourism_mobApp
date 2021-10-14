@@ -1,10 +1,9 @@
 import i18n from "i18next";
 import { initReactI18next } from "react-i18next";
 i18n.use(initReactI18next).init({
+  debug: true,
+  lng: "en",
   fallbackLng: "en",
-  interpolation: {
-    escapeValue: false, // not needed for react as it escapes by default
-  },
   resources: {
     it: {
       translation: {
@@ -13,6 +12,19 @@ i18n.use(initReactI18next).init({
         cat_museums: "Musei e Centri Espositivi",
         user_position: "Ti trovi qui",
         close: "Chiudi",
+        open_time: "Orario",
+        tickets: "Biglietti",
+        chart: "Grafico occupazione",
+        historical : "Storico",
+        real : "Attuale",
+        expected : "Previsto",
+        day_week_mon : "Lunedì",
+        day_week_tue : "Martedì",
+        day_week_wed : "Mercoledì",
+        day_week_thu : "Giovedì",
+        day_week_fri : "Venerdì",
+        day_week_sat : "Sabato",
+        day_week_sun : "Domenica"
       },
     },
     en: {
@@ -22,6 +34,19 @@ i18n.use(initReactI18next).init({
         cat_museums: "Museums and Exhibition Centers",
         user_position: "You are here",
         close: "Close",
+        open_time: "Open Time",
+        tickets: "Tickets",
+        chart: "Grafico occupazione", // it
+        historical : "Historical",
+        real : "Real",
+        expected : "Expected",
+        day_week_mon : "Monday",
+        day_week_tue : "Tuesday",
+        day_week_wed : "Wednesay",
+        day_week_thu : "Thursday",
+        day_week_fri : "Friday",
+        day_week_sat : "Saturday",
+        day_week_sun : "Sunday"
       },
     },
     de: {
@@ -30,8 +55,21 @@ i18n.use(initReactI18next).init({
         cat_monuments: "Denkmäler",
         cat_museums: "Museen und Ausstellungszentren",
         user_position: "Du bist hier",
-        close: "Close",
-      },
+        close: "Close", // en
+        open_time: "Open Time", // en
+        tickets: "Tickets", // en
+        chart: "Grafico occupazione", // it
+        historical : "Historical", // en
+        real : "Real", // en
+        expected : "Expected", // en
+        day_week_mon : "Monday", // en
+        day_week_tue : "Tuesday", // en
+        day_week_wed : "Wednesay", // en
+        day_week_thu : "Thursday", // en
+        day_week_fri : "Friday", // en
+        day_week_sat : "Saturday", // en
+        day_week_sun : "Sunday" // en
+      }, // en
     },
     fr: {
       translation: {
@@ -39,7 +77,20 @@ i18n.use(initReactI18next).init({
         cat_monuments: "Monuments",
         cat_museums: "Musées et Centres d'Exposition",
         user_position: "Tu es ici",
-        close: "Close",
+        close: "Close", // en
+        open_time: "Open Time", // en
+        tickets: "Tickets", // en
+        chart: "Grafico occupazione", // it
+        historical : "Historical", // en
+        real : "Real", // en
+        expected : "Expected", // en
+        day_week_mon : "Monday", // en
+        day_week_tue : "Tuesday", // en
+        day_week_wed : "Wednesay", // en
+        day_week_thu : "Thursday", // en
+        day_week_fri : "Friday", // en
+        day_week_sat : "Saturday", // en
+        day_week_sun : "Sunday" // en
       },
     },
     es: {
@@ -48,7 +99,20 @@ i18n.use(initReactI18next).init({
         cat_monuments: "Monumentos",
         cat_museums: "Museos y Centros de Exposiciones",
         user_position: "Tú estás aquí",
-        close: "Close",
+        close: "Close", // en
+        open_time: "Open Time", // en
+        tickets: "Tickets", // en
+        chart: "Grafico occupazione", // it
+        historical : "Historical", // en
+        real : "Real", // en
+        expected : "Expected", // en
+        day_week_mon : "Monday", // en
+        day_week_tue : "Tuesday", // en
+        day_week_wed : "Wednesay", // en
+        day_week_thu : "Thursday", // en
+        day_week_fri : "Friday", // en
+        day_week_sat : "Saturday", // en
+        day_week_sun : "Sunday" // en
       },
     },
   },

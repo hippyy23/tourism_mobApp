@@ -106,6 +106,7 @@ function MapChild() {
 
   const map = useMap();
   const { t, i18n } = useTranslation();
+  var languageChoice: string;
 
   function setCenterPosition() {
     if (permissionGranted) {
@@ -305,6 +306,7 @@ function MapChild() {
       />
       <IonAlert
         isOpen={chooseLanguage}
+        onDidPresent={() => languageChoice=i18n.language}
         header={"Choose a language"}
         inputs={[
           {
@@ -313,7 +315,7 @@ function MapChild() {
             label: "Italiano",
             checked: i18n.language == "it",
             handler: () => {
-              i18n.changeLanguage("it");
+              languageChoice = "it";
             }
           },
           {
@@ -322,7 +324,7 @@ function MapChild() {
             label: "English",
             checked: i18n.language == "en",
             handler: () => {
-              i18n.changeLanguage("en");
+              languageChoice = "en";
             }
           },
           {
@@ -331,7 +333,7 @@ function MapChild() {
             label: "Deutsch",
             checked: i18n.language == "de",
             handler: () => {
-              i18n.changeLanguage("de");
+              languageChoice = "de";
             }
           },
           {
@@ -340,7 +342,7 @@ function MapChild() {
             label: "Français",
             checked: i18n.language == "fr",
             handler: () => {
-              i18n.changeLanguage("fr");
+              languageChoice = "fr";
             }
           },
           {
@@ -349,18 +351,26 @@ function MapChild() {
             label: "Español",
             checked: i18n.language == "es",
             handler: () => {
-              i18n.changeLanguage("es");
+              languageChoice = "es";
             }
           },
         ]}
         buttons={[
           {
+            text: "Cancel",
+            role: 'cancel',
+            cssClass: 'secondary'
+          },
+          {
             text: "Okay",
             handler: () => {
-              Storage.set({
-                key: "languageCode",
-                value: i18n.language,
-              });
+              if (i18n.language != languageChoice){
+                i18n.changeLanguage(languageChoice);
+                Storage.set({
+                  key: "languageCode",
+                  value: i18n.language,
+                });
+              }
             },
           },
         ]}
