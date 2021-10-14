@@ -36,20 +36,7 @@ import {
   getDetailsFromWebServer,
 } from "../components/Functions";
 import POIModal from "./POIModal";
-import i18n from "i18next";
-import { useTranslation, initReactI18next } from "react-i18next";
-i18n
-  .use(initReactI18next)
-  .init({
-    resources: {
-      en: {
-        translation: { simpleContent: "Welcome to React and react-i18next" },
-      },
-    },
-    lng: "en",
-    fallbackLng: "en",
-    interpolation: { escapeValue: false },
-  });
+import { useTranslation } from "react-i18next";
 
 var jj =
   '{  "features": [    {      "properties": {  "classid": "44",   "open_time" : null,    "descr_it": "Detto anche di Cangrande",        "image_url": "http://www.turismoverona.eu/cache/cfx_imagecr3/11A53001AAADD23C941C7A2BDC95F35B.jpg",        "name_it": "Palazzo del Governo e della Prefettura"      }    }  ],  "numberReturned": 1}';
@@ -92,7 +79,6 @@ const baseData = [
 var data: any;
 data = baseData;
 var detailedData: any;
-var languageCode: string;
 var isLoading: boolean = false;
 const onlineBounds = L.latLngBounds(
   [46.82405708134416, 10.194074757395123],
@@ -119,7 +105,7 @@ function MapChild() {
   const [permissionGranted, setPermissionGranted] = useState<boolean>(false); // Variabile che contiene se si ha il permesso di ottenere la posizione dell'utente
 
   const map = useMap();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
 
   function setCenterPosition() {
     if (permissionGranted) {
@@ -200,7 +186,7 @@ function MapChild() {
     // Recupera la lingua del dispositivo
     Storage.get({ key: "languageCode" }).then((result) => {
       if (result.value != null) {
-        languageCode = result.value;
+        i18n.changeLanguage(result.value);
       } else {
         Device.getLanguageCode().then((lang) => {
           var language = lang.value.substr(0, 2);
@@ -213,7 +199,7 @@ function MapChild() {
           ) {
             language = "en";
           }
-          languageCode = language;
+          i18n.changeLanguage(language);
         });
       }
     });
@@ -319,52 +305,52 @@ function MapChild() {
       />
       <IonAlert
         isOpen={chooseLanguage}
-        header={t("simpleContent")}
+        header={"Choose a language"}
         inputs={[
           {
             name: "it",
             type: "radio",
             label: "Italiano",
-            checked: languageCode == "it",
+            checked: i18n.language == "it",
             handler: () => {
-              languageCode = "it";
-            },
+              i18n.changeLanguage("it");
+            }
           },
           {
             name: "en",
             type: "radio",
             label: "English",
-            checked: languageCode == "en",
+            checked: i18n.language == "en",
             handler: () => {
-              languageCode = "en";
-            },
+              i18n.changeLanguage("en");
+            }
           },
           {
             name: "de",
             type: "radio",
             label: "Deutsch",
-            checked: languageCode == "de",
+            checked: i18n.language == "de",
             handler: () => {
-              languageCode = "de";
-            },
+              i18n.changeLanguage("de");
+            }
           },
           {
             name: "fr",
             type: "radio",
             label: "Français",
-            checked: languageCode == "fr",
+            checked: i18n.language == "fr",
             handler: () => {
-              languageCode = "fr";
-            },
+              i18n.changeLanguage("fr");
+            }
           },
           {
             name: "es",
             type: "radio",
             label: "Español",
-            checked: languageCode == "es",
+            checked: i18n.language == "es",
             handler: () => {
-              languageCode = "es";
-            },
+              i18n.changeLanguage("es");
+            }
           },
         ]}
         buttons={[
@@ -373,7 +359,7 @@ function MapChild() {
             handler: () => {
               Storage.set({
                 key: "languageCode",
-                value: languageCode,
+                value: i18n.language,
               });
             },
           },
@@ -407,7 +393,7 @@ function MapChild() {
           onPresent={setShowLoading}
           onDismissConditions={setShowModal}
           data={detailedData}
-          code={languageCode}
+          code={i18n.language}
         />
       )}
 
@@ -420,7 +406,7 @@ function MapChild() {
             iconSize: [40, 40], // size of the icon
           })}
         >
-          <Popup>{t("simpleContent")}</Popup>
+          <Popup>{t("user_position")}</Popup>
         </Marker>
       )}
 
@@ -443,8 +429,8 @@ function MapChild() {
               }}
             >
               <IonLabel onClick={() => openModal(element.id)}>
-                {element["name_" + languageCode] != null
-                  ? element["name_" + languageCode]
+                {element["name_" + i18n.language] != null
+                  ? element["name_" + i18n.language]
                   : element["name_en"]}
               </IonLabel>
             </Popup>
@@ -468,8 +454,8 @@ function MapChild() {
               }}
             >
               <IonLabel onClick={() => openModal(element.id)}>
-                {element["name_" + languageCode] != null
-                  ? element["name_" + languageCode]
+                {element["name_" + i18n.language] != null
+                  ? element["name_" + i18n.language]
                   : element["name_en"]}
               </IonLabel>
             </Popup>
@@ -493,8 +479,8 @@ function MapChild() {
               }}
             >
               <IonLabel onClick={() => openModal(element.id)}>
-                {element["name_" + languageCode] != null
-                  ? element["name_" + languageCode]
+                {element["name_" + i18n.language] != null
+                  ? element["name_" + i18n.language]
                   : element["name_en"]}
               </IonLabel>
             </Popup>
@@ -517,7 +503,7 @@ function MapChild() {
               setChurchersFilter(!churchersFilter);
             }}
             disabled={!dataObtained}
-            data-desc={data[0]["category_" + languageCode]}
+          data-desc={t("cat_churches")}
             data-bool={churchersFilter}
           >
             <IonIcon
@@ -537,7 +523,7 @@ function MapChild() {
             }
             onClick={() => setMonumentsFilter(!monumentsFilter)}
             disabled={!dataObtained}
-            data-desc={data[1]["category_" + languageCode]}
+            data-desc={t("cat_monuments")}
           >
             <IonIcon
               icon={monumentIconFilter}
@@ -556,7 +542,7 @@ function MapChild() {
             }
             onClick={() => setMuseumsFilter(!museumsFilter)}
             disabled={!dataObtained}
-            data-desc={data[2]["category_" + languageCode]}
+            data-desc={t("cat_museums")}
           >
             <IonIcon
               icon={museumIconFilter}
