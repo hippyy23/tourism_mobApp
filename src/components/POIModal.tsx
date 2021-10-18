@@ -34,7 +34,7 @@ function POIModal(props: {
 
   const { t } = useTranslation();
 
-  // PROVA
+  // DATI DI PROVA
   const data = {
     labels: [
       t("day_week_mon"),
@@ -161,7 +161,7 @@ function POIModal(props: {
                 </IonItem>
 
                 {graphView && (
-                  <IonCardContent class="my-row">
+                  <IonCardContent>
                     <Bar data={data} />
                   </IonCardContent>
                 )}
