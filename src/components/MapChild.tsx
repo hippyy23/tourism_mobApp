@@ -1,20 +1,9 @@
 import {
-  IonFab,
-  IonFabButton,
-  IonIcon,
-  IonFabList,
   IonLabel,
   useIonViewDidEnter,
   IonLoading,
-  IonActionSheet,
-  IonAlert,
+  IonActionSheet
 } from "@ionic/react";
-import {
-  language,
-  ellipsisHorizontal,
-  locationOutline,
-  colorWandSharp,
-} from "ionicons/icons";
 import { TileLayer, useMap, Marker, Popup } from "react-leaflet";
 import { useState } from "react";
 import L from "leaflet";
@@ -22,9 +11,6 @@ import churchIcon from "../assets/images/art_church.png"; // Icona chiesa
 import monumentIcon from "../assets/images/art_monument.png"; // Icona monumento
 import museumIcon from "../assets/images/art_museum.png"; // Icona museo
 import locationIcon from "../assets/images/location-sharp.svg";
-import churchIconFilter from "../assets/images/art_church.svg"; // Icona chiesa filtro
-import monumentIconFilter from "../assets/images/art_monument.svg"; // Icona monumento filtro
-import museumIconFilter from "../assets/images/art_museum.svg"; // Icona museo filtro
 import "../assets/leaflet/leaflet.css";
 import { ConnectionStatus, Network } from "@capacitor/network";
 import { Device } from "@capacitor/device";
@@ -39,15 +25,8 @@ import POIModal from "./POIModal";
 import { useTranslation } from "react-i18next";
 
 var jj =
-  '{  "features": [    {      "properties": {  "classid": "44",   "open_time" : null,    "descr_it": "Detto anche di Cangrande",        "image_url": "http://www.turismoverona.eu/cache/cfx_imagecr3/11A53001AAADD23C941C7A2BDC95F35B.jpg",        "name_it": "Palazzo del Governo e della Prefettura"      }    }  ],  "numberReturned": 1}';
+  '{  "features": [    {      "properties": {  "classid": "44",   "open_time" : null,    "descr_it": "Detto anche di Cangrande, fu costruito allinizio del XIV sec., ma venne più volte rimaneggiato. Lultimo restauro del 1929-30 ha tentato di restituirgli (attraverso abbattimenti di parti di epoche diverse, il ripristino della merlatura e linserimento di elementi architettonici consoni) le strutture medievali, di cui rimanevano significativi esempi nel cortile.",        "image_url": "http://www.turismoverona.eu/cache/cfx_imagecr3/11A53001AAADD23C941C7A2BDC95F35B.jpg",        "name_it": "Palazzo del Governo e della Prefettura"      }    }  ],  "numberReturned": 1}';
 
-const textPosition: any = {
-  it: "Ti trovi qui",
-  en: "You are here",
-  de: "Du bist hier",
-  fr: "Tu es ici",
-  es: "Tú estás aquí",
-};
 
 const baseData = [
   {
@@ -87,26 +66,28 @@ const onlineBounds = L.latLngBounds(
 const offlineBounds = L.latLngBounds([45.4568, 10.9625], [45.4203, 11.0227]);
 var watchId: string;
 
-function MapChild() {
+function MapChild(props: {
+  churchersFilter: boolean,
+  monumentsFilter: boolean,
+  museumsFilter: boolean,
+  dataObtained: boolean,
+  setDataObtained: React.Dispatch<React.SetStateAction<boolean>>,
+  centerPosition: boolean,
+  setCenterPosition: React.Dispatch<React.SetStateAction<boolean>>
+}) {
   const [downloadedData, setDownloadedData] = useState<boolean>(false); // True se la lista dei punti con le loro coordinate sono stati scaricati dal webserver
-  const [dataObtained, setDataObtained] = useState<boolean>(false); // True se possiedo la lista dei punti con le loro coordinate, o sono stati caricati dalla memoria oppure scaricati dal webserver
   const [showLoading, setShowLoading] = useState<boolean>(false); // Permette di mostrare il componente di caricamento
-  const [churchersFilter, setChurchersFilter] = useState<boolean>(true); // Variabile che indica se mostrate sulla mappa le chiese
-  const [monumentsFilter, setMonumentsFilter] = useState<boolean>(true); // Variabile che indica se mostrate sulla mappa i monumenti
-  const [museumsFilter, setMuseumsFilter] = useState<boolean>(true); // Variabile che indica se mostrate sulla mappa i musei
   const [connectionStatus, setConnectionStatus] = useState<ConnectionStatus>({
     // Stato della connessione del dispositivo
     connected: true,
     connectionType: "none",
   });
-  const [chooseLanguage, setChooseLanguage] = useState<boolean>(false); // Variabile che indica se mostrare l'alert per la selezione della lingua
   const [showModal, setShowModal] = useState<boolean>(false); // Mostra la POIModal in cui sono presenti i dettagli di un punto di interesse
   const [position, setPosition] = useState<Position>(); // Variabile che contiene la posizione dell'utente
   const [permissionGranted, setPermissionGranted] = useState<boolean>(false); // Variabile che contiene se si ha il permesso di ottenere la posizione dell'utente
 
   const map = useMap();
   const { t, i18n } = useTranslation();
-  var languageChoice: string;
 
   function setCenterPosition() {
     if (permissionGranted) {
@@ -116,6 +97,7 @@ function MapChild() {
         Geolocation.clearWatch({ id: watchId });
       }
     } else checkLocationPermission();
+    props.setCenterPosition(false);
   }
   function setCenterData() {
     map.panTo(findCenter(data));
@@ -171,7 +153,7 @@ function MapChild() {
       Storage.get({ key: "baseData" }).then((result) => {
         if (result.value != null) {
           data = JSON.parse(result.value);
-          setDataObtained(true);
+          props.setDataObtained(true);
           setCenterData();
           setOnlineBounds();
         }
@@ -245,8 +227,8 @@ function MapChild() {
           value: JSON.stringify(data),
         });
         setDownloadedData(true);
-        setDataObtained(false);
-        setDataObtained(true);
+        props.setDataObtained(false);
+        props.setDataObtained(true);
         setCenterData();
       })
       .catch((error) => {
@@ -260,7 +242,7 @@ function MapChild() {
   function getDetails(id: string) {
     if (
       detailedData == null ||
-      (detailedData != null && detailedData.classid != id)
+      (detailedData != null /*&& detailedData.classid != id*/)
     ) {
       detailedData = null;
       getDetailsFromWebServer(id)
@@ -282,7 +264,7 @@ function MapChild() {
   }
 
   function openModal(id: string) {
-    if (detailedData != null && detailedData.classid == id) {
+    if (detailedData != null /*&& detailedData.classid == id*/) {
       setShowModal(true);
       isLoading = false;
     } else {
@@ -293,6 +275,8 @@ function MapChild() {
 
   return (
     <>
+    {props.centerPosition && setCenterPosition()}
+
       {/* Notifica se il dispositivo è offline */}
       <IonActionSheet
         mode="ios"
@@ -304,78 +288,7 @@ function MapChild() {
           },
         ]}
       />
-      <IonAlert
-        isOpen={chooseLanguage}
-        onDidPresent={() => languageChoice=i18n.language}
-        header={"Choose a language"}
-        inputs={[
-          {
-            name: "it",
-            type: "radio",
-            label: "Italiano",
-            checked: i18n.language == "it",
-            handler: () => {
-              languageChoice = "it";
-            }
-          },
-          {
-            name: "en",
-            type: "radio",
-            label: "English",
-            checked: i18n.language == "en",
-            handler: () => {
-              languageChoice = "en";
-            }
-          },
-          {
-            name: "de",
-            type: "radio",
-            label: "Deutsch",
-            checked: i18n.language == "de",
-            handler: () => {
-              languageChoice = "de";
-            }
-          },
-          {
-            name: "fr",
-            type: "radio",
-            label: "Français",
-            checked: i18n.language == "fr",
-            handler: () => {
-              languageChoice = "fr";
-            }
-          },
-          {
-            name: "es",
-            type: "radio",
-            label: "Español",
-            checked: i18n.language == "es",
-            handler: () => {
-              languageChoice = "es";
-            }
-          },
-        ]}
-        buttons={[
-          {
-            text: "Cancel",
-            role: 'cancel',
-            cssClass: 'secondary'
-          },
-          {
-            text: "Okay",
-            handler: () => {
-              if (i18n.language != languageChoice){
-                i18n.changeLanguage(languageChoice);
-                Storage.set({
-                  key: "languageCode",
-                  value: i18n.language,
-                });
-              }
-            },
-          },
-        ]}
-        onDidDismiss={() => setChooseLanguage(false)}
-      />
+      
       {connectionStatus?.connected && (
         <TileLayer
           attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
@@ -421,8 +334,8 @@ function MapChild() {
       )}
 
       {/* Creazione dinamica dei marker delle chiese */}
-      {dataObtained &&
-        churchersFilter &&
+      {props.dataObtained &&
+        props.churchersFilter &&
         data[0].elements.map((element: any) => (
           <Marker
             key={element.id}
@@ -447,8 +360,8 @@ function MapChild() {
           </Marker>
         ))}
       {/* Creazione dinamica dei marker dei monumenti */}
-      {dataObtained &&
-        monumentsFilter &&
+      {props.dataObtained &&
+        props.monumentsFilter &&
         data[1].elements.map((element: any) => (
           <Marker
             key={element.id}
@@ -472,8 +385,8 @@ function MapChild() {
           </Marker>
         ))}
       {/* Creazione dinamica dei marker dei musei */}
-      {dataObtained &&
-        museumsFilter &&
+      {props.dataObtained &&
+        props.museumsFilter &&
         data[2].elements.map((element: any) => (
           <Marker
             key={element.id}
@@ -496,94 +409,6 @@ function MapChild() {
             </Popup>
           </Marker>
         ))}
-
-      {/* Filtro dei marker */}
-      <IonFab vertical="bottom" horizontal="end" className="ion-margin-bottom">
-        <IonFabButton>
-          <IonIcon icon={ellipsisHorizontal} />
-        </IonFabButton>
-        <IonFabList side="top">
-          <IonFabButton
-            class={
-              churchersFilter
-                ? "my-ion-fab-button ion-color ion-color-success md fab-button-in-list ion-activatable ion-focusable hydrated"
-                : "my-ion-fab-button-opacity ion-color ion-color-danger md fab-button-in-list ion-activatable ion-focusable hydrated"
-            }
-            onClick={() => {
-              setChurchersFilter(!churchersFilter);
-            }}
-            disabled={!dataObtained}
-          data-desc={t("cat_churches")}
-            data-bool={churchersFilter}
-          >
-            <IonIcon
-              icon={churchIconFilter}
-              class={
-                churchersFilter
-                  ? "my-icon md hydrated"
-                  : "my-icon-opacity md hydrated"
-              }
-            />
-          </IonFabButton>
-          <IonFabButton
-            class={
-              monumentsFilter
-                ? "my-ion-fab-button ion-color ion-color-success md fab-button-in-list ion-activatable ion-focusable hydrated"
-                : "my-ion-fab-button-opacity ion-color ion-color-danger md fab-button-in-list ion-activatable ion-focusable hydrated"
-            }
-            onClick={() => setMonumentsFilter(!monumentsFilter)}
-            disabled={!dataObtained}
-            data-desc={t("cat_monuments")}
-          >
-            <IonIcon
-              icon={monumentIconFilter}
-              class={
-                monumentsFilter
-                  ? "my-icon md hydrated"
-                  : "my-icon-opacity md hydrated"
-              }
-            />
-          </IonFabButton>
-          <IonFabButton
-            class={
-              museumsFilter
-                ? "my-ion-fab-button ion-color ion-color-success md fab-button-in-list ion-activatable ion-focusable hydrated"
-                : "my-ion-fab-button-opacity ion-color ion-color-danger md fab-button-in-list ion-activatable ion-focusable hydrated"
-            }
-            onClick={() => setMuseumsFilter(!museumsFilter)}
-            disabled={!dataObtained}
-            data-desc={t("cat_museums")}
-          >
-            <IonIcon
-              icon={museumIconFilter}
-              class={
-                museumsFilter
-                  ? "my-icon md hydrated"
-                  : "my-icon-opacity md hydrated"
-              }
-            />
-          </IonFabButton>
-        </IonFabList>
-
-        <IonFabList side="start">
-          <IonFabButton color="light" onClick={() => setChooseLanguage(true)}>
-            <IonIcon icon={language} />
-          </IonFabButton>
-        </IonFabList>
-      </IonFab>
-
-      <IonFab
-        vertical="bottom"
-        horizontal="start"
-        className="ion-margin-bottom"
-        onClick={() => {
-          setCenterPosition();
-        }}
-      >
-        <IonFabButton color="light">
-          <IonIcon icon={locationOutline} />
-        </IonFabButton>
-      </IonFab>
     </>
   );
 }

@@ -43,7 +43,7 @@ function POIModal(props: {
       t("day_week_thu"),
       t("day_week_fri"),
       t("day_week_sat"),
-      t("day_week_sun")
+      t("day_week_sun"),
     ],
     datasets: [
       {
@@ -170,13 +170,16 @@ function POIModal(props: {
           </IonRow>
 
           <IonRow class="my-row">
-            <IonText className="ion-margin">
-              {removeDoubleSlashN(
-                props.data["descr_" + props.code] != null
-                  ? props.data["descr_" + props.code]
-                  : props.data["descr_en"]
-              )}
-            </IonText>
+            <IonCol className="ion-margin">
+              <IonLabel><h2><b>{t("description")}:</b></h2></IonLabel>
+              <IonText>
+                {removeDoubleSlashN(
+                  props.data["descr_" + props.code] != null
+                    ? props.data["descr_" + props.code]
+                    : props.data["descr_en"]
+                )}
+              </IonText>
+            </IonCol>
           </IonRow>
         </IonGrid>
       </IonContent>

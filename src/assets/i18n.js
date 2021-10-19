@@ -12,6 +12,7 @@ i18n.use(initReactI18next).init({
         cat_museums: "Musei e Centri Espositivi",
         user_position: "Ti trovi qui",
         close: "Chiudi",
+        description: "Descrizione",
         open_time: "Orario",
         tickets: "Biglietti",
         chart: "Grafico occupazione",
@@ -34,6 +35,7 @@ i18n.use(initReactI18next).init({
         cat_museums: "Museums and Exhibition Centers",
         user_position: "You are here",
         close: "Close",
+        description: "Description",
         open_time: "Open Time",
         tickets: "Tickets",
         chart: "Grafico occupazione", // it
@@ -56,6 +58,7 @@ i18n.use(initReactI18next).init({
         cat_museums: "Museen und Ausstellungszentren",
         user_position: "Du bist hier",
         close: "Close", // en
+        description: "Description", // en
         open_time: "Open Time", // en
         tickets: "Tickets", // en
         chart: "Grafico occupazione", // it
@@ -78,6 +81,7 @@ i18n.use(initReactI18next).init({
         cat_museums: "Musées et Centres d'Exposition",
         user_position: "Tu es ici",
         close: "Close", // en
+        description: "Description", // en
         open_time: "Open Time", // en
         tickets: "Tickets", // en
         chart: "Grafico occupazione", // it
@@ -100,6 +104,7 @@ i18n.use(initReactI18next).init({
         cat_museums: "Museos y Centros de Exposiciones",
         user_position: "Tú estás aquí",
         close: "Close", // en
+        description: "Description", // en
         open_time: "Open Time", // en
         tickets: "Tickets", // en
         chart: "Grafico occupazione", // it
