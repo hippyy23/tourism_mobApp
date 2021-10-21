@@ -1,4 +1,4 @@
-import React, { Component, useState } from "react";
+import React, { Component, useRef, useState } from "react";
 import { Bar } from "react-chartjs-2";
 import {
   IonButton,
@@ -7,17 +7,20 @@ import {
   IonCol,
   IonContent,
   IonGrid,
+  IonHeader,
   IonIcon,
   IonImg,
   IonItem,
   IonLabel,
   IonModal,
   IonRow,
+  IonSlide,
+  IonSlides,
   IonText,
   IonTitle,
   IonToolbar,
 } from "@ionic/react";
-import { addCircle, removeCircle } from "ionicons/icons";
+import { addCircle, removeCircle, arrowForward, arrowBack } from "ionicons/icons";
 import ReactHtmlParser from "react-html-parser";
 import { useTranslation } from "react-i18next";
 
@@ -31,19 +34,22 @@ function POIModal(props: {
   const [openTimeView, setOpenTimeView] = useState<boolean>(false); // Mostra o nascondi il testo relativo agli orari del punto di interesse
   const [ticketsView, setTicketsView] = useState<boolean>(false); // Mostra o nascondi il testo relativo al prezzo dei biglietti del punto di interesse
   const [graphView, setGraphView] = useState<boolean>(false); // Mostra o nascondi il grafico della popolazione nel POI
+  const slideRef = useRef<HTMLIonSlidesElement>(null);
 
   const { t } = useTranslation();
-
+  
   // DATI DI PROVA
   const data = {
     labels: [
       t("day_week_mon"),
       t("day_week_tue"),
       t("day_week_wed"),
+      /*
       t("day_week_thu"),
       t("day_week_fri"),
       t("day_week_sat"),
       t("day_week_sun"),
+      */
     ],
     datasets: [
       {
@@ -114,7 +120,10 @@ function POIModal(props: {
           <IonRow>
             <IonCol>
               <IonCard>
-                <IonItem lines={openTimeView ? "inset" : "none"} onClick={() => setOpenTimeView(!openTimeView)}>
+                <IonItem
+                  lines={openTimeView ? "inset" : "none"}
+                  onClick={() => setOpenTimeView(!openTimeView)}
+                >
                   <IonLabel>{t("open_time")}:</IonLabel>
                   <IonIcon
                     slot="end"
@@ -133,7 +142,10 @@ function POIModal(props: {
           <IonRow>
             <IonCol>
               <IonCard>
-                <IonItem lines={ticketsView ? "inset" : "none"} onClick={() => setTicketsView(!ticketsView)}>
+                <IonItem
+                  lines={ticketsView ? "inset" : "none"}
+                  onClick={() => setTicketsView(!ticketsView)}
+                >
                   <IonLabel>{t("tickets")}:</IonLabel>
                   <IonIcon
                     slot="end"
@@ -152,7 +164,10 @@ function POIModal(props: {
           <IonRow>
             <IonCol>
               <IonCard>
-                <IonItem lines={graphView ? "inset" : "none"} onClick={() => setGraphView(!graphView)}>
+                <IonItem
+                  lines={graphView ? "inset" : "none"}
+                  onClick={() => setGraphView(!graphView)}
+                >
                   <IonLabel>{t("chart")}:</IonLabel>
                   <IonIcon
                     slot="end"
@@ -162,7 +177,27 @@ function POIModal(props: {
 
                 {graphView && (
                   <IonCardContent>
-                    <Bar data={data} />
+                    <IonSlides pager={true} ref={slideRef}>
+                      <IonSlide>
+                        <Bar data={data} className="ion-bar-chart"/>
+                      </IonSlide>
+                      <IonSlide>
+                        <Bar data={data} />
+                      </IonSlide>
+                      <IonSlide>
+                        <Bar data={data} />
+                      </IonSlide>
+                    </IonSlides>
+                    <IonGrid fixed={true} class="ion-buttons-grid">
+                      <IonRow>
+                        <IonCol>
+                          <IonButton onClick={() => slideRef.current?.slidePrev()}>Precedente{/*<IonIcon icon={arrowBack}/>*/}</IonButton>
+                        </IonCol>
+                        <IonCol className="ion-text-right">
+                          <IonButton onClick={() => slideRef.current?.slideNext()}>Successivo</IonButton>
+                        </IonCol>
+                      </IonRow>
+                    </IonGrid>
                   </IonCardContent>
                 )}
               </IonCard>
@@ -171,7 +206,11 @@ function POIModal(props: {
 
           <IonRow class="my-row">
             <IonCol className="ion-margin">
-              <IonLabel><h2><b>{t("description")}:</b></h2></IonLabel>
+              <IonLabel>
+                <h2>
+                  <b>{t("description")}:</b>
+                </h2>
+              </IonLabel>
               <IonText>
                 {removeDoubleSlashN(
                   props.data["descr_" + props.code] != null

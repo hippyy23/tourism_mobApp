@@ -71,3 +71,7 @@ ion-toolbar{
 .ion-label-toolbar{
   font-size: 120% !important;
 }
+
+.ion-bar-chart{
+  margin-bottom: 35px;
+}

@@ -1,6 +1,7 @@
 import {
   IonAlert,
   IonButtons,
+  IonCardHeader,
   IonFab,
   IonFabButton,
   IonFabList,
@@ -38,7 +39,8 @@ const PopoverList: React.FC<{
   onHide: () => void;
   t: TFunction;
   setChooseLanguage: React.Dispatch<React.SetStateAction<boolean>>;
-}> = ({ onHide, t, setChooseLanguage }) => (
+  setShowInfo: React.Dispatch<React.SetStateAction<boolean>>;
+}> = ({ onHide, t, setChooseLanguage, setShowInfo }) => (
   <IonList>
     {/*<IonListHeader>Ionic</IonListHeader>*/}
     <IonItem
@@ -48,7 +50,6 @@ const PopoverList: React.FC<{
         setChooseLanguage(true);
         onHide();
       }}
-      
     >
       <IonIcon icon={language} />
       <IonLabel className="ion-margin-start">{t("change_language")}</IonLabel>
@@ -57,12 +58,12 @@ const PopoverList: React.FC<{
       lines="none"
       detail={false}
       onClick={() => {
-        //setChooseLanguage(true);
+        setShowInfo(true);
         onHide();
       }}
       button
     >
-     <IonIcon icon={informationCircle} />
+      <IonIcon icon={informationCircle} />
       <IonLabel className="ion-padding-start">{t("info")}</IonLabel>
     </IonItem>
     {/*<IonItem detail={false} button onClick={onHide}>
@@ -78,6 +79,7 @@ const Home: React.FC = () => {
   const [dataObtained, setDataObtained] = useState<boolean>(false); // True se possiedo la lista dei punti con le loro coordinate, o sono stati caricati dalla memoria oppure scaricati dal webserver
   const [chooseLanguage, setChooseLanguage] = useState<boolean>(false); // Variabile che indica se mostrare l'alert per la selezione della lingua
   const [centerPosition, setCenterPosition] = useState<boolean>(false);
+  const [showInfo, setShowInfo] = useState<boolean>(false);
 
   const { t, i18n } = useTranslation();
 
@@ -85,6 +87,7 @@ const Home: React.FC = () => {
     onHide: () => dismiss(),
     t,
     setChooseLanguage,
+    setShowInfo,
   });
 
   var languageChoice: string;
@@ -209,7 +212,6 @@ const Home: React.FC = () => {
             />
           </IonFabButton>
         </IonFabList>
-
       </IonFab>
 
       <IonFab
@@ -296,6 +298,16 @@ const Home: React.FC = () => {
           },
         ]}
         onDidDismiss={() => setChooseLanguage(false)}
+      />
+      
+      <IonAlert
+        isOpen={showInfo}
+        header={"Informazioni e contatti"}
+        onDidDismiss={() => setShowInfo(false)}
+        buttons={[{ text: "Close", role: "cancel", cssClass: "secondary" }]}
+        message={
+          "Prototipo realizzato dal comune di Verona con la collaborazione dell'Università degli studi di Verona - Dipartimento di Informatica"
+        }
       />
     </IonPage>
   );
