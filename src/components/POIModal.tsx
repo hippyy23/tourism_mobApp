@@ -114,7 +114,7 @@ function POIModal(props: {
           <IonRow>
             <IonCol>
               <IonCard>
-                <IonItem onClick={() => setOpenTimeView(!openTimeView)}>
+                <IonItem lines={openTimeView ? "inset" : "none"} onClick={() => setOpenTimeView(!openTimeView)}>
                   <IonLabel>{t("open_time")}:</IonLabel>
                   <IonIcon
                     slot="end"
@@ -133,7 +133,7 @@ function POIModal(props: {
           <IonRow>
             <IonCol>
               <IonCard>
-                <IonItem onClick={() => setTicketsView(!ticketsView)}>
+                <IonItem lines={ticketsView ? "inset" : "none"} onClick={() => setTicketsView(!ticketsView)}>
                   <IonLabel>{t("tickets")}:</IonLabel>
                   <IonIcon
                     slot="end"
@@ -152,7 +152,7 @@ function POIModal(props: {
           <IonRow>
             <IonCol>
               <IonCard>
-                <IonItem onClick={() => setGraphView(!graphView)}>
+                <IonItem lines={graphView ? "inset" : "none"} onClick={() => setGraphView(!graphView)}>
                   <IonLabel>{t("chart")}:</IonLabel>
                   <IonIcon
                     slot="end"

@@ -7,6 +7,8 @@ i18n.use(initReactI18next).init({
   resources: {
     it: {
       translation: {
+        change_language: "Cambia lingua",
+        info: "Informazioni",
         cat_churches: "Chiese",
         cat_monuments: "Monumenti",
         cat_museums: "Musei e Centri Espositivi",
@@ -30,6 +32,8 @@ i18n.use(initReactI18next).init({
     },
     en: {
       translation: {
+        change_language: "Change language",
+        info: "Information",
         cat_churches: "Churches",
         cat_monuments: "Monuments",
         cat_museums: "Museums and Exhibition Centers",
@@ -53,6 +57,8 @@ i18n.use(initReactI18next).init({
     },
     de: {
       translation: {
+        change_language: "Change language", // en
+        info: "Information", // en
         cat_churches: "Kirchen",
         cat_monuments: "Denkmäler",
         cat_museums: "Museen und Ausstellungszentren",
@@ -76,6 +82,8 @@ i18n.use(initReactI18next).init({
     },
     fr: {
       translation: {
+        change_language: "Change language", // en
+        info: "Information", // en
         cat_churches: "Église",
         cat_monuments: "Monuments",
         cat_museums: "Musées et Centres d'Exposition",
@@ -99,6 +107,8 @@ i18n.use(initReactI18next).init({
     },
     es: {
       translation: {
+        change_language: "Change language", // en
+        info: "Information", // en
         cat_churches: "Iglesias",
         cat_monuments: "Monumentos",
         cat_museums: "Museos y Centros de Exposiciones",

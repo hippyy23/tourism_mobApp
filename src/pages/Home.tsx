@@ -1,17 +1,18 @@
 import {
   IonAlert,
-  IonBackButton,
-  IonButton,
   IonButtons,
-  IonContent,
   IonFab,
   IonFabButton,
   IonFabList,
   IonHeader,
   IonIcon,
+  IonItem,
+  IonLabel,
+  IonList,
   IonPage,
   IonTitle,
   IonToolbar,
+  useIonPopover,
 } from "@ionic/react";
 import "./Home.css";
 import { MapContainer } from "react-leaflet";
@@ -21,9 +22,54 @@ import churchIconFilter from "../assets/images/art_church.svg"; // Icona chiesa 
 import monumentIconFilter from "../assets/images/art_monument.svg"; // Icona monumento filtro
 import museumIconFilter from "../assets/images/art_museum.svg"; // Icona museo filtro
 import MapChild from "../components/MapChild";
-import { ellipsisHorizontal, ellipsisVertical, language, locationOutline } from "ionicons/icons";
+import {
+  ellipsisHorizontal,
+  ellipsisVertical,
+  informationCircle,
+  language,
+  layers,
+  locationOutline,
+} from "ionicons/icons";
 import { useTranslation } from "react-i18next";
 import { Storage } from "@capacitor/storage";
+import { TFunction } from "i18next";
+
+const PopoverList: React.FC<{
+  onHide: () => void;
+  t: TFunction;
+  setChooseLanguage: React.Dispatch<React.SetStateAction<boolean>>;
+}> = ({ onHide, t, setChooseLanguage }) => (
+  <IonList>
+    {/*<IonListHeader>Ionic</IonListHeader>*/}
+    <IonItem
+      detail={false}
+      button
+      onClick={() => {
+        setChooseLanguage(true);
+        onHide();
+      }}
+      
+    >
+      <IonIcon icon={language} />
+      <IonLabel className="ion-margin-start">{t("change_language")}</IonLabel>
+    </IonItem>
+    <IonItem
+      lines="none"
+      detail={false}
+      onClick={() => {
+        //setChooseLanguage(true);
+        onHide();
+      }}
+      button
+    >
+     <IonIcon icon={informationCircle} />
+      <IonLabel className="ion-padding-start">{t("info")}</IonLabel>
+    </IonItem>
+    {/*<IonItem detail={false} button onClick={onHide}>
+      Close
+</IonItem>*/}
+  </IonList>
+);
 
 const Home: React.FC = () => {
   const [churchersFilter, setChurchersFilter] = useState<boolean>(true); // Variabile che indica se mostrate sulla mappa le chiese
@@ -34,6 +80,13 @@ const Home: React.FC = () => {
   const [centerPosition, setCenterPosition] = useState<boolean>(false);
 
   const { t, i18n } = useTranslation();
+
+  const [present, dismiss] = useIonPopover(PopoverList, {
+    onHide: () => dismiss(),
+    t,
+    setChooseLanguage,
+  });
+
   var languageChoice: string;
 
   return (
@@ -55,196 +108,195 @@ const Home: React.FC = () => {
       <IonHeader>
         <IonToolbar>
           <IonButtons slot="end" className="ion-margin-end">
-          <IonIcon slot="icon-only" ios={ellipsisHorizontal} md={ellipsisVertical} />
+            <IonIcon
+              slot="icon-only"
+              ios={ellipsisHorizontal}
+              md={ellipsisVertical}
+              onClick={(e) =>
+                present({
+                  event: e.nativeEvent,
+                })
+              }
+            />
           </IonButtons>
           <IonTitle>Mappa Verona</IonTitle>
         </IonToolbar>
       </IonHeader>
 
-      
-        <MapContainer
-          center={[45.43895, 10.99439]}
-          zoom={15}
-          minZoom={13}
-          scrollWheelZoom={true}
-          style={{ height: "100%", width: "100%" }}
-          zoomControl={true}
-        >
-          <MapChild
-            churchersFilter={churchersFilter}
-            monumentsFilter={monumentsFilter}
-            museumsFilter={museumsFilter}
-            dataObtained={dataObtained}
-            setDataObtained={setDataObtained}
-            centerPosition={centerPosition}
-            setCenterPosition={setCenterPosition}
-          />
-        </MapContainer>
+      <MapContainer
+        center={[45.43895, 10.99439]}
+        zoom={15}
+        minZoom={13}
+        scrollWheelZoom={true}
+        style={{ height: "100%", width: "100%" }}
+        zoomControl={true}
+      >
+        <MapChild
+          churchersFilter={churchersFilter}
+          monumentsFilter={monumentsFilter}
+          museumsFilter={museumsFilter}
+          dataObtained={dataObtained}
+          setDataObtained={setDataObtained}
+          centerPosition={centerPosition}
+          setCenterPosition={setCenterPosition}
+        />
+      </MapContainer>
 
-        {/* Filtro dei marker */}
-        <IonFab
-          vertical="bottom"
-          horizontal="end"
-          className="ion-margin-bottom"
-        >
-          <IonFabButton>
-            <IonIcon icon={ellipsisHorizontal} />
-          </IonFabButton>
-          <IonFabList side="top">
-            <IonFabButton
+      {/* Filtro dei marker */}
+      <IonFab vertical="bottom" horizontal="end" className="ion-margin-bottom">
+        <IonFabButton>
+          <IonIcon icon={layers} />
+        </IonFabButton>
+        <IonFabList side="top">
+          <IonFabButton
+            class={
+              churchersFilter
+                ? "my-ion-fab-button ion-color ion-color-success md fab-button-in-list ion-activatable ion-focusable hydrated"
+                : "my-ion-fab-button-opacity ion-color ion-color-danger md fab-button-in-list ion-activatable ion-focusable hydrated"
+            }
+            onClick={() => {
+              setChurchersFilter(!churchersFilter);
+            }}
+            disabled={!dataObtained}
+            data-desc={t("cat_churches")}
+            data-bool={churchersFilter}
+          >
+            <IonIcon
+              icon={churchIconFilter}
               class={
                 churchersFilter
-                  ? "my-ion-fab-button ion-color ion-color-success md fab-button-in-list ion-activatable ion-focusable hydrated"
-                  : "my-ion-fab-button-opacity ion-color ion-color-danger md fab-button-in-list ion-activatable ion-focusable hydrated"
+                  ? "my-icon md hydrated"
+                  : "my-icon-opacity md hydrated"
               }
-              onClick={() => {
-                setChurchersFilter(!churchersFilter);
-              }}
-              disabled={!dataObtained}
-              data-desc={t("cat_churches")}
-              data-bool={churchersFilter}
-            >
-              <IonIcon
-                icon={churchIconFilter}
-                class={
-                  churchersFilter
-                    ? "my-icon md hydrated"
-                    : "my-icon-opacity md hydrated"
-                }
-              />
-            </IonFabButton>
-            <IonFabButton
+            />
+          </IonFabButton>
+          <IonFabButton
+            class={
+              monumentsFilter
+                ? "my-ion-fab-button ion-color ion-color-success md fab-button-in-list ion-activatable ion-focusable hydrated"
+                : "my-ion-fab-button-opacity ion-color ion-color-danger md fab-button-in-list ion-activatable ion-focusable hydrated"
+            }
+            onClick={() => setMonumentsFilter(!monumentsFilter)}
+            disabled={!dataObtained}
+            data-desc={t("cat_monuments")}
+          >
+            <IonIcon
+              icon={monumentIconFilter}
               class={
                 monumentsFilter
-                  ? "my-ion-fab-button ion-color ion-color-success md fab-button-in-list ion-activatable ion-focusable hydrated"
-                  : "my-ion-fab-button-opacity ion-color ion-color-danger md fab-button-in-list ion-activatable ion-focusable hydrated"
+                  ? "my-icon md hydrated"
+                  : "my-icon-opacity md hydrated"
               }
-              onClick={() => setMonumentsFilter(!monumentsFilter)}
-              disabled={!dataObtained}
-              data-desc={t("cat_monuments")}
-            >
-              <IonIcon
-                icon={monumentIconFilter}
-                class={
-                  monumentsFilter
-                    ? "my-icon md hydrated"
-                    : "my-icon-opacity md hydrated"
-                }
-              />
-            </IonFabButton>
-            <IonFabButton
+            />
+          </IonFabButton>
+          <IonFabButton
+            class={
+              museumsFilter
+                ? "my-ion-fab-button ion-color ion-color-success md fab-button-in-list ion-activatable ion-focusable hydrated"
+                : "my-ion-fab-button-opacity ion-color ion-color-danger md fab-button-in-list ion-activatable ion-focusable hydrated"
+            }
+            onClick={() => setMuseumsFilter(!museumsFilter)}
+            disabled={!dataObtained}
+            data-desc={t("cat_museums")}
+          >
+            <IonIcon
+              icon={museumIconFilter}
               class={
                 museumsFilter
-                  ? "my-ion-fab-button ion-color ion-color-success md fab-button-in-list ion-activatable ion-focusable hydrated"
-                  : "my-ion-fab-button-opacity ion-color ion-color-danger md fab-button-in-list ion-activatable ion-focusable hydrated"
+                  ? "my-icon md hydrated"
+                  : "my-icon-opacity md hydrated"
               }
-              onClick={() => setMuseumsFilter(!museumsFilter)}
-              disabled={!dataObtained}
-              data-desc={t("cat_museums")}
-            >
-              <IonIcon
-                icon={museumIconFilter}
-                class={
-                  museumsFilter
-                    ? "my-icon md hydrated"
-                    : "my-icon-opacity md hydrated"
-                }
-              />
-            </IonFabButton>
-          </IonFabList>
-
-          <IonFabList side="start">
-            <IonFabButton color="light" onClick={() => setChooseLanguage(true)}>
-              <IonIcon icon={language} />
-            </IonFabButton>
-          </IonFabList>
-        </IonFab>
-
-        <IonFab
-          vertical="bottom"
-          horizontal="start"
-          className="ion-margin-bottom"
-          onClick={() => {
-            setCenterPosition(true);
-          }}
-        >
-          <IonFabButton color="light">
-            <IonIcon icon={locationOutline} />
+            />
           </IonFabButton>
-        </IonFab>
+        </IonFabList>
 
-        <IonAlert
-          isOpen={chooseLanguage}
-          onDidPresent={() => (languageChoice = i18n.language)}
-          header={"Choose a language"}
-          inputs={[
-            {
-              name: "it",
-              type: "radio",
-              label: "Italiano",
-              checked: i18n.language == "it",
-              handler: () => {
-                languageChoice = "it";
-              },
+      </IonFab>
+
+      <IonFab
+        vertical="bottom"
+        horizontal="start"
+        className="ion-margin-bottom"
+        onClick={() => {
+          setCenterPosition(true);
+        }}
+      >
+        <IonFabButton color="light">
+          <IonIcon icon={locationOutline} />
+        </IonFabButton>
+      </IonFab>
+
+      <IonAlert
+        isOpen={chooseLanguage}
+        onDidPresent={() => (languageChoice = i18n.language)}
+        header={"Choose a language"}
+        inputs={[
+          {
+            name: "it",
+            type: "radio",
+            label: "Italiano",
+            checked: i18n.language == "it",
+            handler: () => {
+              languageChoice = "it";
             },
-            {
-              name: "en",
-              type: "radio",
-              label: "English",
-              checked: i18n.language == "en",
-              handler: () => {
-                languageChoice = "en";
-              },
+          },
+          {
+            name: "en",
+            type: "radio",
+            label: "English",
+            checked: i18n.language == "en",
+            handler: () => {
+              languageChoice = "en";
             },
-            {
-              name: "de",
-              type: "radio",
-              label: "Deutsch",
-              checked: i18n.language == "de",
-              handler: () => {
-                languageChoice = "de";
-              },
+          },
+          {
+            name: "de",
+            type: "radio",
+            label: "Deutsch",
+            checked: i18n.language == "de",
+            handler: () => {
+              languageChoice = "de";
             },
-            {
-              name: "fr",
-              type: "radio",
-              label: "Français",
-              checked: i18n.language == "fr",
-              handler: () => {
-                languageChoice = "fr";
-              },
+          },
+          {
+            name: "fr",
+            type: "radio",
+            label: "Français",
+            checked: i18n.language == "fr",
+            handler: () => {
+              languageChoice = "fr";
             },
-            {
-              name: "es",
-              type: "radio",
-              label: "Español",
-              checked: i18n.language == "es",
-              handler: () => {
-                languageChoice = "es";
-              },
+          },
+          {
+            name: "es",
+            type: "radio",
+            label: "Español",
+            checked: i18n.language == "es",
+            handler: () => {
+              languageChoice = "es";
             },
-          ]}
-          buttons={[
-            {
-              text: "Cancel",
-              role: "cancel",
-              cssClass: "secondary",
+          },
+        ]}
+        buttons={[
+          {
+            text: "Cancel",
+            role: "cancel",
+            cssClass: "secondary",
+          },
+          {
+            text: "Okay",
+            handler: () => {
+              if (i18n.language != languageChoice) {
+                i18n.changeLanguage(languageChoice);
+                Storage.set({
+                  key: "languageCode",
+                  value: i18n.language,
+                });
+              }
             },
-            {
-              text: "Okay",
-              handler: () => {
-                if (i18n.language != languageChoice) {
-                  i18n.changeLanguage(languageChoice);
-                  Storage.set({
-                    key: "languageCode",
-                    value: i18n.language,
-                  });
-                }
-              },
-            },
-          ]}
-          onDidDismiss={() => setChooseLanguage(false)}
-        />
+          },
+        ]}
+        onDidDismiss={() => setChooseLanguage(false)}
+      />
     </IonPage>
   );
 };
