@@ -87,3 +87,5 @@
 <h3>Comandi per eseguire il progetto:</h3>
 -ionic serve            // Esegue il progetto sul browser<br/>
 -ionic cap run android  // Compila ed esegue il progetto su dispositivo Android
+
+-ncu -u                 // Aggiorna il package json
