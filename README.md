@@ -32,6 +32,12 @@
     <td>Progetto non si avvia</td>
   </tr>
   <tr>
+    <td>android</td>
+    <td>local.properties</td>
+    <td>Crea il file ed inserisci dentro questa stringa "sdk.dir=C:\\users\\Michele\\AppData\\Local\\Android\\sdk"</td>
+    <td>Errore capacitor, non permette di aprire l'emulatore</td>
+  </tr>
+  <tr>
     <td>android/app/src/main</td>
     <td>AndroidManifest.xml</td>
     <td>Aggiungi ad <b>application</b> android:usesCleartextTraffic="true"</td>
