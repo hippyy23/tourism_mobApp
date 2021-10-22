@@ -1,4 +1,4 @@
-import React, { Component, useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 import { Bar } from "react-chartjs-2";
 import {
   IonButton,
@@ -7,7 +7,6 @@ import {
   IonCol,
   IonContent,
   IonGrid,
-  IonHeader,
   IonIcon,
   IonImg,
   IonItem,
@@ -17,19 +16,18 @@ import {
   IonSlide,
   IonSlides,
   IonText,
-  IonTitle,
   IonToolbar,
 } from "@ionic/react";
-import { addCircle, removeCircle, arrowForward, arrowBack } from "ionicons/icons";
+import { addCircle, removeCircle } from "ionicons/icons";
 import ReactHtmlParser from "react-html-parser";
 import { useTranslation } from "react-i18next";
 
 function POIModal(props: {
-  openCondition: any;
-  onPresent: any;
-  onDismissConditions: any;
+  openCondition: boolean;
+  onPresent: React.Dispatch<React.SetStateAction<boolean>>;
+  onDismissConditions: React.Dispatch<React.SetStateAction<boolean>>;
   data: any;
-  code: any;
+  code: string;
 }) {
   const [openTimeView, setOpenTimeView] = useState<boolean>(false); // Mostra o nascondi il testo relativo agli orari del punto di interesse
   const [ticketsView, setTicketsView] = useState<boolean>(false); // Mostra o nascondi il testo relativo al prezzo dei biglietti del punto di interesse
@@ -71,15 +69,15 @@ function POIModal(props: {
   };
 
   const open_time = () => {
-    if (props.code == "it") return props.data.open_time;
-    return props.data["open_time_" + props.code] != null
+    if (props.code === "it") return props.data.open_time;
+    return props.data["open_time_" + props.code] !== null
       ? props.data["open_time_" + props.code]
       : props.data["open_time_en"];
   };
 
   const tickets = () => {
-    if (props.code == "it") return props.data.tickets;
-    return props.data["tickets_" + props.code] != null
+    if (props.code === "it") return props.data.tickets;
+    return props.data["tickets_" + props.code] !== null
       ? props.data["tickets_" + props.code]
       : props.data["tickets_en"];
   };
@@ -101,7 +99,7 @@ function POIModal(props: {
     >
       <IonToolbar className="ion-padding">
         <IonLabel>
-          {props.data["name_" + props.code] != null
+          {props.data["name_" + props.code] !== null
             ? props.data["name_" + props.code]
             : props.data["name_en"]}
         </IonLabel>
@@ -128,6 +126,7 @@ function POIModal(props: {
                   <IonIcon
                     slot="end"
                     icon={openTimeView ? removeCircle : addCircle}
+                    color="primary"
                   />
                 </IonItem>
 
@@ -150,6 +149,7 @@ function POIModal(props: {
                   <IonIcon
                     slot="end"
                     icon={ticketsView ? removeCircle : addCircle}
+                    color="primary"
                   />
                 </IonItem>
 
@@ -172,6 +172,7 @@ function POIModal(props: {
                   <IonIcon
                     slot="end"
                     icon={graphView ? removeCircle : addCircle}
+                    color="primary"
                   />
                 </IonItem>
 
@@ -213,7 +214,7 @@ function POIModal(props: {
               </IonLabel>
               <IonText>
                 {removeDoubleSlashN(
-                  props.data["descr_" + props.code] != null
+                  props.data["descr_" + props.code] !== null
                     ? props.data["descr_" + props.code]
                     : props.data["descr_en"]
                 )}

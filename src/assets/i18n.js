@@ -3,10 +3,11 @@ import { initReactI18next } from "react-i18next";
 i18n.use(initReactI18next).init({
   debug: true,
   lng: "en",
-  fallbackLng: "en",
+  fallbackLng: ["en", "it", "de", "fr", "es"], // Da mettere tutti i linguaggi presenti
   resources: {
     it: {
       translation: {
+        it: "Italiano",
         change_language: "Cambia lingua",
         info: "Informazioni",
         cat_churches: "Chiese",
@@ -32,6 +33,7 @@ i18n.use(initReactI18next).init({
     },
     en: {
       translation: {
+        en: "English",
         change_language: "Change language",
         info: "Information",
         cat_churches: "Churches",
@@ -57,6 +59,7 @@ i18n.use(initReactI18next).init({
     },
     de: {
       translation: {
+        de: "Deutsch",
         change_language: "Change language", // en
         info: "Information", // en
         cat_churches: "Kirchen",
@@ -82,6 +85,7 @@ i18n.use(initReactI18next).init({
     },
     fr: {
       translation: {
+        fr: "Français",
         change_language: "Change language", // en
         info: "Information", // en
         cat_churches: "Église",
@@ -107,6 +111,7 @@ i18n.use(initReactI18next).init({
     },
     es: {
       translation: {
+        es: "Español",
         change_language: "Change language", // en
         info: "Information", // en
         cat_churches: "Iglesias",

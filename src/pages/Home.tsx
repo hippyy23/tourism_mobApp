@@ -1,76 +1,34 @@
 import {
   IonAlert,
   IonButtons,
-  IonCardHeader,
   IonFab,
   IonFabButton,
   IonFabList,
   IonHeader,
   IonIcon,
-  IonItem,
-  IonLabel,
-  IonList,
   IonPage,
   IonTitle,
   IonToolbar,
   useIonPopover,
 } from "@ionic/react";
+import {
+  ellipsisHorizontal,
+  ellipsisVertical,
+  layers,
+  locationOutline,
+} from "ionicons/icons";
 import "./Home.css";
 import { MapContainer } from "react-leaflet";
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import "../assets/leaflet/leaflet.css";
 import churchIconFilter from "../assets/images/art_church.svg"; // Icona chiesa filtro
 import monumentIconFilter from "../assets/images/art_monument.svg"; // Icona monumento filtro
 import museumIconFilter from "../assets/images/art_museum.svg"; // Icona museo filtro
 import MapChild from "../components/MapChild";
-import {
-  ellipsisHorizontal,
-  ellipsisVertical,
-  informationCircle,
-  language,
-  layers,
-  locationOutline,
-} from "ionicons/icons";
-import { useTranslation } from "react-i18next";
-import { Storage } from "@capacitor/storage";
-import { TFunction } from "i18next";
+import LanguageAlert from "../components/LanguageAlert";
+import PopoverList from "../components/PopoverList";
 
-const PopoverList: React.FC<{
-  onHide: () => void;
-  t: TFunction;
-  setChooseLanguage: React.Dispatch<React.SetStateAction<boolean>>;
-  setShowInfo: React.Dispatch<React.SetStateAction<boolean>>;
-}> = ({ onHide, t, setChooseLanguage, setShowInfo }) => (
-  <IonList>
-    {/*<IonListHeader>Ionic</IonListHeader>*/}
-    <IonItem
-      detail={false}
-      button
-      onClick={() => {
-        setChooseLanguage(true);
-        onHide();
-      }}
-    >
-      <IonIcon icon={language} />
-      <IonLabel className="ion-margin-start">{t("change_language")}</IonLabel>
-    </IonItem>
-    <IonItem
-      lines="none"
-      detail={false}
-      onClick={() => {
-        setShowInfo(true);
-        onHide();
-      }}
-      button
-    >
-      <IonIcon icon={informationCircle} />
-      <IonLabel className="ion-padding-start">{t("info")}</IonLabel>
-    </IonItem>
-    {/*<IonItem detail={false} button onClick={onHide}>
-      Close
-</IonItem>*/}
-  </IonList>
-);
+import { useTranslation } from "react-i18next";
 
 const Home: React.FC = () => {
   const [churchersFilter, setChurchersFilter] = useState<boolean>(true); // Variabile che indica se mostrate sulla mappa le chiese
@@ -80,6 +38,7 @@ const Home: React.FC = () => {
   const [chooseLanguage, setChooseLanguage] = useState<boolean>(false); // Variabile che indica se mostrare l'alert per la selezione della lingua
   const [centerPosition, setCenterPosition] = useState<boolean>(false);
   const [showInfo, setShowInfo] = useState<boolean>(false);
+  const fabRef = useRef<HTMLIonFabElement>(null);
 
   const { t, i18n } = useTranslation();
 
@@ -89,8 +48,6 @@ const Home: React.FC = () => {
     setChooseLanguage,
     setShowInfo,
   });
-
-  var languageChoice: string;
 
   return (
     <IonPage>
@@ -108,7 +65,13 @@ const Home: React.FC = () => {
         crossOrigin=""
       ></script>
       */}
-      <IonHeader>
+      <IonHeader
+        onClick={() => {
+          if (fabRef.current?.activated) {
+            fabRef.current.activated = false;
+          }
+        }}
+      >
         <IonToolbar>
           <IonButtons slot="end" className="ion-margin-end">
             <IonIcon
@@ -126,27 +89,55 @@ const Home: React.FC = () => {
         </IonToolbar>
       </IonHeader>
 
-      <MapContainer
-        center={[45.43895, 10.99439]}
-        zoom={15}
-        minZoom={13}
-        scrollWheelZoom={true}
-        style={{ height: "100%", width: "100%" }}
-        zoomControl={true}
+      <div
+        onClick={() => {
+          if (fabRef.current?.activated) {
+            fabRef.current.activated = false;
+          }
+        }}
+        style={{ height: "100%" }}
       >
-        <MapChild
-          churchersFilter={churchersFilter}
-          monumentsFilter={monumentsFilter}
-          museumsFilter={museumsFilter}
-          dataObtained={dataObtained}
-          setDataObtained={setDataObtained}
-          centerPosition={centerPosition}
-          setCenterPosition={setCenterPosition}
-        />
-      </MapContainer>
+        <MapContainer
+          center={[45.43895, 10.99439]}
+          zoom={15}
+          minZoom={13}
+          scrollWheelZoom={true}
+          style={{ height: "100%", width: "100%" }}
+          zoomControl={true}
+        >
+          <MapChild
+            churchersFilter={churchersFilter}
+            monumentsFilter={monumentsFilter}
+            museumsFilter={museumsFilter}
+            dataObtained={dataObtained}
+            setDataObtained={setDataObtained}
+            centerPosition={centerPosition}
+            setCenterPosition={setCenterPosition}
+          />
+        </MapContainer>
+
+        {/* Pulsante per centrare nell propria posizione */}
+        <IonFab
+          vertical="bottom"
+          horizontal="start"
+          className="ion-margin-bottom"
+          onClick={() => {
+            setCenterPosition(true);
+          }}
+        >
+          <IonFabButton color="light">
+            <IonIcon icon={locationOutline} />
+          </IonFabButton>
+        </IonFab>
+      </div>
 
       {/* Filtro dei marker */}
-      <IonFab vertical="bottom" horizontal="end" className="ion-margin-bottom">
+      <IonFab
+        vertical="bottom"
+        horizontal="end"
+        className="ion-margin-bottom"
+        ref={fabRef}
+      >
         <IonFabButton>
           <IonIcon icon={layers} />
         </IonFabButton>
@@ -214,92 +205,10 @@ const Home: React.FC = () => {
         </IonFabList>
       </IonFab>
 
-      <IonFab
-        vertical="bottom"
-        horizontal="start"
-        className="ion-margin-bottom"
-        onClick={() => {
-          setCenterPosition(true);
-        }}
-      >
-        <IonFabButton color="light">
-          <IonIcon icon={locationOutline} />
-        </IonFabButton>
-      </IonFab>
+      {chooseLanguage && (
+        <LanguageAlert i18n={i18n} onDismiss={() => setChooseLanguage(false)} />
+      )}
 
-      <IonAlert
-        isOpen={chooseLanguage}
-        onDidPresent={() => (languageChoice = i18n.language)}
-        header={"Choose a language"}
-        inputs={[
-          {
-            name: "it",
-            type: "radio",
-            label: "Italiano",
-            checked: i18n.language == "it",
-            handler: () => {
-              languageChoice = "it";
-            },
-          },
-          {
-            name: "en",
-            type: "radio",
-            label: "English",
-            checked: i18n.language == "en",
-            handler: () => {
-              languageChoice = "en";
-            },
-          },
-          {
-            name: "de",
-            type: "radio",
-            label: "Deutsch",
-            checked: i18n.language == "de",
-            handler: () => {
-              languageChoice = "de";
-            },
-          },
-          {
-            name: "fr",
-            type: "radio",
-            label: "Français",
-            checked: i18n.language == "fr",
-            handler: () => {
-              languageChoice = "fr";
-            },
-          },
-          {
-            name: "es",
-            type: "radio",
-            label: "Español",
-            checked: i18n.language == "es",
-            handler: () => {
-              languageChoice = "es";
-            },
-          },
-        ]}
-        buttons={[
-          {
-            text: "Cancel",
-            role: "cancel",
-            cssClass: "secondary",
-          },
-          {
-            text: "Okay",
-            handler: () => {
-              if (i18n.language != languageChoice) {
-                i18n.changeLanguage(languageChoice);
-                Storage.set({
-                  key: "languageCode",
-                  value: i18n.language,
-                });
-              }
-            },
-          },
-        ]}
-        onDidDismiss={() => setChooseLanguage(false)}
-      />
-      
       <IonAlert
         isOpen={showInfo}
         header={"Informazioni e contatti"}

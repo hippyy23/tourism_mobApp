@@ -35,7 +35,7 @@ const baseData = [
     category_de: "Kirchen",
     category_fr: "Église",
     category_es: "Iglesias",
-    elements: new Array(),
+    elements: [],
   },
   {
     category_it: "Monumenti",
@@ -43,7 +43,7 @@ const baseData = [
     category_de: "Denkmäler",
     category_fr: "Monuments",
     category_es: "Monumentos",
-    elements: new Array(),
+    elements: [],
   },
   {
     category_it: "Musei e Centri Espositivi",
@@ -51,12 +51,11 @@ const baseData = [
     category_de: "Museen und Ausstellungszentren",
     category_fr: "Musées et Centres d'Exposition",
     category_es: "Museos y Centros de Exposiciones",
-    elements: new Array(),
+    elements: [],
   },
 ];
 
-var data: any;
-data = baseData;
+var data: any = baseData;
 var detailedData: any;
 var isLoading: boolean = false;
 const onlineBounds = L.latLngBounds(
@@ -130,7 +129,7 @@ function MapChild(props: {
         default:
           Geolocation.requestPermissions()
             .then((permission) => {
-              if (permission.location == "granted") {
+              if (permission.location === "granted") {
                 Geolocation.watchPosition(
                   { enableHighAccuracy: true },
                   updateUserPosition
@@ -151,7 +150,7 @@ function MapChild(props: {
     Network.getStatus().then((netStatus) => {
       setConnectionStatus(netStatus);
       Storage.get({ key: "baseData" }).then((result) => {
-        if (result.value != null) {
+        if (result.value !== null) {
           data = JSON.parse(result.value);
           props.setDataObtained(true);
           setCenterData();
@@ -168,21 +167,14 @@ function MapChild(props: {
 
     // Recupera la lingua del dispositivo
     Storage.get({ key: "languageCode" }).then((result) => {
-      if (result.value != null) {
+      if (result.value !== null) {
         i18n.changeLanguage(result.value);
       } else {
         Device.getLanguageCode().then((lang) => {
           var language = lang.value.substr(0, 2);
-          if (
-            language != "it" &&
-            language != "en" &&
-            language != "de" &&
-            language != "fr" &&
-            language != "es"
-          ) {
-            language = "en";
+          if (i18n.languages.includes(language)) {
+            i18n.changeLanguage(language);
           }
-          i18n.changeLanguage(language);
         });
       }
     });
@@ -208,9 +200,9 @@ function MapChild(props: {
         data = baseData;
         result.forEach((element: any) => {
           let index = data.findIndex(
-            (value: any) => value.category_it == element.properties.category_it
+            (value: any) => value.category_it === element.properties.category_it
           );
-          if (index != -1) {
+          if (index !== -1) {
             data[index].elements.push({
               name_it: element.properties.name_it,
               name_en: element.properties.name_en,
@@ -241,13 +233,13 @@ function MapChild(props: {
 
   function getDetails(id: string) {
     if (
-      detailedData == null ||
-      (detailedData != null /*&& detailedData.classid != id*/)
+      detailedData === null ||
+      (detailedData !== null /*&& detailedData.classid != id*/)
     ) {
       detailedData = null;
       getDetailsFromWebServer(id)
         .then((json) => {
-          if (json.numberReturned == 1) {
+          if (json.numberReturned === 1) {
             detailedData = json.features[0].properties;
             if (isLoading) {
               setShowModal(true);
@@ -264,7 +256,7 @@ function MapChild(props: {
   }
 
   function openModal(id: string) {
-    if (detailedData != null /*&& detailedData.classid == id*/) {
+    if (detailedData !== null /*&& detailedData.classid == id*/) {
       setShowModal(true);
       isLoading = false;
     } else {
@@ -352,7 +344,7 @@ function MapChild(props: {
               }}
             >
               <IonLabel onClick={() => openModal(element.id)}>
-                {element["name_" + i18n.language] != null
+                {element["name_" + i18n.language] !== null
                   ? element["name_" + i18n.language]
                   : element["name_en"]}
               </IonLabel>
@@ -377,7 +369,7 @@ function MapChild(props: {
               }}
             >
               <IonLabel onClick={() => openModal(element.id)}>
-                {element["name_" + i18n.language] != null
+                {element["name_" + i18n.language] !== null
                   ? element["name_" + i18n.language]
                   : element["name_en"]}
               </IonLabel>
@@ -402,7 +394,7 @@ function MapChild(props: {
               }}
             >
               <IonLabel onClick={() => openModal(element.id)}>
-                {element["name_" + i18n.language] != null
+                {element["name_" + i18n.language] !== null
                   ? element["name_" + i18n.language]
                   : element["name_en"]}
               </IonLabel>
