@@ -1,3 +1,5 @@
+import { DeviceId } from "@capacitor/device";
+import { Position } from "@capacitor/geolocation";
 import L from "leaflet";
 
 // Trova il centro rispetto a tutti i punti di interesse
@@ -37,6 +39,19 @@ export function findCenter(data: any) {
   return new L.LatLng(lan, lon);
 }
 
+var lastPos: Position;
+// Invia la posizione del device al server
+export function sendPosition(id: DeviceId, pos: Position) {
+  if (lastPos) {
+    let lastPosll = L.latLng(lastPos.coords.latitude, lastPos.coords.longitude);
+    let posll = L.latLng(pos.coords.latitude, pos.coords.longitude);
+    if (posll.distanceTo(lastPosll)<100)
+      return;
+  }
+  alert({ id: id, position: pos });
+  lastPos = pos;
+}
+
 // Ritorna la lista di tutti i punti di interesse con le coordinate e i nomi
 export async function getListFromWebServer() {
   const artCategoryRequest =
@@ -57,6 +72,21 @@ export async function getDetailsFromWebServer(id: string) {
     "&request=GetFeature" +
     "&typeName=tourism:v_art" +
     "&cql_filter=(classid=" +
+    id +
+    ")" +
+    "&outputFormat=json";
+
+  return fetch(classIdRequest).then((response) => response.json());
+}
+
+// Ritorna i media di un punto specifico
+export async function getMediaFromWebServer(id: string) {
+  const classIdRequest =
+    "https://sitavr.scienze.univr.it/geoserver" +
+    "/tourism/ows?service=WFS&version=1.0.0" +
+    "&request=GetFeature" +
+    "&typeName=tourism:v_art_media" +
+    "&cql_filter=(art=" +
     id +
     ")" +
     "&outputFormat=json";

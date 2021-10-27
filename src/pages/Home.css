@@ -1,3 +1,4 @@
+/* Rimuove il doppio padding presente nella toolbar */
 ion-toolbar{
   --padding-start: 0 !important;
   --padding-end: 0 !important;
@@ -74,4 +75,17 @@ ion-toolbar{
 
 .ion-bar-chart{
   margin-bottom: 35px;
+}
+
+/* Per far si che la grandezza del player corrisponda a quella del video*/
+.player-wrapper {
+  width: auto; /* Reset width*/
+  height: auto; /* Reset height*/
+}
+.react-player {
+  position: relative; /* Set to relative*/
+}
+
+.react-player > div {
+  position: absolute; /* Scaling will occur since parent is relative now*/
 }

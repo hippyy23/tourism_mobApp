@@ -89,14 +89,14 @@ const Home: React.FC = () => {
         </IonToolbar>
       </IonHeader>
 
-      <div
+      {/*<div
         onClick={() => {
           if (fabRef.current?.activated) {
             fabRef.current.activated = false;
           }
         }}
         style={{ height: "100%" }}
-      >
+      >*/}
         <MapContainer
           center={[45.43895, 10.99439]}
           zoom={15}
@@ -129,7 +129,7 @@ const Home: React.FC = () => {
             <IonIcon icon={locationOutline} />
           </IonFabButton>
         </IonFab>
-      </div>
+      {/*</div>*/}
 
       {/* Filtro dei marker */}
       <IonFab

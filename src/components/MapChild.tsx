@@ -2,7 +2,7 @@ import {
   IonLabel,
   useIonViewDidEnter,
   IonLoading,
-  IonActionSheet
+  IonActionSheet,
 } from "@ionic/react";
 import { TileLayer, useMap, Marker, Popup } from "react-leaflet";
 import { useState } from "react";
@@ -13,20 +13,20 @@ import museumIcon from "../assets/images/art_museum.png"; // Icona museo
 import locationIcon from "../assets/images/location-sharp.svg";
 import "../assets/leaflet/leaflet.css";
 import { ConnectionStatus, Network } from "@capacitor/network";
-import { Device } from "@capacitor/device";
+import { Device, DeviceId } from "@capacitor/device";
 import { Storage } from "@capacitor/storage";
 import { Geolocation, Position } from "@capacitor/geolocation";
 import {
   findCenter,
   getListFromWebServer,
   getDetailsFromWebServer,
+  sendPosition,
 } from "../components/Functions";
 import POIModal from "./POIModal";
 import { useTranslation } from "react-i18next";
 
 var jj =
   '{  "features": [    {      "properties": {  "classid": "44",   "open_time" : null,    "descr_it": "Detto anche di Cangrande, fu costruito allinizio del XIV sec., ma venne più volte rimaneggiato. Lultimo restauro del 1929-30 ha tentato di restituirgli (attraverso abbattimenti di parti di epoche diverse, il ripristino della merlatura e linserimento di elementi architettonici consoni) le strutture medievali, di cui rimanevano significativi esempi nel cortile.",        "image_url": "http://www.turismoverona.eu/cache/cfx_imagecr3/11A53001AAADD23C941C7A2BDC95F35B.jpg",        "name_it": "Palazzo del Governo e della Prefettura"      }    }  ],  "numberReturned": 1}';
-
 
 const baseData = [
   {
@@ -64,15 +64,16 @@ const onlineBounds = L.latLngBounds(
 );
 const offlineBounds = L.latLngBounds([45.4568, 10.9625], [45.4203, 11.0227]);
 var watchId: string;
+var deviceLanguage: string;
 
 function MapChild(props: {
-  churchersFilter: boolean,
-  monumentsFilter: boolean,
-  museumsFilter: boolean,
-  dataObtained: boolean,
-  setDataObtained: React.Dispatch<React.SetStateAction<boolean>>,
-  centerPosition: boolean,
-  setCenterPosition: React.Dispatch<React.SetStateAction<boolean>>
+  churchersFilter: boolean;
+  monumentsFilter: boolean;
+  museumsFilter: boolean;
+  dataObtained: boolean;
+  setDataObtained: React.Dispatch<React.SetStateAction<boolean>>;
+  centerPosition: boolean;
+  setCenterPosition: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
   const [downloadedData, setDownloadedData] = useState<boolean>(false); // True se la lista dei punti con le loro coordinate sono stati scaricati dal webserver
   const [showLoading, setShowLoading] = useState<boolean>(false); // Permette di mostrare il componente di caricamento
@@ -84,20 +85,9 @@ function MapChild(props: {
   const [showModal, setShowModal] = useState<boolean>(false); // Mostra la POIModal in cui sono presenti i dettagli di un punto di interesse
   const [position, setPosition] = useState<Position>(); // Variabile che contiene la posizione dell'utente
   const [permissionGranted, setPermissionGranted] = useState<boolean>(false); // Variabile che contiene se si ha il permesso di ottenere la posizione dell'utente
-
   const map = useMap();
   const { t, i18n } = useTranslation();
 
-  function setCenterPosition() {
-    if (permissionGranted) {
-      let pos = L.latLng(position!.coords.latitude, position!.coords.longitude);
-      if (offlineBounds.contains(pos)) map.panTo(pos);
-      else {
-        Geolocation.clearWatch({ id: watchId });
-      }
-    } else checkLocationPermission();
-    props.setCenterPosition(false);
-  }
   function setCenterData() {
     map.panTo(findCenter(data));
   }
@@ -108,38 +98,58 @@ function MapChild(props: {
     map.setMaxBounds(onlineBounds);
   }
 
+  function setCenterPosition() {
+    if (permissionGranted) {
+      Geolocation.getCurrentPosition({ enableHighAccuracy: true }).then(
+        (pos) => {
+          if (pos) {
+            let posll = L.latLng(pos.coords.latitude, pos.coords.longitude);
+            if (offlineBounds.contains(posll)) {
+              map.panTo(posll);
+              Geolocation.watchPosition(
+                { enableHighAccuracy: true },
+                updateUserPosition
+              ).then((id) => (watchId = id));
+            } else {
+              Geolocation.clearWatch({ id: watchId });
+              setPermissionGranted(false);
+            }
+          }
+        }
+      );
+    } else {
+      checkLocationPermission();
+    }
+    props.setCenterPosition(false);
+  }
+
   function updateUserPosition(pos: Position | null) {
     if (pos) {
+      Device.getId().then((id) => sendPosition(id, pos));
       setPosition(pos);
-      setPermissionGranted(true);
+      let posll = L.latLng(pos.coords.latitude, pos.coords.longitude);
+      if (!offlineBounds.contains(posll)){
+        Geolocation.clearWatch({ id: watchId });
+        setPermissionGranted(false);
+      } else setPermissionGranted(true);
     }
   }
 
   function checkLocationPermission() {
-    Geolocation.checkPermissions().then((permission) => {
-      switch (permission.location) {
-        case "denied":
-          return;
-        case "granted":
-          Geolocation.watchPosition(
-            { enableHighAccuracy: true },
-            updateUserPosition
-          ).then((id) => (watchId = id));
-          break;
-        default:
-          Geolocation.requestPermissions()
-            .then((permission) => {
-              if (permission.location === "granted") {
-                Geolocation.watchPosition(
-                  { enableHighAccuracy: true },
-                  updateUserPosition
-                ).then((id) => (watchId = id));
-              }
-            })
-            .catch(() => console.log("Browser not implemented"));
-          break;
-      }
-    });
+    Geolocation.requestPermissions()
+      .then((permission) => {
+        switch (permission.location) {
+          case "denied":
+            return;
+          case "granted":
+            Geolocation.watchPosition(
+              { enableHighAccuracy: true },
+              updateUserPosition
+            ).then((id) => (watchId = id));
+            break;
+        }
+      })
+      .catch(() => console.log("Browser not implemented"));
   }
 
   useIonViewDidEnter(() => {
@@ -171,9 +181,9 @@ function MapChild(props: {
         i18n.changeLanguage(result.value);
       } else {
         Device.getLanguageCode().then((lang) => {
-          var language = lang.value.substr(0, 2);
-          if (i18n.languages.includes(language)) {
-            i18n.changeLanguage(language);
+          deviceLanguage = lang.value.substr(0, 2);
+          if (i18n.languages.includes(deviceLanguage)) {
+            i18n.changeLanguage(deviceLanguage);
           }
         });
       }
@@ -195,12 +205,13 @@ function MapChild(props: {
   function getList() {
     if (downloadedData) return;
     getListFromWebServer()
-      .then((json: any) => {
+      .then((json: { features: [] }) => {
         let result = json.features;
         data = baseData;
         result.forEach((element: any) => {
           let index = data.findIndex(
-            (value: any) => value.category_it === element.properties.category_it
+            (value: { category_it: string }) =>
+              value.category_it === element.properties.category_it
           );
           if (index !== -1) {
             data[index].elements.push({
@@ -234,7 +245,7 @@ function MapChild(props: {
   function getDetails(id: string) {
     if (
       detailedData === null ||
-      (detailedData !== null /*&& detailedData.classid != id*/)
+      detailedData !== null /*&& detailedData.classid != id*/
     ) {
       detailedData = null;
       getDetailsFromWebServer(id)
@@ -267,7 +278,7 @@ function MapChild(props: {
 
   return (
     <>
-    {props.centerPosition && setCenterPosition()}
+      {props.centerPosition && setCenterPosition()}
 
       {/* Notifica se il dispositivo è offline */}
       <IonActionSheet
@@ -280,7 +291,7 @@ function MapChild(props: {
           },
         ]}
       />
-      
+
       {connectionStatus?.connected && (
         <TileLayer
           attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'

@@ -21,6 +21,8 @@ import {
 import { addCircle, removeCircle } from "ionicons/icons";
 import ReactHtmlParser from "react-html-parser";
 import { useTranslation } from "react-i18next";
+import { getMediaFromWebServer } from "./Functions";
+import ReactPlayer from "react-player/file";
 
 function POIModal(props: {
   openCondition: boolean;
@@ -32,10 +34,11 @@ function POIModal(props: {
   const [openTimeView, setOpenTimeView] = useState<boolean>(false); // Mostra o nascondi il testo relativo agli orari del punto di interesse
   const [ticketsView, setTicketsView] = useState<boolean>(false); // Mostra o nascondi il testo relativo al prezzo dei biglietti del punto di interesse
   const [graphView, setGraphView] = useState<boolean>(false); // Mostra o nascondi il grafico della popolazione nel POI
+  const [urlMedia, setUrlMedia] = useState<string>(); //
   const slideRef = useRef<HTMLIonSlidesElement>(null);
 
   const { t } = useTranslation();
-  
+
   // DATI DI PROVA
   const data = {
     labels: [
@@ -94,6 +97,16 @@ function POIModal(props: {
       }}
       onWillPresent={() => {
         props.onPresent(false);
+        getMediaFromWebServer(props.data.classid)
+          .then((json) => {
+            if (json.numberReturned === 1) {
+              console.log(json.features[0].properties);
+              setUrlMedia(json.features[0].properties.path);
+            }
+          })
+          .catch(() => {
+            console.log("Catch");
+          });
         console.log(props.data);
       }}
     >
@@ -180,7 +193,7 @@ function POIModal(props: {
                   <IonCardContent>
                     <IonSlides pager={true} ref={slideRef}>
                       <IonSlide>
-                        <Bar data={data} className="ion-bar-chart"/>
+                        <Bar data={data} className="ion-bar-chart" />
                       </IonSlide>
                       <IonSlide>
                         <Bar data={data} />
@@ -192,10 +205,18 @@ function POIModal(props: {
                     <IonGrid fixed={true} class="ion-buttons-grid">
                       <IonRow>
                         <IonCol>
-                          <IonButton onClick={() => slideRef.current?.slidePrev()}>Precedente{/*<IonIcon icon={arrowBack}/>*/}</IonButton>
+                          <IonButton
+                            onClick={() => slideRef.current?.slidePrev()}
+                          >
+                            Precedente{/*<IonIcon icon={arrowBack}/>*/}
+                          </IonButton>
                         </IonCol>
                         <IonCol className="ion-text-right">
-                          <IonButton onClick={() => slideRef.current?.slideNext()}>Successivo</IonButton>
+                          <IonButton
+                            onClick={() => slideRef.current?.slideNext()}
+                          >
+                            Successivo
+                          </IonButton>
                         </IonCol>
                       </IonRow>
                     </IonGrid>
@@ -221,6 +242,18 @@ function POIModal(props: {
               </IonText>
             </IonCol>
           </IonRow>
+
+          {urlMedia && (
+            <IonRow className="player-wrapper">
+                <ReactPlayer
+                  className="react-player"
+                  url="https://sitavr.scienze.univr.it/veronapp/ArenaEsterno.mp4"
+                  width="100%"
+                  height="100%"
+                  controls
+                />
+            </IonRow>
+          )}
         </IonGrid>
       </IonContent>
     </IonModal>
