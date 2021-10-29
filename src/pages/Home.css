@@ -89,3 +89,8 @@ ion-toolbar{
 .react-player > div {
   position: absolute; /* Scaling will occur since parent is relative now*/
 }
+
+.poi_description{
+  --padding-start: 0px;
+  --padding-end: 0px;
+}

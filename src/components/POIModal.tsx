@@ -17,12 +17,24 @@ import {
   IonSlides,
   IonText,
   IonToolbar,
+  IonicSwiper,
+  IonButtons,
 } from "@ionic/react";
-import { addCircle, removeCircle } from "ionicons/icons";
+import {
+  addCircle,
+  removeCircle,
+  volumeHigh,
+  volumeMute,
+} from "ionicons/icons";
 import ReactHtmlParser from "react-html-parser";
 import { useTranslation } from "react-i18next";
 import { getMediaFromWebServer } from "./Functions";
+import { Swiper, SwiperSlide } from "swiper/react";
+import SwiperCore, { Navigation, Pagination } from "swiper";
+import { TextToSpeech } from "@capacitor-community/text-to-speech";
 import ReactPlayer from "react-player/file";
+import "swiper/swiper-bundle.min.css";
+import "@ionic/react/css/ionic-swiper.css";
 
 function POIModal(props: {
   openCondition: boolean;
@@ -35,41 +47,65 @@ function POIModal(props: {
   const [ticketsView, setTicketsView] = useState<boolean>(false); // Mostra o nascondi il testo relativo al prezzo dei biglietti del punto di interesse
   const [graphView, setGraphView] = useState<boolean>(false); // Mostra o nascondi il grafico della popolazione nel POI
   const [urlMedia, setUrlMedia] = useState<string>(); //
-  const slideRef = useRef<HTMLIonSlidesElement>(null);
+  const [textPlaying, setTextPlaying] = useState<boolean>(false); //
+  const [swiperInstance, setSwiperInstance] = useState<SwiperCore>(); //
 
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  SwiperCore.use([IonicSwiper, Navigation, Pagination]);
 
   // DATI DI PROVA
   const data = {
     labels: [
       t("day_week_mon"),
       t("day_week_tue"),
-      t("day_week_wed"),
+      t("day_week_tue"),
       /*
       t("day_week_thu"),
       t("day_week_fri"),
       t("day_week_sat"),
       t("day_week_sun"),
       */
+      ,
     ],
     datasets: [
       {
         label: t("historical"),
-        data: [12, 19, 3, 5, 2, 3, 4],
+        data: [12, 19, 3, 5, 2, 3],
         backgroundColor: "rgb(255, 99, 132)",
       },
       {
         label: t("real"),
-        data: [2, 3, 20, 5, 1, 4, 6],
+        data: [2, 3, 20, 5, 1, 4],
         backgroundColor: "rgb(54, 162, 235)",
       },
       {
         label: t("expected"),
-        data: [3, 10, 13, 15, 22, 30, 18],
+        data: [3, 10, 13, 15, 22, 30],
         backgroundColor: "rgb(75, 192, 192)",
       },
     ],
   };
+
+  function speak() {
+    setTextPlaying(true);
+    TextToSpeech.speak({
+      text: removeDoubleSlashN(
+        props.data["descr_" + props.code] !== null
+          ? props.data["descr_" + props.code]
+          : props.data["descr_en"]
+      ),
+      locale: i18n.language + "_" + i18n.language.toUpperCase(),
+      speechRate: 1.0,
+      pitchRate: 1.0,
+      volume: 1.0,
+      category: "ambient",
+    }).then(() => setTextPlaying(false));
+  }
+
+  function stop() {
+    TextToSpeech.stop();
+    setTextPlaying(false);
+  }
 
   const open_time = () => {
     if (props.code === "it") return props.data.open_time;
@@ -191,29 +227,35 @@ function POIModal(props: {
 
                 {graphView && (
                   <IonCardContent>
-                    <IonSlides pager={true} ref={slideRef}>
-                      <IonSlide>
+                    <IonLabel>{(new Date()).toUTCString()}</IonLabel>
+                    <Swiper
+                      pagination={{
+                        clickable: true,
+                      }}
+                      onSwiper={(swiper) => setSwiperInstance(swiper)}
+                    >
+                      <SwiperSlide>
                         <Bar data={data} className="ion-bar-chart" />
-                      </IonSlide>
-                      <IonSlide>
+                      </SwiperSlide>
+                      <SwiperSlide>
                         <Bar data={data} />
-                      </IonSlide>
-                      <IonSlide>
+                      </SwiperSlide>
+                      <SwiperSlide>
                         <Bar data={data} />
-                      </IonSlide>
-                    </IonSlides>
+                      </SwiperSlide>
+                    </Swiper>
                     <IonGrid fixed={true} class="ion-buttons-grid">
                       <IonRow>
                         <IonCol>
                           <IonButton
-                            onClick={() => slideRef.current?.slidePrev()}
+                            onClick={() => swiperInstance?.slidePrev()}
                           >
                             Precedente{/*<IonIcon icon={arrowBack}/>*/}
                           </IonButton>
                         </IonCol>
                         <IonCol className="ion-text-right">
                           <IonButton
-                            onClick={() => slideRef.current?.slideNext()}
+                            onClick={() => swiperInstance?.slideNext()}
                           >
                             Successivo
                           </IonButton>
@@ -228,11 +270,23 @@ function POIModal(props: {
 
           <IonRow class="my-row">
             <IonCol className="ion-margin">
-              <IonLabel>
-                <h2>
-                  <b>{t("description")}:</b>
-                </h2>
-              </IonLabel>
+              <IonItem lines="none" class="poi_description">
+                <IonLabel slot="start">
+                  <h2>
+                    <b>{t("description")}:</b>
+                  </h2>
+                </IonLabel>
+                <IonButton
+                  slot="end"
+                  fill="clear"
+                  onClick={textPlaying ? stop : speak}
+                >
+                  <IonIcon
+                    slot="icon-only"
+                    icon={textPlaying ? volumeMute : volumeHigh}
+                  />
+                </IonButton>
+              </IonItem>
               <IonText>
                 {removeDoubleSlashN(
                   props.data["descr_" + props.code] !== null
@@ -245,13 +299,13 @@ function POIModal(props: {
 
           {urlMedia && (
             <IonRow className="player-wrapper">
-                <ReactPlayer
-                  className="react-player"
-                  url="https://sitavr.scienze.univr.it/veronapp/ArenaEsterno.mp4"
-                  width="100%"
-                  height="100%"
-                  controls
-                />
+              <ReactPlayer
+                className="react-player"
+                url="https://sitavr.scienze.univr.it/veronapp/ArenaEsterno.mp4"
+                width="100%"
+                height="100%"
+                controls
+              />
             </IonRow>
           )}
         </IonGrid>

@@ -6,6 +6,8 @@ import {
   IonFabList,
   IonHeader,
   IonIcon,
+  IonImg,
+  IonItem,
   IonPage,
   IonTitle,
   IonToolbar,
@@ -24,6 +26,7 @@ import "../assets/leaflet/leaflet.css";
 import churchIconFilter from "../assets/images/art_church.svg"; // Icona chiesa filtro
 import monumentIconFilter from "../assets/images/art_monument.svg"; // Icona monumento filtro
 import museumIconFilter from "../assets/images/art_museum.svg"; // Icona museo filtro
+import toolbarIcon from "../assets/images/logo.png";
 import MapChild from "../components/MapChild";
 import LanguageAlert from "../components/LanguageAlert";
 import PopoverList from "../components/PopoverList";
@@ -73,6 +76,9 @@ const Home: React.FC = () => {
         }}
       >
         <IonToolbar>
+          <IonItem lines="none">
+            <IonImg src={toolbarIcon}/>
+          </IonItem>
           <IonButtons slot="end" className="ion-margin-end">
             <IonIcon
               slot="icon-only"
@@ -85,7 +91,6 @@ const Home: React.FC = () => {
               }
             />
           </IonButtons>
-          <IonTitle>Mappa Verona</IonTitle>
         </IonToolbar>
       </IonHeader>
 
