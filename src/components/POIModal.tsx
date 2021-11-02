@@ -59,12 +59,12 @@ function POIModal(props: {
   SwiperCore.use([IonicSwiper, Navigation, Pagination]);
 
   // DATI DI PROVA
-  const data = {
+  const data1 = {
     labels: [
-      t("day_week_mon"),
+      "6-8", "8-10"
+      /*t("day_week_mon"),
       t("day_week_tue"),
       t("day_week_tue"),
-      /*
       t("day_week_thu"),
       t("day_week_fri"),
       t("day_week_sat"),
@@ -74,17 +74,63 @@ function POIModal(props: {
     datasets: [
       {
         label: t("historical"),
-        data: [12, 19, 3, 5, 2, 3],
+        data: [12, 19],
         backgroundColor: "rgb(255, 99, 132)",
       },
       {
         label: t("real"),
-        data: [2, 3, 20, 5, 1, 4],
+        data: [2, 3],
         backgroundColor: "rgb(54, 162, 235)",
       },
       {
         label: t("expected"),
-        data: [3, 10, 13, 15, 22, 30],
+        data: [3, 10],
+        backgroundColor: "rgb(75, 192, 192)",
+      },
+    ],
+  };
+
+  const data2 = {
+    labels: [
+      "10-12", "12-14"
+    ],
+    datasets: [
+      {
+        label: t("historical"),
+        data: [3, 5],
+        backgroundColor: "rgb(255, 99, 132)",
+      },
+      {
+        label: t("real"),
+        data: [20, 5],
+        backgroundColor: "rgb(54, 162, 235)",
+      },
+      {
+        label: t("expected"),
+        data: [13, 15],
+        backgroundColor: "rgb(75, 192, 192)",
+      },
+    ],
+  };
+
+  const data3 = {
+    labels: [
+      "14-16", "16-18"
+    ],
+    datasets: [
+      {
+        label: t("historical"),
+        data: [2, 3],
+        backgroundColor: "rgb(255, 99, 132)",
+      },
+      {
+        label: t("real"),
+        data: [1, 4],
+        backgroundColor: "rgb(54, 162, 235)",
+      },
+      {
+        label: t("expected"),
+        data: [12, 13],
         backgroundColor: "rgb(75, 192, 192)",
       },
     ],
@@ -126,7 +172,9 @@ function POIModal(props: {
   };
 
   const removeDoubleSlashN = (str: string) => {
-    return str.replace(/\\n/g, "");
+    if (str)
+      return str.replace(/\\n/g, "");
+    return "No description for this POI."
   };
 
   const [present, dismiss] = useIonPopover(PopoverList, {
@@ -263,13 +311,13 @@ function POIModal(props: {
                       onSwiper={(swiper) => setSwiperInstance(swiper)}
                     >
                       <SwiperSlide>
-                        <Bar data={data} className="ion-bar-chart" />
+                        <Bar data={data1} className="ion-bar-chart" />
                       </SwiperSlide>
                       <SwiperSlide>
-                        <Bar data={data} />
+                        <Bar data={data2} />
                       </SwiperSlide>
                       <SwiperSlide>
-                        <Bar data={data} />
+                        <Bar data={data3} />
                       </SwiperSlide>
                     </Swiper>
                     <IonGrid fixed={true} class="ion-buttons-grid">

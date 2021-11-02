@@ -40,13 +40,13 @@ export function findCenter(data: any) {
 }
 
 var lastPos: Position;
-// Invia la posizione del device al server se ci si sposta di più di x metri oppure ogni 30 secondi
+// Invia la posizione del device al server se ci si sposta di più di 100 metri oppure ogni 30 secondi
 export function sendPosition(id: DeviceId, pos: Position) {
   if (lastPos) {
     let lastPosll = L.latLng(lastPos.coords.latitude, lastPos.coords.longitude);
     let posll = L.latLng(pos.coords.latitude, pos.coords.longitude);
     let timeDiff = (pos.timestamp-lastPos.timestamp);
-    if (posll.distanceTo(lastPosll)<100 && timeDiff<30000)
+    if (posll.distanceTo(lastPosll)<100 && timeDiff<30000) 
       return;
   }
   //alert("Invio al server i dati " + { id: id, position: pos });

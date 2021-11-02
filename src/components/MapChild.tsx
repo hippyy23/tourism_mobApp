@@ -26,7 +26,7 @@ import POIModal from "./POIModal";
 import { useTranslation } from "react-i18next";
 
 var jj =
-  '{  "features": [    {      "properties": {  "classid": "44",   "open_time" : null,    "descr_it": "Detto anche di Cangrande, fu costruito allinizio del XIV sec., ma venne più volte rimaneggiato. Lultimo restauro del 1929-30 ha tentato di restituirgli (attraverso abbattimenti di parti di epoche diverse, il ripristino della merlatura e linserimento di elementi architettonici consoni) le strutture medievali, di cui rimanevano significativi esempi nel cortile.",        "image_url": "http://www.turismoverona.eu/cache/cfx_imagecr3/11A53001AAADD23C941C7A2BDC95F35B.jpg",        "name_it": "Palazzo del Governo e della Prefettura"      }    }  ],  "numberReturned": 1}';
+  '{  "features": [    {      "properties": {  "classid": "44",   "open_time" : null,    "descr_it": "Detto anche di Cangrande, fu costruito allinizio del XIV sec., ma venne più volte rimaneggiato. Lultimo restauro del 1929-30 ha tentato di restituirgli (attraverso abbattimenti di parti di epoche diverse, il ripristino della merlatura e linserimento di elementi architettonici consoni) le strutture medievali, di cui rimanevano significativi esempi nel cortile.",        "image_url": "http://www.turismoverona.eu/cache/cfx_imagecr3/11A53001AAADD23C941C7A2BDC95F35B.jpg",        "name_it": "Palazzo del Governo e della Prefettura", "name_en": "Palazzo del Governo e della Prefettura"    }    }  ],  "numberReturned": 1}';
 
 const baseData = [
   {
