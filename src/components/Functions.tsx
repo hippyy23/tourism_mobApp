@@ -107,5 +107,5 @@ export async function getCrowdingFromWebServer(id: string) {
     ")" +
     "&outputFormat=json";
 
-  return fetch(classIdRequest).then((response) => response.json()); //ciaooo
+  return fetch(classIdRequest).then((response) => response.json()); //ciao2
 }
