@@ -7,14 +7,6 @@
   --ion-color-primary-tint: #6587b8 !important;
 }
 
-/* Rimuove il doppio padding presente nella toolbar */
-ion-toolbar {
-  --padding-start: 0 !important;
-  --padding-end: 0 !important;
-  --padding-top: 0 !important;
-  --padding-bottom: 0 !important;
-}
-
 .my-action-sheet {
   --backdrop-opacity: 0;
 }

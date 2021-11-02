@@ -15,10 +15,15 @@ import {
   IonRow,
   IonText,
   IonToolbar,
-  IonicSwiper
+  IonicSwiper,
+  IonHeader,
+  useIonPopover,
+  IonButtons,
 } from "@ionic/react";
 import {
   addCircle,
+  ellipsisHorizontal,
+  ellipsisVertical,
   removeCircle,
   volumeHigh,
   volumeMute,
@@ -32,6 +37,8 @@ import { TextToSpeech } from "@capacitor-community/text-to-speech";
 import ReactPlayer from "react-player/file";
 import "swiper/swiper-bundle.min.css";
 import "@ionic/react/css/ionic-swiper.css";
+import PopoverList from "./PopoverList";
+import LanguageAlert from "./LanguageAlert";
 
 function POIModal(props: {
   openCondition: boolean;
@@ -43,6 +50,7 @@ function POIModal(props: {
   const [openTimeView, setOpenTimeView] = useState<boolean>(false); // Mostra o nascondi il testo relativo agli orari del punto di interesse
   const [ticketsView, setTicketsView] = useState<boolean>(false); // Mostra o nascondi il testo relativo al prezzo dei biglietti del punto di interesse
   const [graphView, setGraphView] = useState<boolean>(false); // Mostra o nascondi il grafico della popolazione nel POI
+  const [chooseLanguage, setChooseLanguage] = useState<boolean>(false); // Variabile che indica se mostrare l'alert per la selezione della lingua
   const [urlMedia, setUrlMedia] = useState<string>(); //
   const [textPlaying, setTextPlaying] = useState<boolean>(false); //
   const [swiperInstance, setSwiperInstance] = useState<SwiperCore>(); //
@@ -121,6 +129,13 @@ function POIModal(props: {
     return str.replace(/\\n/g, "");
   };
 
+  const [present, dismiss] = useIonPopover(PopoverList, {
+    onHide: () => dismiss(),
+    t,
+    setChooseLanguage,
+    chooseLanguage,
+  });
+
   return (
     <IonModal
       isOpen={props.openCondition}
@@ -142,17 +157,34 @@ function POIModal(props: {
         console.log(props.data);
       }}
     >
-      <IonToolbar className="ion-padding">
-        <IonLabel>
-          {props.data["name_" + props.code] !== null
-            ? props.data["name_" + props.code]
-            : props.data["name_en"]}
-        </IonLabel>
+      <IonHeader className="ion-padding-horizontal">
+        <IonToolbar>
+          <IonLabel>
+            {props.data["name_" + props.code] !== null
+              ? props.data["name_" + props.code]
+              : props.data["name_en"]}
+          </IonLabel>
 
-        <IonButton onClick={() => props.onDismissConditions(false)} slot="end">
-          {t("close")}
-        </IonButton>
-      </IonToolbar>
+          <IonButton
+            onClick={() => props.onDismissConditions(false)}
+            slot="end"
+          >
+            {t("close")}
+          </IonButton>
+          <IonButtons slot="end" className="ion-margin-end">
+            <IonIcon
+              slot="icon-only"
+              ios={ellipsisHorizontal}
+              md={ellipsisVertical}
+              onClick={(e) =>
+                present({
+                  event: e.nativeEvent,
+                })
+              }
+            />
+          </IonButtons>
+        </IonToolbar>
+      </IonHeader>
       <IonContent>
         <IonGrid fixed={true}>
           <IonRow className="ion-align-items-center">
@@ -306,6 +338,10 @@ function POIModal(props: {
           )}
         </IonGrid>
       </IonContent>
+
+      {chooseLanguage && (
+        <LanguageAlert i18n={i18n} onDismiss={() => setChooseLanguage(false)} />
+      )}
     </IonModal>
   );
 }
