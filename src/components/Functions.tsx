@@ -40,15 +40,16 @@ export function findCenter(data: any) {
 }
 
 var lastPos: Position;
-// Invia la posizione del device al server
+// Invia la posizione del device al server se ci si sposta di più di x metri oppure ogni 30 secondi
 export function sendPosition(id: DeviceId, pos: Position) {
   if (lastPos) {
     let lastPosll = L.latLng(lastPos.coords.latitude, lastPos.coords.longitude);
     let posll = L.latLng(pos.coords.latitude, pos.coords.longitude);
-    if (posll.distanceTo(lastPosll)<100)
+    let timeDiff = (pos.timestamp-lastPos.timestamp);
+    if (posll.distanceTo(lastPosll)<100 && timeDiff<30000)
       return;
   }
-  alert({ id: id, position: pos });
+  //alert("Invio al server i dati " + { id: id, position: pos });
   lastPos = pos;
 }
 
@@ -87,6 +88,21 @@ export async function getMediaFromWebServer(id: string) {
     "&request=GetFeature" +
     "&typeName=tourism:v_art_media" +
     "&cql_filter=(art=" +
+    id +
+    ")" +
+    "&outputFormat=json";
+
+  return fetch(classIdRequest).then((response) => response.json());
+}
+
+// Ritorna l'occupazione di un punto specifico
+export async function getCrowdingFromWebServer(id: string) {
+  const classIdRequest =
+    "https://sitavr.scienze.univr.it/geoserver" +
+    "/tourism/ows?service=WFS&version=1.0.0" +
+    "&request=GetFeature" +
+    "&typeName=tourism:crowding" +
+    "&cql_filter=(punto_di_interesse=" +
     id +
     ")" +
     "&outputFormat=json";

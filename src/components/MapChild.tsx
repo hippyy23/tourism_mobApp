@@ -13,7 +13,7 @@ import museumIcon from "../assets/images/art_museum.png"; // Icona museo
 import locationIcon from "../assets/images/location-sharp.svg";
 import "../assets/leaflet/leaflet.css";
 import { ConnectionStatus, Network } from "@capacitor/network";
-import { Device, DeviceId } from "@capacitor/device";
+import { Device } from "@capacitor/device";
 import { Storage } from "@capacitor/storage";
 import { Geolocation, Position } from "@capacitor/geolocation";
 import {

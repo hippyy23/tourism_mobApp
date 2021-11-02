@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useState } from "react";
 import { Bar } from "react-chartjs-2";
 import {
   IonButton,
@@ -13,12 +13,9 @@ import {
   IonLabel,
   IonModal,
   IonRow,
-  IonSlide,
-  IonSlides,
   IonText,
   IonToolbar,
-  IonicSwiper,
-  IonButtons,
+  IonicSwiper
 } from "@ionic/react";
 import {
   addCircle,
@@ -65,7 +62,6 @@ function POIModal(props: {
       t("day_week_sat"),
       t("day_week_sun"),
       */
-      ,
     ],
     datasets: [
       {
@@ -227,7 +223,7 @@ function POIModal(props: {
 
                 {graphView && (
                   <IonCardContent>
-                    <IonLabel>{(new Date()).toUTCString()}</IonLabel>
+                    {/*<IonLabel>{(new Date()).toDateString()}</IonLabel>*/}
                     <Swiper
                       pagination={{
                         clickable: true,

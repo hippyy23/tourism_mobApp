@@ -9,7 +9,6 @@ import {
   IonImg,
   IonItem,
   IonPage,
-  IonTitle,
   IonToolbar,
   useIonPopover,
 } from "@ionic/react";
@@ -75,10 +74,11 @@ const Home: React.FC = () => {
           }
         }}
       >
-        <IonToolbar>
-          <IonItem lines="none">
-            <IonImg src={toolbarIcon}/>
+        <IonToolbar color="primary">
+          <IonItem slot="start" lines="none" color="primary">
+            <IonImg src={toolbarIcon} />
           </IonItem>
+
           <IonButtons slot="end" className="ion-margin-end">
             <IonIcon
               slot="icon-only"
@@ -102,38 +102,38 @@ const Home: React.FC = () => {
         }}
         style={{ height: "100%" }}
       >*/}
-        <MapContainer
-          center={[45.43895, 10.99439]}
-          zoom={15}
-          minZoom={13}
-          scrollWheelZoom={true}
-          style={{ height: "100%", width: "100%" }}
-          zoomControl={true}
-        >
-          <MapChild
-            churchersFilter={churchersFilter}
-            monumentsFilter={monumentsFilter}
-            museumsFilter={museumsFilter}
-            dataObtained={dataObtained}
-            setDataObtained={setDataObtained}
-            centerPosition={centerPosition}
-            setCenterPosition={setCenterPosition}
-          />
-        </MapContainer>
+      <MapContainer
+        center={[45.43895, 10.99439]}
+        zoom={15}
+        minZoom={13}
+        scrollWheelZoom={true}
+        style={{ height: "100%", width: "100%" }}
+        zoomControl={true}
+      >
+        <MapChild
+          churchersFilter={churchersFilter}
+          monumentsFilter={monumentsFilter}
+          museumsFilter={museumsFilter}
+          dataObtained={dataObtained}
+          setDataObtained={setDataObtained}
+          centerPosition={centerPosition}
+          setCenterPosition={setCenterPosition}
+        />
+      </MapContainer>
 
-        {/* Pulsante per centrare nell propria posizione */}
-        <IonFab
-          vertical="bottom"
-          horizontal="start"
-          className="ion-margin-bottom"
-          onClick={() => {
-            setCenterPosition(true);
-          }}
-        >
-          <IonFabButton color="light">
-            <IonIcon icon={locationOutline} />
-          </IonFabButton>
-        </IonFab>
+      {/* Pulsante per centrare nell propria posizione */}
+      <IonFab
+        vertical="bottom"
+        horizontal="start"
+        className="ion-margin-bottom"
+        onClick={() => {
+          setCenterPosition(true);
+        }}
+      >
+        <IonFabButton color="light">
+          <IonIcon icon={locationOutline} />
+        </IonFabButton>
+      </IonFab>
       {/*</div>*/}
 
       {/* Filtro dei marker */}
