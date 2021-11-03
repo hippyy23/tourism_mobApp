@@ -22,6 +22,8 @@ import {
 } from "@ionic/react";
 import {
   addCircle,
+  arrowBack,
+  chevronBack,
   ellipsisHorizontal,
   ellipsisVertical,
   removeCircle,
@@ -61,7 +63,8 @@ function POIModal(props: {
   // DATI DI PROVA
   const data1 = {
     labels: [
-      "6-8", "8-10"
+      "6-8",
+      "8-10",
       /*t("day_week_mon"),
       t("day_week_tue"),
       t("day_week_tue"),
@@ -91,9 +94,7 @@ function POIModal(props: {
   };
 
   const data2 = {
-    labels: [
-      "10-12", "12-14"
-    ],
+    labels: ["10-12", "12-14"],
     datasets: [
       {
         label: t("historical"),
@@ -114,9 +115,7 @@ function POIModal(props: {
   };
 
   const data3 = {
-    labels: [
-      "14-16", "16-18"
-    ],
+    labels: ["14-16", "16-18"],
     datasets: [
       {
         label: t("historical"),
@@ -172,9 +171,8 @@ function POIModal(props: {
   };
 
   const removeDoubleSlashN = (str: string) => {
-    if (str)
-      return str.replace(/\\n/g, "");
-    return "No description for this POI."
+    if (str) return str.replace(/\\n/g, "");
+    return "No description for this POI.";
   };
 
   const [present, dismiss] = useIonPopover(PopoverList, {
@@ -205,23 +203,24 @@ function POIModal(props: {
         console.log(props.data);
       }}
     >
-      <IonHeader className="ion-padding-horizontal">
+      <IonHeader>
         <IonToolbar>
+          <IonButton
+            onClick={() => props.onDismissConditions(false)}
+            slot="start"
+            fill="clear"
+          >
+            <IonIcon slot="icon-only" md={arrowBack} ios={chevronBack} />
+          </IonButton>
           <IonLabel>
             {props.data["name_" + props.code] !== null
               ? props.data["name_" + props.code]
               : props.data["name_en"]}
           </IonLabel>
-
-          <IonButton
-            onClick={() => props.onDismissConditions(false)}
-            slot="end"
-          >
-            {t("close")}
-          </IonButton>
           <IonButtons slot="end" className="ion-margin-end">
             <IonIcon
               slot="icon-only"
+              color="primary"
               ios={ellipsisHorizontal}
               md={ellipsisVertical}
               onClick={(e) =>
