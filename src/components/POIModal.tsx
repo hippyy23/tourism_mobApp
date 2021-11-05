@@ -19,6 +19,7 @@ import {
   IonHeader,
   useIonPopover,
   IonButtons,
+  IonThumbnail,
 } from "@ionic/react";
 import {
   addCircle,
@@ -35,12 +36,13 @@ import { useTranslation } from "react-i18next";
 import { getMediaFromWebServer } from "./Functions";
 import { Swiper, SwiperSlide } from "swiper/react";
 import SwiperCore, { Navigation, Pagination } from "swiper";
-import { TextToSpeech } from "@capacitor-community/text-to-speech";
+import { TextToSpeech } from '@capacitor-community/text-to-speech';
 import ReactPlayer from "react-player/file";
 import "swiper/swiper-bundle.min.css";
 import "@ionic/react/css/ionic-swiper.css";
 import PopoverList from "./PopoverList";
 import LanguageAlert from "./LanguageAlert";
+import logoVerona from "../assets/images/logo_con_unesco_coloreQ.png";
 
 function POIModal(props: {
   openCondition: boolean;
@@ -143,11 +145,7 @@ function POIModal(props: {
           ? props.data["descr_" + props.code]
           : props.data["descr_en"]
       ),
-      locale: i18n.language + "_" + i18n.language.toUpperCase(),
-      speechRate: 1.0,
-      pitchRate: 1.0,
-      volume: 1.0,
-      category: "ambient",
+      lang: i18n.language + "_" + i18n.language.toUpperCase(),
     }).then(() => setTextPlaying(false));
   }
 
@@ -212,7 +210,10 @@ function POIModal(props: {
           >
             <IonIcon slot="icon-only" md={arrowBack} ios={chevronBack} />
           </IonButton>
-          <IonLabel>
+          <IonThumbnail slot="start">
+            <img src={logoVerona} alt="Logo Comune di Verona"/>
+          </IonThumbnail>
+          <IonLabel slot="start" className="ion-padding-start">
             {props.data["name_" + props.code] !== null
               ? props.data["name_" + props.code]
               : props.data["name_en"]}
@@ -223,7 +224,7 @@ function POIModal(props: {
               color="primary"
               ios={ellipsisHorizontal}
               md={ellipsisVertical}
-              onClick={(e) =>
+              onClick={(e : any) =>
                 present({
                   event: e.nativeEvent,
                 })

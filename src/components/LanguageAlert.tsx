@@ -3,24 +3,25 @@ import {
 } from "@ionic/react";
 import { Storage } from "@capacitor/storage";
 import { i18n } from "i18next";
+import { LANGUAGES } from "../configVar";
 
 function LanguageAlert(props: { i18n: i18n; onDismiss: any }) {
   var languageChoice: string;
 
   var inputs: any[] = [];
 
-  props.i18n.languages.forEach((language) => {
+  LANGUAGES.forEach((language) => {
     inputs.push({
       name: language,
       type: "radio",
-      label: props.i18n.t(language),
+      label: props.i18n.t("lang", {lng: language}),
       checked: props.i18n.language === language,
       handler: () => {
         languageChoice = language;
       },
     });
   });
-  inputs.sort((a, b) => a.name.localeCompare(b.name));
+  //inputs.sort((a, b) => a.name.localeCompare(b.name));
 
   return (
     <IonAlert
