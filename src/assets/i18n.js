@@ -28,7 +28,11 @@ i18n.use(initReactI18next).init({
         day_week_thu : "Giovedì",
         day_week_fri : "Venerdì",
         day_week_sat : "Sabato",
-        day_week_sun : "Domenica"
+        day_week_sun : "Domenica",
+        xlabel: "Orari",
+        ylabel: "Affollamento",
+        prev: "Precedente",
+        next: "Successivo"
       },
     },
     en: {
@@ -54,7 +58,11 @@ i18n.use(initReactI18next).init({
         day_week_thu : "Thursday",
         day_week_fri : "Friday",
         day_week_sat : "Saturday",
-        day_week_sun : "Sunday"
+        day_week_sun : "Sunday",
+        xlabel: "Time",
+        ylabel: "Crowding",
+        prev: "Previous",
+        next: "Next"
       },
     },
     de: {
@@ -80,8 +88,12 @@ i18n.use(initReactI18next).init({
         day_week_thu : "Thursday", // en
         day_week_fri : "Friday", // en
         day_week_sat : "Saturday", // en
-        day_week_sun : "Sunday" // en
-      }, // en
+        day_week_sun : "Sunday", // en
+        xlabel: "Time", // en
+        ylabel: "Crowding", // en
+        prev: "Previous", // en
+        next: "Next" // en
+      }, 
     },
     fr: {
       translation: {
@@ -106,7 +118,11 @@ i18n.use(initReactI18next).init({
         day_week_thu : "Thursday", // en
         day_week_fri : "Friday", // en
         day_week_sat : "Saturday", // en
-        day_week_sun : "Sunday" // en
+        day_week_sun : "Sunday", // en
+        xlabel: "Time", // en
+        ylabel: "Crowding", // en
+        prev: "Previous", // en
+        next: "Next" // en
       },
     },
     es: {
@@ -132,7 +148,11 @@ i18n.use(initReactI18next).init({
         day_week_thu : "Thursday", // en
         day_week_fri : "Friday", // en
         day_week_sat : "Saturday", // en
-        day_week_sun : "Sunday" // en
+        day_week_sun : "Sunday", // en
+        xlabel: "Time", // en
+        ylabel: "Crowding", // en
+        prev: "Previous", // en
+        next: "Next" // en
       },
     },
   },

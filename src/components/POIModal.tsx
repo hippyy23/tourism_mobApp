@@ -19,6 +19,7 @@ import {
   IonHeader,
   useIonPopover,
   IonButtons,
+  useIonViewDidEnter,
 } from "@ionic/react";
 import {
   addCircle,
@@ -56,15 +57,16 @@ function POIModal(props: {
   const [urlMedia, setUrlMedia] = useState<string>(); //
   const [textPlaying, setTextPlaying] = useState<boolean>(false); //
   const [swiperInstance, setSwiperInstance] = useState<SwiperCore>(); //
-
   const { t, i18n } = useTranslation();
   SwiperCore.use([IonicSwiper, Navigation, Pagination]);
 
   // DATI DI PROVA
+
   const data1 = {
     labels: [
       "6-8",
       "8-10",
+      "10-12",
       /*t("day_week_mon"),
       t("day_week_tue"),
       t("day_week_tue"),
@@ -76,64 +78,92 @@ function POIModal(props: {
     ],
     datasets: [
       {
-        label: t("historical"),
-        data: [12, 19],
+        label: "historical",
+        data: [12, 19, 25],
         backgroundColor: "rgb(255, 99, 132)",
       },
       {
-        label: t("real"),
-        data: [2, 3],
-        backgroundColor: "rgb(54, 162, 235)",
+        label: "expected",
+        data: [3, 10, 2],
+        backgroundColor: "rgb(75, 192, 192)",
       },
       {
-        label: t("expected"),
-        data: [3, 10],
-        backgroundColor: "rgb(75, 192, 192)",
+        label: "real",
+        data: [0, 3, 0],
+        backgroundColor: "rgb(54, 162, 235)",
       },
     ],
   };
 
   const data2 = {
-    labels: ["10-12", "12-14"],
+    labels: ["12-14", "14-16", "16-18"],
     datasets: [
       {
         label: t("historical"),
-        data: [3, 5],
+        data: [3, 5, 13],
         backgroundColor: "rgb(255, 99, 132)",
       },
       {
-        label: t("real"),
-        data: [20, 5],
-        backgroundColor: "rgb(54, 162, 235)",
-      },
-      {
         label: t("expected"),
-        data: [13, 15],
+        data: [13, 15, 15],
         backgroundColor: "rgb(75, 192, 192)",
       },
     ],
   };
 
   const data3 = {
-    labels: ["14-16", "16-18"],
+    labels: ["18-20", "20-22", "22-24"],
     datasets: [
       {
         label: t("historical"),
-        data: [2, 3],
+        data: [2, 3, 18],
         backgroundColor: "rgb(255, 99, 132)",
       },
       {
-        label: t("real"),
-        data: [1, 4],
-        backgroundColor: "rgb(54, 162, 235)",
-      },
-      {
         label: t("expected"),
-        data: [12, 13],
+        data: [12, 13, 25],
         backgroundColor: "rgb(75, 192, 192)",
       },
     ],
   };
+
+  function BarChart(props: { data: any }) {
+
+    return (
+      <Bar
+        data={props.data}
+        className="ion-bar-chart"
+        options={{
+          responsive: true,
+          scales: {
+            x: {
+              offset: true,
+              display: true,
+              title: {
+                display: true,
+                text: t("xlabel"),
+                font: {
+                  weight: "bold",
+                  size: 14,
+                },
+              },
+            },
+            y: {
+              display: true,
+              title: {
+                display: true,
+                text: t("ylabel"),
+                font: {
+                  weight: "bold",
+                  size: 14,
+                },
+              },
+            },
+          },
+        }}
+      />
+    );
+  }
 
   function speak() {
     setTextPlaying(true);
@@ -308,15 +338,16 @@ function POIModal(props: {
                         clickable: true,
                       }}
                       onSwiper={(swiper) => setSwiperInstance(swiper)}
+                      onAfterInit={() => setTimeout(() => window.dispatchEvent(new Event('resize')), 10)}
                     >
                       <SwiperSlide>
-                        <Bar data={data1} className="ion-bar-chart" />
+                        <BarChart data={data1}/>
                       </SwiperSlide>
                       <SwiperSlide>
-                        <Bar data={data2} />
+                        <BarChart data={data2}/>
                       </SwiperSlide>
                       <SwiperSlide>
-                        <Bar data={data3} />
+                        <BarChart data={data3}/>
                       </SwiperSlide>
                     </Swiper>
                     <IonGrid fixed={true} class="ion-buttons-grid">
@@ -325,14 +356,12 @@ function POIModal(props: {
                           <IonButton
                             onClick={() => swiperInstance?.slidePrev()}
                           >
-                            Precedente{/*<IonIcon icon={arrowBack}/>*/}
+                            {t("prev")}{/*<IonIcon icon={arrowBack}/>*/}
                           </IonButton>
                         </IonCol>
                         <IonCol className="ion-text-right">
-                          <IonButton
-                            onClick={() => swiperInstance?.slideNext()}
-                          >
-                            Successivo
+                          <IonButton onClick={() => swiperInstance?.slideNext()}>
+                            {t("next")}
                           </IonButton>
                         </IonCol>
                       </IonRow>
