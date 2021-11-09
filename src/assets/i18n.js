@@ -5,7 +5,7 @@ import { LANGUAGES } from "../configVar";
 i18n.use(initReactI18next).init({
   debug: true,
   lng: "en",
-  supportedLngs: LANGUAGES,
+  supportedLngs: LANGUAGES.concat("dev"),
   resources: {
     it: {
       translation: {
@@ -21,20 +21,21 @@ i18n.use(initReactI18next).init({
         open_time: "Orario",
         tickets: "Biglietti",
         chart: "Grafico occupazione",
-        historical : "Storico",
-        real : "Attuale",
-        expected : "Previsto",
-        day_week_mon : "Lunedì",
-        day_week_tue : "Martedì",
-        day_week_wed : "Mercoledì",
-        day_week_thu : "Giovedì",
-        day_week_fri : "Venerdì",
-        day_week_sat : "Sabato",
-        day_week_sun : "Domenica",
+        historical: "Storico",
+        real: "Attuale",
+        expected: "Previsto",
+        day_week_mon: "Lunedì",
+        day_week_tue: "Martedì",
+        day_week_wed: "Mercoledì",
+        day_week_thu: "Giovedì",
+        day_week_fri: "Venerdì",
+        day_week_sat: "Sabato",
+        day_week_sun: "Domenica",
         xlabel: "Orari",
         ylabel: "Affollamento",
         prev: "Precedente",
-        next: "Successivo"
+        next: "Successivo",
+        not_supported: "Questo contenuto non è disponibile nella tua lingua.",
       },
     },
     en: {
@@ -51,20 +52,21 @@ i18n.use(initReactI18next).init({
         open_time: "Open Time",
         tickets: "Tickets",
         chart: "Grafico occupazione", // it
-        historical : "Historical",
-        real : "Real",
-        expected : "Expected",
-        day_week_mon : "Monday",
-        day_week_tue : "Tuesday",
-        day_week_wed : "Wednesay",
-        day_week_thu : "Thursday",
-        day_week_fri : "Friday",
-        day_week_sat : "Saturday",
-        day_week_sun : "Sunday",
+        historical: "Historical",
+        real: "Real",
+        expected: "Expected",
+        day_week_mon: "Monday",
+        day_week_tue: "Tuesday",
+        day_week_wed: "Wednesay",
+        day_week_thu: "Thursday",
+        day_week_fri: "Friday",
+        day_week_sat: "Saturday",
+        day_week_sun: "Sunday",
         xlabel: "Time",
         ylabel: "Crowding",
         prev: "Previous",
-        next: "Next"
+        next: "Next",
+        not_supported: "This content is not available in your language.",
       },
     },
     de: {
@@ -81,21 +83,22 @@ i18n.use(initReactI18next).init({
         open_time: "Open Time", // en
         tickets: "Tickets", // en
         chart: "Grafico occupazione", // it
-        historical : "Historical", // en
-        real : "Real", // en
-        expected : "Expected", // en
-        day_week_mon : "Monday", // en
-        day_week_tue : "Tuesday", // en
-        day_week_wed : "Wednesay", // en
-        day_week_thu : "Thursday", // en
-        day_week_fri : "Friday", // en
-        day_week_sat : "Saturday", // en
-        day_week_sun : "Sunday", // en
+        historical: "Historical", // en
+        real: "Real", // en
+        expected: "Expected", // en
+        day_week_mon: "Monday", // en
+        day_week_tue: "Tuesday", // en
+        day_week_wed: "Wednesay", // en
+        day_week_thu: "Thursday", // en
+        day_week_fri: "Friday", // en
+        day_week_sat: "Saturday", // en
+        day_week_sun: "Sunday", // en
         xlabel: "Time", // en
         ylabel: "Crowding", // en
         prev: "Previous", // en
-        next: "Next" // en
-      }, 
+        next: "Next", // en
+        not_supported: "This content is not available in your language.", // en
+      },
     },
     fr: {
       translation: {
@@ -111,20 +114,21 @@ i18n.use(initReactI18next).init({
         open_time: "Open Time", // en
         tickets: "Tickets", // en
         chart: "Grafico occupazione", // it
-        historical : "Historical", // en
-        real : "Real", // en
-        expected : "Expected", // en
-        day_week_mon : "Monday", // en
-        day_week_tue : "Tuesday", // en
-        day_week_wed : "Wednesay", // en
-        day_week_thu : "Thursday", // en
-        day_week_fri : "Friday", // en
-        day_week_sat : "Saturday", // en
-        day_week_sun : "Sunday", // en
+        historical: "Historical", // en
+        real: "Real", // en
+        expected: "Expected", // en
+        day_week_mon: "Monday", // en
+        day_week_tue: "Tuesday", // en
+        day_week_wed: "Wednesay", // en
+        day_week_thu: "Thursday", // en
+        day_week_fri: "Friday", // en
+        day_week_sat: "Saturday", // en
+        day_week_sun: "Sunday", // en
         xlabel: "Time", // en
         ylabel: "Crowding", // en
         prev: "Previous", // en
-        next: "Next" // en
+        next: "Next", // en
+        not_supported: "This content is not available in your language.", // en
       },
     },
     es: {
@@ -141,21 +145,24 @@ i18n.use(initReactI18next).init({
         open_time: "Open Time", // en
         tickets: "Tickets", // en
         chart: "Grafico occupazione", // it
-        historical : "Historical", // en
-        real : "Real", // en
-        expected : "Expected", // en
-        day_week_mon : "Monday", // en
-        day_week_tue : "Tuesday", // en
-        day_week_wed : "Wednesay", // en
-        day_week_thu : "Thursday", // en
-        day_week_fri : "Friday", // en
-        day_week_sat : "Saturday", // en
-        day_week_sun : "Sunday", // en
+        historical: "Historical", // en
+        real: "Real", // en
+        expected: "Expected", // en
+        day_week_mon: "Monday", // en
+        day_week_tue: "Tuesday", // en
+        day_week_wed: "Wednesay", // en
+        day_week_thu: "Thursday", // en
+        day_week_fri: "Friday", // en
+        day_week_sat: "Saturday", // en
+        day_week_sun: "Sunday", // en
         xlabel: "Time", // en
         ylabel: "Crowding", // en
         prev: "Previous", // en
-        next: "Next" // en
+        next: "Next", // en
+        not_supported: "This content is not available in your language.", // en
       },
     },
   },
 });
+
+export default i18n;

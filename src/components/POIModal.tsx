@@ -20,6 +20,7 @@ import {
   useIonPopover,
   IonButtons,
   IonThumbnail,
+  IonNote,
 } from "@ionic/react";
 import {
   addCircle,
@@ -36,7 +37,7 @@ import { useTranslation } from "react-i18next";
 import { getMediaFromWebServer } from "./Functions";
 import { Swiper, SwiperSlide } from "swiper/react";
 import SwiperCore, { Navigation, Pagination } from "swiper";
-import { TextToSpeech } from '@capacitor-community/text-to-speech';
+import { TextToSpeech } from "@capacitor-community/text-to-speech";
 import ReactPlayer from "react-player/file";
 import "swiper/swiper-bundle.min.css";
 import "@ionic/react/css/ionic-swiper.css";
@@ -55,8 +56,8 @@ function POIModal(props: {
   const [ticketsView, setTicketsView] = useState<boolean>(false); // Mostra o nascondi il testo relativo al prezzo dei biglietti del punto di interesse
   const [graphView, setGraphView] = useState<boolean>(false); // Mostra o nascondi il grafico della popolazione nel POI
   const [chooseLanguage, setChooseLanguage] = useState<boolean>(false); // Variabile che indica se mostrare l'alert per la selezione della lingua
-  const [urlMedia, setUrlMedia] = useState<string>(); //
-  const [textPlaying, setTextPlaying] = useState<boolean>(false); //
+  const [urlMedia, setUrlMedia] = useState<string>(); // Imposta la URL da dove caricare il video del POI se è presente
+  const [textPlaying, setTextPlaying] = useState<boolean>(false); // Controlla se il TTS è in riproduzione o no
   const [swiperInstance, setSwiperInstance] = useState<SwiperCore>(); //
   const { t, i18n } = useTranslation();
   SwiperCore.use([IonicSwiper, Navigation, Pagination]);
@@ -129,7 +130,6 @@ function POIModal(props: {
   };
 
   function BarChart(props: { data: any }) {
-
     return (
       <Bar
         data={props.data}
@@ -183,19 +183,34 @@ function POIModal(props: {
     setTextPlaying(false);
   }
 
-  const open_time = () => {
+  const getOpenTime = () => {
     if (props.code === "it") return props.data.open_time;
-    return props.data["open_time_" + props.code] !== null
-      ? props.data["open_time_" + props.code]
-      : props.data["open_time_en"];
+    return props.data["open_time_" + props.code];
   };
 
-  const tickets = () => {
+  const getTickets = () => {
     if (props.code === "it") return props.data.tickets;
-    return props.data["tickets_" + props.code] !== null
-      ? props.data["tickets_" + props.code]
-      : props.data["tickets_en"];
+    return props.data["tickets_" + props.code];
   };
+
+  const getOpenTimeFallback = () => {
+    let openTime = getOpenTime();
+    return openTime ? openTime : props.data["open_time_en"];
+  };
+
+  const getTicketsFallback = () => {
+    let tickets = getTickets();
+    return tickets ? tickets : props.data["tickets_en"];
+  };
+
+  function getDescription() {
+    return  props.data["descr_" + props.code];
+  }
+  
+  function getDescriptionFallback(): string {
+    let description = getDescription();
+    return description ? description : props.data["descr_en"];
+  }
 
   const removeDoubleSlashN = (str: string) => {
     if (str) return str.replace(/\\n/g, "");
@@ -232,7 +247,7 @@ function POIModal(props: {
     >
       <IonHeader>
         <IonToolbar color="primary">
-        <IonButtons slot="start" className="ion-margin">
+          <IonButtons slot="start" className="ion-margin">
             <IonIcon
               slot="icon-only"
               ios={chevronBack}
@@ -240,8 +255,8 @@ function POIModal(props: {
               onClick={() => props.onDismissConditions(false)}
             />
           </IonButtons>
-          <IonThumbnail slot="start" >
-            <img src={logoVerona} alt="Logo Comune di Verona"/>
+          <IonThumbnail slot="start">
+            <img src={logoVerona} alt="Logo Comune di Verona" />
           </IonThumbnail>
           <IonLabel slot="start" className="ion-padding-start">
             {props.data["name_" + props.code] !== null
@@ -253,7 +268,7 @@ function POIModal(props: {
               slot="icon-only"
               ios={ellipsisHorizontal}
               md={ellipsisVertical}
-              onClick={(e : any) =>
+              onClick={(e: any) =>
                 present({
                   event: e.nativeEvent,
                 })
@@ -286,8 +301,15 @@ function POIModal(props: {
                 </IonItem>
 
                 {openTimeView && (
-                  <IonCardContent class="my-row">
-                    {ReactHtmlParser(open_time())}
+                  <IonCardContent>
+                    {!getOpenTime() && (
+                      <IonNote color="danger">
+                        {t("not_supported")}
+                        <br />
+                        <br />
+                      </IonNote>
+                    )}
+                    {ReactHtmlParser(getOpenTimeFallback())}
                   </IonCardContent>
                 )}
               </IonCard>
@@ -310,8 +332,15 @@ function POIModal(props: {
                 </IonItem>
 
                 {ticketsView && (
-                  <IonCardContent class="my-row">
-                    {ReactHtmlParser(tickets())}
+                  <IonCardContent>
+                    {!getTickets() && (
+                      <IonNote color="danger">
+                        {t("not_supported")}
+                        <br />
+                        <br />
+                      </IonNote>
+                    )}
+                    {ReactHtmlParser(getTicketsFallback())}
                   </IonCardContent>
                 )}
               </IonCard>
@@ -341,16 +370,21 @@ function POIModal(props: {
                         clickable: true,
                       }}
                       onSwiper={(swiper) => setSwiperInstance(swiper)}
-                      onAfterInit={() => setTimeout(() => window.dispatchEvent(new Event('resize')), 10)}
+                      onAfterInit={() =>
+                        setTimeout(
+                          () => window.dispatchEvent(new Event("resize")),
+                          10
+                        )
+                      }
                     >
                       <SwiperSlide>
-                        <BarChart data={data1}/>
+                        <BarChart data={data1} />
                       </SwiperSlide>
                       <SwiperSlide>
-                        <BarChart data={data2}/>
+                        <BarChart data={data2} />
                       </SwiperSlide>
                       <SwiperSlide>
-                        <BarChart data={data3}/>
+                        <BarChart data={data3} />
                       </SwiperSlide>
                     </Swiper>
                     <IonGrid fixed={true} class="ion-buttons-grid">
@@ -359,11 +393,14 @@ function POIModal(props: {
                           <IonButton
                             onClick={() => swiperInstance?.slidePrev()}
                           >
-                            {t("prev")}{/*<IonIcon icon={arrowBack}/>*/}
+                            {t("prev")}
+                            {/*<IonIcon icon={arrowBack}/>*/}
                           </IonButton>
                         </IonCol>
                         <IonCol className="ion-text-right">
-                          <IonButton onClick={() => swiperInstance?.slideNext()}>
+                          <IonButton
+                            onClick={() => swiperInstance?.slideNext()}
+                          >
                             {t("next")}
                           </IonButton>
                         </IonCol>
@@ -394,11 +431,16 @@ function POIModal(props: {
                   />
                 </IonButton>
               </IonItem>
+              {!getDescription() && (
+                <IonNote color="danger">
+                  {t("not_supported")}
+                  <br />
+                  <br />
+                </IonNote>
+              )}
               <IonText>
                 {removeDoubleSlashN(
-                  props.data["descr_" + props.code] !== null
-                    ? props.data["descr_" + props.code]
-                    : props.data["descr_en"]
+                  getDescriptionFallback()
                 )}
               </IonText>
             </IonCol>
