@@ -76,7 +76,7 @@ const Home: React.FC = () => {
       >
         <IonToolbar color="primary">
           <IonItem slot="start" lines="none" color="primary">
-            <IonImg src={toolbarIcon} />
+            <IonImg src={toolbarIcon} style={{height: "80%"}}/>
           </IonItem>
 
           <IonButtons slot="end" className="ion-margin-end">

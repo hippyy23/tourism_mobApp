@@ -42,7 +42,7 @@ import "swiper/swiper-bundle.min.css";
 import "@ionic/react/css/ionic-swiper.css";
 import PopoverList from "./PopoverList";
 import LanguageAlert from "./LanguageAlert";
-import logoVerona from "../assets/images/logo_con_unesco_coloreQ.png";
+import logoVerona from "../assets/images/logo_stemma.png";
 
 function POIModal(props: {
   openCondition: boolean;
@@ -231,15 +231,16 @@ function POIModal(props: {
       }}
     >
       <IonHeader>
-        <IonToolbar>
-          <IonButton
-            onClick={() => props.onDismissConditions(false)}
-            slot="start"
-            fill="clear"
-          >
-            <IonIcon slot="icon-only" md={arrowBack} ios={chevronBack} />
-          </IonButton>
-          <IonThumbnail slot="start">
+        <IonToolbar color="primary">
+        <IonButtons slot="start" className="ion-margin">
+            <IonIcon
+              slot="icon-only"
+              ios={chevronBack}
+              md={arrowBack}
+              onClick={() => props.onDismissConditions(false)}
+            />
+          </IonButtons>
+          <IonThumbnail slot="start" >
             <img src={logoVerona} alt="Logo Comune di Verona"/>
           </IonThumbnail>
           <IonLabel slot="start" className="ion-padding-start">
@@ -250,7 +251,6 @@ function POIModal(props: {
           <IonButtons slot="end" className="ion-margin-end">
             <IonIcon
               slot="icon-only"
-              color="primary"
               ios={ellipsisHorizontal}
               md={ellipsisVertical}
               onClick={(e : any) =>
@@ -273,6 +273,7 @@ function POIModal(props: {
             <IonCol>
               <IonCard>
                 <IonItem
+                  color="primary" //TITOLO MENU COLORATO
                   lines={openTimeView ? "inset" : "none"}
                   onClick={() => setOpenTimeView(!openTimeView)}
                 >
@@ -280,7 +281,7 @@ function POIModal(props: {
                   <IonIcon
                     slot="end"
                     icon={openTimeView ? removeCircle : addCircle}
-                    color="primary"
+                    // color="primary" BOTTONE BIANCO CON TITOLO COLORATO
                   />
                 </IonItem>
 
@@ -296,6 +297,7 @@ function POIModal(props: {
             <IonCol>
               <IonCard>
                 <IonItem
+                  color="primary" //TITOLO MENU COLORATO
                   lines={ticketsView ? "inset" : "none"}
                   onClick={() => setTicketsView(!ticketsView)}
                 >
@@ -303,7 +305,7 @@ function POIModal(props: {
                   <IonIcon
                     slot="end"
                     icon={ticketsView ? removeCircle : addCircle}
-                    color="primary"
+                    // color="primary" BOTTONE BIANCO CON TITOLO COLORATO
                   />
                 </IonItem>
 
@@ -319,6 +321,7 @@ function POIModal(props: {
             <IonCol>
               <IonCard>
                 <IonItem
+                  color="primary" //TITOLO MENU COLORATO
                   lines={graphView ? "inset" : "none"}
                   onClick={() => setGraphView(!graphView)}
                 >
@@ -326,7 +329,7 @@ function POIModal(props: {
                   <IonIcon
                     slot="end"
                     icon={graphView ? removeCircle : addCircle}
-                    color="primary"
+                    // color="primary" BOTTONE BIANCO CON TITOLO COLORATO
                   />
                 </IonItem>
 
