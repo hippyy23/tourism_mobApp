@@ -169,11 +169,7 @@ function POIModal(props: {
   function speak() {
     setTextPlaying(true);
     TextToSpeech.speak({
-      text: removeDoubleSlashN(
-        props.data["descr_" + props.code] !== null
-          ? props.data["descr_" + props.code]
-          : props.data["descr_en"]
-      ),
+      text: getDescriptionFallback(),
       lang: i18n.language + "_" + i18n.language.toUpperCase(),
     }).then(() => setTextPlaying(false));
   }
@@ -204,9 +200,9 @@ function POIModal(props: {
   };
 
   function getDescription() {
-    return  props.data["descr_" + props.code];
+    return props.data["descr_" + props.code];
   }
-  
+
   function getDescriptionFallback(): string {
     let description = getDescription();
     return description ? description : props.data["descr_en"];
@@ -309,7 +305,9 @@ function POIModal(props: {
                         <br />
                       </IonNote>
                     )}
-                    {ReactHtmlParser(getOpenTimeFallback())}
+                    <IonLabel color="dark">
+                      {ReactHtmlParser(getOpenTimeFallback())}
+                    </IonLabel>
                   </IonCardContent>
                 )}
               </IonCard>
@@ -340,7 +338,9 @@ function POIModal(props: {
                         <br />
                       </IonNote>
                     )}
-                    {ReactHtmlParser(getTicketsFallback())}
+                    <IonLabel color="dark">
+                      {ReactHtmlParser(getTicketsFallback())}
+                    </IonLabel>
                   </IonCardContent>
                 )}
               </IonCard>
@@ -412,49 +412,53 @@ function POIModal(props: {
             </IonCol>
           </IonRow>
 
-          <IonRow class="my-row">
-            <IonCol className="ion-margin">
-              <IonItem lines="none" class="poi_description">
-                <IonLabel slot="start">
-                  <h2>
-                    <b>{t("description")}:</b>
-                  </h2>
-                </IonLabel>
-                <IonButton
-                  slot="end"
-                  fill="clear"
-                  onClick={textPlaying ? stop : speak}
+          <IonRow>
+            <IonCol>
+              <IonCard>
+                <IonItem
+                  color="primary" //TITOLO MENU COLORATO
                 >
-                  <IonIcon
-                    slot="icon-only"
-                    icon={textPlaying ? volumeMute : volumeHigh}
-                  />
-                </IonButton>
-              </IonItem>
-              {!getDescription() && (
-                <IonNote color="danger">
-                  {t("not_supported")}
-                  <br />
-                  <br />
-                </IonNote>
-              )}
-              <IonText>
-                {removeDoubleSlashN(
-                  getDescriptionFallback()
-                )}
-              </IonText>
+                  <IonLabel>{t("description")}:</IonLabel>
+                  <IonButton
+                    slot="end"
+                    fill="clear"
+                    onClick={textPlaying ? stop : speak}
+                  >
+                    <IonIcon
+                      slot="icon-only"
+                      color="light"
+                      icon={textPlaying ? volumeMute : volumeHigh}
+                    />
+                  </IonButton>
+                </IonItem>
+
+                <IonCardContent>
+                  {!getDescription() && (
+                    <IonNote color="danger">
+                      {t("not_supported")}
+                      <br />
+                      <br />
+                    </IonNote>
+                  )}
+                  <IonText color="dark" class="format-text">
+                    {removeDoubleSlashN(getDescriptionFallback())}
+                  </IonText>
+                </IonCardContent>
+              </IonCard>
             </IonCol>
           </IonRow>
 
           {urlMedia && (
             <IonRow className="player-wrapper">
-              <ReactPlayer
-                className="react-player"
-                url="https://sitavr.scienze.univr.it/veronapp/ArenaEsterno.mp4"
-                width="100%"
-                height="100%"
-                controls
-              />
+              <IonCol>
+                <ReactPlayer
+                  className="react-player"
+                  url="https://sitavr.scienze.univr.it/veronapp/ArenaEsterno.mp4"
+                  width="100%"
+                  height="100%"
+                  controls
+                />
+              </IonCol>
             </IonRow>
           )}
         </IonGrid>

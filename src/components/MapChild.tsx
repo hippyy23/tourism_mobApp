@@ -130,7 +130,7 @@ function MapChild(props: {
       Device.getId().then((id) => sendPosition(id, pos));
       setPosition(pos);
       let posll = L.latLng(pos.coords.latitude, pos.coords.longitude);
-      if (!locationBounds.contains(posll)){
+      if (!locationBounds.contains(posll)) {
         Geolocation.clearWatch({ id: watchId });
         setPermissionGranted(false);
       } else setPermissionGranted(true);
