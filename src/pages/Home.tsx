@@ -32,6 +32,8 @@ import PopoverList from "../components/PopoverList";
 
 import { useTranslation } from "react-i18next";
 
+var isOpen = false;
+
 const Home: React.FC = () => {
   const [churchersFilter, setChurchersFilter] = useState<boolean>(true); // Variabile che indica se mostrate sulla mappa le chiese
   const [monumentsFilter, setMonumentsFilter] = useState<boolean>(true); // Variabile che indica se mostrate sulla mappa i monumenti
@@ -52,7 +54,18 @@ const Home: React.FC = () => {
   });
 
   return (
-    <IonPage>
+    <IonPage onClick={(event) => {
+      if (fabRef.current) {
+        if(isOpen){
+          fabRef.current.activated = false;
+        }
+        if (fabRef.current.activated){
+          isOpen=true;
+        } else {
+          isOpen = false;
+        }
+      }
+    }}>
       {/* Utilizzo di css e javascript di leaflet online
       <link
         rel="stylesheet"
@@ -68,11 +81,6 @@ const Home: React.FC = () => {
       ></script>
       */}
       <IonHeader
-        onClick={() => {
-          if (fabRef.current?.activated) {
-            fabRef.current.activated = false;
-          }
-        }}
       >
         <IonToolbar color="primary">
           <IonItem slot="start" lines="none" color="primary">
@@ -94,14 +102,6 @@ const Home: React.FC = () => {
         </IonToolbar>
       </IonHeader>
 
-      {/*<div
-        onClick={() => {
-          if (fabRef.current?.activated) {
-            fabRef.current.activated = false;
-          }
-        }}
-        style={{ height: "100%" }}
-      >*/}
       <MapContainer
         center={[45.43895, 10.99439]}
         zoom={15}
@@ -134,7 +134,6 @@ const Home: React.FC = () => {
           <IonIcon icon={locationOutline} />
         </IonFabButton>
       </IonFab>
-      {/*</div>*/}
 
       {/* Filtro dei marker */}
       <IonFab
