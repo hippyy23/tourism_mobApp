@@ -170,7 +170,7 @@ function POIModal(props: {
   function speak() {
     setTextPlaying(true);
     TextToSpeech.speak({
-      text: getDescriptionFallback(),
+      text: removeDoubleSlashN(getDescriptionFallback()),
       lang: i18n.language + "-" + i18n.language.toUpperCase(),
     }).then(() => setTextPlaying(false));
   }
