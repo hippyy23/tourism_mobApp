@@ -134,6 +134,7 @@ function POIModal(props: {
         data={props.data}
         className="ion-bar-chart"
         options={{
+          animation: false,
           responsive: true,
           scales: {
             x: {
