@@ -1,7 +1,7 @@
-import { DeviceId } from "@capacitor/device";
+import { Device, DeviceId } from "@capacitor/device";
 import { Position } from "@capacitor/geolocation";
 import L from "leaflet";
-import { SERVER_DOMAIN } from "../configVar";
+import { LOG_SERVER_DOMAIN, SERVER_DOMAIN } from "../configVar";
 
 // Trova il centro rispetto a tutti i punti di interesse
 export function findCenter(data: any) {
@@ -50,6 +50,12 @@ export function sendPosition(id: DeviceId, pos: Position) {
     if (posll.distanceTo(lastPosll) < 100 && timeDiff < 30000) return;
   }
   //alert("Invio al server i dati " + { id: id, position: pos });
+  sendToLogServer("location" , {
+    timestamp: pos.timestamp,
+    coords: pos.coords,
+  }).catch(() => {
+    console.log("Impossibile contattare il server di log");
+  });
   lastPos = pos;
 }
 
@@ -107,5 +113,32 @@ export async function getCrowdingFromWebServer(id: string) {
     ")" +
     "&outputFormat=json";
 
-  return fetch(classIdRequest).then((response) => response.json()); //ciao2
+  return fetch(classIdRequest).then((response) => response.json());
+}
+
+export async function sendLanguage(chooseLng: string) {
+  let deviceId = await Device.getId();
+  let deviceInfo = await Device.getInfo();
+  let deviceLng = await Device.getLanguageCode();
+
+  sendToLogServer("language" , {
+    id: deviceId.uuid,
+    platform: deviceInfo.platform,
+    deviceLng: deviceLng.value,
+    chooseLng: chooseLng,
+  }).catch(() => {
+    console.log("Impossibile contattare il server di log");
+  });
+}
+
+export async function sendToLogServer(path: string, data : Object) {
+  return fetch(LOG_SERVER_DOMAIN + path, {
+    method: "POST",
+    mode: "cors",
+    cache: "no-cache",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+  });
 }

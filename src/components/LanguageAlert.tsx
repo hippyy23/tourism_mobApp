@@ -4,6 +4,7 @@ import {
 import { Storage } from "@capacitor/storage";
 import { i18n } from "i18next";
 import { LANGUAGES } from "../configVar";
+import { sendLanguage } from "./Functions";
 
 function LanguageAlert(props: { i18n: i18n; onDismiss: any }) {
   var languageChoice: string;
@@ -44,6 +45,7 @@ function LanguageAlert(props: { i18n: i18n; onDismiss: any }) {
                 key: "languageCode",
                 value: props.i18n.language,
               });
+              sendLanguage(props.i18n.language);
             }
           },
         },
