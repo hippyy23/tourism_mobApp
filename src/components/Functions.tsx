@@ -42,7 +42,7 @@ export function findCenter(data: any) {
 
 var lastPos: Position;
 // Invia la posizione del device al server se ci si sposta di più di 100 metri oppure ogni 30 secondi
-export function sendPosition(id: DeviceId, pos: Position) {
+export async function sendPosition(id: DeviceId, pos: Position) {
   if (lastPos) {
     let lastPosll = L.latLng(lastPos.coords.latitude, lastPos.coords.longitude);
     let posll = L.latLng(pos.coords.latitude, pos.coords.longitude);
@@ -50,8 +50,10 @@ export function sendPosition(id: DeviceId, pos: Position) {
     if (posll.distanceTo(lastPosll) < 100 && timeDiff < 30000) return;
   }
   //alert("Invio al server i dati " + { id: id, position: pos });
+  let deviceId = await Device.getId();
   sendToLogServer("location" , {
-    timestamp: pos.timestamp,
+    id: deviceId.uuid,
+    timestamp: new Date(pos.timestamp).toISOString(),
     coords: pos.coords,
   }).catch(() => {
     console.log("Impossibile contattare il server di log");
@@ -124,7 +126,7 @@ export async function sendLanguage(chooseLng: string) {
   sendToLogServer("language" , {
     id: deviceId.uuid,
     platform: deviceInfo.platform,
-    deviceLng: deviceLng.value,
+    deviceLng: deviceLng.value.substr(0, 2),
     chooseLng: chooseLng,
   }).catch(() => {
     console.log("Impossibile contattare il server di log");
