@@ -27,7 +27,6 @@ import monumentIconFilter from "../assets/images/art_monument.svg"; // Icona mon
 import museumIconFilter from "../assets/images/art_museum.svg"; // Icona museo filtro
 import toolbarIcon from "../assets/images/logo.png";
 import MapChild from "../components/MapChild";
-import LanguageAlert from "../components/LanguageAlert";
 import PopoverList from "../components/PopoverList";
 
 import { useTranslation } from "react-i18next";
@@ -39,18 +38,13 @@ const Home: React.FC = () => {
   const [monumentsFilter, setMonumentsFilter] = useState<boolean>(true); // Variabile che indica se mostrate sulla mappa i monumenti
   const [museumsFilter, setMuseumsFilter] = useState<boolean>(true); // Variabile che indica se mostrate sulla mappa i musei
   const [dataObtained, setDataObtained] = useState<boolean>(false); // True se possiedo la lista dei punti con le loro coordinate, o sono stati caricati dalla memoria oppure scaricati dal webserver
-  const [chooseLanguage, setChooseLanguage] = useState<boolean>(false); // Variabile che indica se mostrare l'alert per la selezione della lingua
   const [centerPosition, setCenterPosition] = useState<boolean>(false);
-  const [showInfo, setShowInfo] = useState<boolean>(false);
   const fabRef = useRef<HTMLIonFabElement>(null);
 
   const { t, i18n } = useTranslation();
 
   const [present, dismiss] = useIonPopover(PopoverList, {
     onHide: () => dismiss(),
-    t,
-    setChooseLanguage,
-    setShowInfo,
   });
 
   return (
@@ -209,19 +203,6 @@ const Home: React.FC = () => {
         </IonFabList>
       </IonFab>
 
-      {chooseLanguage && (
-        <LanguageAlert i18n={i18n} onDismiss={() => setChooseLanguage(false)} />
-      )}
-
-      <IonAlert
-        isOpen={showInfo}
-        header={"Informazioni e contatti"}
-        onDidDismiss={() => setShowInfo(false)}
-        buttons={[{ text: "Close", role: "cancel", cssClass: "secondary" }]}
-        message={
-          "Prototipo realizzato dal comune di Verona con la collaborazione dell'Università degli studi di Verona - Dipartimento di Informatica"
-        }
-      />
     </IonPage>
   );
 };

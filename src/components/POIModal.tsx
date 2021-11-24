@@ -56,8 +56,6 @@ function POIModal(props: {
   const [openTimeView, setOpenTimeView] = useState<boolean>(false); // Mostra o nascondi il testo relativo agli orari del punto di interesse
   const [ticketsView, setTicketsView] = useState<boolean>(false); // Mostra o nascondi il testo relativo al prezzo dei biglietti del punto di interesse
   const [graphView, setGraphView] = useState<boolean>(false); // Mostra o nascondi il grafico della popolazione nel POI
-  const [showInfo, setShowInfo] = useState<boolean>(false);
-  const [chooseLanguage, setChooseLanguage] = useState<boolean>(false); // Variabile che indica se mostrare l'alert per la selezione della lingua
   const [urlMedia, setUrlMedia] = useState<string>(); // Imposta la URL da dove caricare il video del POI se è presente
   const [textPlaying, setTextPlaying] = useState<boolean>(false); // Controlla se il TTS è in riproduzione o no
   const [swiperInstance, setSwiperInstance] = useState<SwiperCore>(); //
@@ -220,10 +218,7 @@ function POIModal(props: {
   };
 
   const [present, dismiss] = useIonPopover(PopoverList, {
-    onHide: () => dismiss(),
-    t,
-    setChooseLanguage,
-    setShowInfo,
+    onHide: () => dismiss()
   });
 
   return (
@@ -470,19 +465,6 @@ function POIModal(props: {
         </IonGrid>
       </IonContent>
 
-      {chooseLanguage && (
-        <LanguageAlert i18n={i18n} onDismiss={() => setChooseLanguage(false)} />
-      )}
-
-      <IonAlert
-        isOpen={showInfo}
-        header={"Informazioni e contatti"}
-        onDidDismiss={() => setShowInfo(false)}
-        buttons={[{ text: "Close", role: "cancel", cssClass: "secondary" }]}
-        message={
-          "Prototipo realizzato dal comune di Verona con la collaborazione dell'Università degli studi di Verona - Dipartimento di Informatica"
-        }
-      />
     </IonModal>
   );
 }
