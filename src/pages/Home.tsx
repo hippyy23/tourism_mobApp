@@ -1,5 +1,4 @@
 import {
-  IonAlert,
   IonButtons,
   IonFab,
   IonFabButton,
@@ -28,7 +27,6 @@ import museumIconFilter from "../assets/images/art_museum.svg"; // Icona museo f
 import toolbarIcon from "../assets/images/logo.png";
 import MapChild from "../components/MapChild";
 import PopoverList from "../components/PopoverList";
-
 import { useTranslation } from "react-i18next";
 
 var isOpen = false;
@@ -40,8 +38,7 @@ const Home: React.FC = () => {
   const [dataObtained, setDataObtained] = useState<boolean>(false); // True se possiedo la lista dei punti con le loro coordinate, o sono stati caricati dalla memoria oppure scaricati dal webserver
   const [centerPosition, setCenterPosition] = useState<boolean>(false);
   const fabRef = useRef<HTMLIonFabElement>(null);
-
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
 
   const [present, dismiss] = useIonPopover(PopoverList, {
     onHide: () => dismiss(),

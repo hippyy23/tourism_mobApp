@@ -1,5 +1,4 @@
 import { IonAlert, IonIcon, IonItem, IonLabel, IonList } from "@ionic/react";
-import { TFunction } from "i18next";
 import { informationCircle, language } from "ionicons/icons";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";

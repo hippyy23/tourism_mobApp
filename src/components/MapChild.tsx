@@ -3,6 +3,7 @@ import {
   useIonViewDidEnter,
   IonLoading,
   IonActionSheet,
+  useIonToast,
 } from "@ionic/react";
 import { TileLayer, useMap, Marker, Popup } from "react-leaflet";
 import { useState } from "react";
@@ -87,8 +88,10 @@ function MapChild(props: {
   const [showModal, setShowModal] = useState<boolean>(false); // Mostra la POIModal in cui sono presenti i dettagli di un punto di interesse
   const [position, setPosition] = useState<Position>(); // Variabile che contiene la posizione dell'utente
   const [permissionGranted, setPermissionGranted] = useState<boolean>(false); // Variabile che contiene se si ha il permesso di ottenere la posizione dell'utente
+  const [showLocationMarker, setShowLocationMarker] = useState<boolean>(false); // Indica se è da mostrare il marker della posizione dell'utente
   const map = useMap();
   const { t, i18n } = useTranslation();
+  const [presentToast, dismissToast] = useIonToast();
 
   function setCenterData() {
     map.panTo(findCenter(data));
@@ -102,7 +105,7 @@ function MapChild(props: {
 
   function setCenterPosition() {
     if (permissionGranted) {
-      Geolocation.getCurrentPosition({ enableHighAccuracy: true }).then(
+      Geolocation.getCurrentPosition({ enableHighAccuracy: true, maximumAge: 0 }).then(
         (pos) => {
           if (pos) {
             let posll = L.latLng(pos.coords.latitude, pos.coords.longitude);
@@ -114,7 +117,12 @@ function MapChild(props: {
               ).then((id) => (watchId = id));
             } else {
               Geolocation.clearWatch({ id: watchId });
-              setPermissionGranted(false);
+              setShowLocationMarker(false);
+              presentToast({
+                buttons: [{ text: 'hide', handler: () => dismissToast() }],
+                message: 'You are not in Verona',
+                duration: 5000
+              })
             }
           }
         }
@@ -132,8 +140,8 @@ function MapChild(props: {
       let posll = L.latLng(pos.coords.latitude, pos.coords.longitude);
       if (!locationBounds.contains(posll)) {
         Geolocation.clearWatch({ id: watchId });
-        setPermissionGranted(false);
-      } else setPermissionGranted(true);
+        setShowLocationMarker(false);
+      } else setShowLocationMarker(true);
     }
   }
 
@@ -144,6 +152,7 @@ function MapChild(props: {
           case "denied":
             return;
           case "granted":
+            setPermissionGranted(true);
             Geolocation.watchPosition(
               { enableHighAccuracy: true },
               updateUserPosition
@@ -174,6 +183,11 @@ function MapChild(props: {
         getList();
       } else {
         setOfflineBounds();
+        presentToast({
+          buttons: [{ text: 'hide', handler: () => dismissToast() }],
+          message: 'You are offline',
+          duration: 5000
+        })
       }
     });
 
@@ -200,6 +214,11 @@ function MapChild(props: {
       setOnlineBounds();
     } else {
       setOfflineBounds();
+      presentToast({
+        buttons: [{ text: 'hide', handler: () => dismissToast() }],
+        message: 'You are offline',
+        duration: 5000
+      })
     }
     setConnectionStatus(status);
   });
@@ -282,18 +301,6 @@ function MapChild(props: {
     <>
       {props.centerPosition && setCenterPosition()}
 
-      {/* Notifica se il dispositivo è offline */}
-      <IonActionSheet
-        mode="ios"
-        cssClass="my-action-sheet"
-        isOpen={!connectionStatus?.connected}
-        buttons={[
-          {
-            text: "Sei offline",
-          },
-        ]}
-      />
-
       {connectionStatus?.connected && (
         <TileLayer
           attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
@@ -326,7 +333,7 @@ function MapChild(props: {
       )}
 
       {/* Marker della posizione corrente dell'utente */}
-      {permissionGranted && (
+      {showLocationMarker && (
         <Marker
           position={[position!.coords.latitude, position!.coords.longitude]}
           icon={L.icon({

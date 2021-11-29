@@ -21,7 +21,6 @@ import {
   IonButtons,
   IonThumbnail,
   IonNote,
-  IonAlert,
 } from "@ionic/react";
 import {
   addCircle,
@@ -43,7 +42,6 @@ import ReactPlayer from "react-player/file";
 import "swiper/swiper-bundle.min.css";
 import "@ionic/react/css/ionic-swiper.css";
 import PopoverList from "./PopoverList";
-import LanguageAlert from "./LanguageAlert";
 import logoVerona from "../assets/images/logo_stemma.png";
 
 function POIModal(props: {
