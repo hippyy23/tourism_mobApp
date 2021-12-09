@@ -4,6 +4,10 @@ import {
   IonLoading,
   IonActionSheet,
   useIonToast,
+  IonRow,
+  IonCol,
+  IonButton,
+  IonGrid,
 } from "@ionic/react";
 import { TileLayer, useMap, Marker, Popup } from "react-leaflet";
 import { useState } from "react";
@@ -105,28 +109,29 @@ function MapChild(props: {
 
   function setCenterPosition() {
     if (permissionGranted) {
-      Geolocation.getCurrentPosition({ enableHighAccuracy: true, maximumAge: 0 }).then(
-        (pos) => {
-          if (pos) {
-            let posll = L.latLng(pos.coords.latitude, pos.coords.longitude);
-            if (locationBounds.contains(posll)) {
-              map.panTo(posll);
-              Geolocation.watchPosition(
-                { enableHighAccuracy: true },
-                updateUserPosition
-              ).then((id) => (watchId = id));
-            } else {
-              Geolocation.clearWatch({ id: watchId });
-              setShowLocationMarker(false);
-              presentToast({
-                buttons: [{ text: 'hide', handler: () => dismissToast() }],
-                message: 'You are not in Verona',
-                duration: 5000
-              })
-            }
+      Geolocation.getCurrentPosition({
+        enableHighAccuracy: true,
+        maximumAge: 0,
+      }).then((pos) => {
+        if (pos) {
+          let posll = L.latLng(pos.coords.latitude, pos.coords.longitude);
+          if (locationBounds.contains(posll)) {
+            map.panTo(posll);
+            Geolocation.watchPosition(
+              { enableHighAccuracy: true },
+              updateUserPosition
+            ).then((id) => (watchId = id));
+          } else {
+            Geolocation.clearWatch({ id: watchId });
+            setShowLocationMarker(false);
+            presentToast({
+              buttons: [{ text: "hide", handler: () => dismissToast() }],
+              message: t("user_not_in_verona"),
+              duration: 5000,
+            });
           }
         }
-      );
+      });
     } else {
       checkLocationPermission();
     }
@@ -184,10 +189,10 @@ function MapChild(props: {
       } else {
         setOfflineBounds();
         presentToast({
-          buttons: [{ text: 'hide', handler: () => dismissToast() }],
-          message: 'You are offline',
-          duration: 5000
-        })
+          buttons: [{ text: "hide", handler: () => dismissToast() }],
+          message: t("user_offline"),
+          duration: 5000,
+        });
       }
     });
 
@@ -215,10 +220,10 @@ function MapChild(props: {
     } else {
       setOfflineBounds();
       presentToast({
-        buttons: [{ text: 'hide', handler: () => dismissToast() }],
-        message: 'You are offline',
-        duration: 5000
-      })
+        buttons: [{ text: "hide", handler: () => dismissToast() }],
+        message: t("user_offline"),
+        duration: 5000,
+      });
     }
     setConnectionStatus(status);
   });
