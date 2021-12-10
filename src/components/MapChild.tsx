@@ -8,6 +8,7 @@ import {
   IonCol,
   IonButton,
   IonGrid,
+  IonButtons,
 } from "@ionic/react";
 import { TileLayer, useMap, Marker, Popup } from "react-leaflet";
 import { useState } from "react";
@@ -367,12 +368,20 @@ function MapChild(props: {
               onOpen={() => {
                 getDetails(element.id);
               }}
+              minWidth={125}
+              keepInView
             >
-              <IonLabel onClick={() => openModal(element.id)}>
-                {element["name_" + i18n.language] !== null
-                  ? element["name_" + i18n.language]
-                  : element["name_en"]}
-              </IonLabel>
+              <div style={{ textAlign: "center" }}>
+                <IonLabel style={{ fontSize: "14px" }}>
+                  {element["name_" + i18n.language] !== null
+                    ? element["name_" + i18n.language]
+                    : element["name_en"]}
+                </IonLabel>
+                <br />
+                <IonButton onClick={() => openModal(element.id)}>
+                  {t("details_button")}
+                </IonButton>
+              </div>
             </Popup>
           </Marker>
         ))}
@@ -392,12 +401,20 @@ function MapChild(props: {
               onOpen={() => {
                 getDetails(element.id);
               }}
+              minWidth={125}
+              keepInView
             >
-              <IonLabel onClick={() => openModal(element.id)}>
-                {element["name_" + i18n.language] !== null
-                  ? element["name_" + i18n.language]
-                  : element["name_en"]}
-              </IonLabel>
+              <div style={{ textAlign: "center" }}>
+                <IonLabel style={{ fontSize: "14px"}}>
+                  {element["name_" + i18n.language] !== null
+                    ? element["name_" + i18n.language]
+                    : element["name_en"]}
+                </IonLabel>
+                <br />
+                <IonButton shape="round" fill="outline" size="small" onClick={() => openModal(element.id)}>
+                  {t("details_button")}
+                </IonButton>
+              </div>
             </Popup>
           </Marker>
         ))}
@@ -417,12 +434,20 @@ function MapChild(props: {
               onOpen={() => {
                 getDetails(element.id);
               }}
+              minWidth={125}
+              keepInView
             >
-              <IonLabel onClick={() => openModal(element.id)}>
-                {element["name_" + i18n.language] !== null
-                  ? element["name_" + i18n.language]
-                  : element["name_en"]}
-              </IonLabel>
+              <div style={{ textAlign: "center" }}>
+                <IonLabel style={{ fontSize: "14px" }}>
+                  {element["name_" + i18n.language] !== null
+                    ? element["name_" + i18n.language]
+                    : element["name_en"]}
+                </IonLabel>
+                <br />
+                <IonLabel style={{ color: "blue", 'font-style': "italic", fontSize: "14px"}} onClick={() => openModal(element.id)}>
+                  {t("details_button")}
+                </IonLabel>
+              </div>
             </Popup>
           </Marker>
         ))}

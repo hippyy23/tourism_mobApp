@@ -72,7 +72,7 @@ i18n.use(initReactI18next).init({
         not_supported: "This content is not available in your language.",
         user_offline: "You are offline",
         user_not_in_verona: "You are not in Verona",
-        details_button: "details",
+        details_button: "Details",
       },
     },
     de: {
