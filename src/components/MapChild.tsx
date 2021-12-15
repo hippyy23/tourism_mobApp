@@ -378,7 +378,7 @@ function MapChild(props: {
                     : element["name_en"]}
                 </IonLabel>
                 <br />
-                <IonButton onClick={() => openModal(element.id)}>
+                <IonButton shape="round" fill="outline" size="small" onClick={() => openModal(element.id)}>
                   {t("details_button")}
                 </IonButton>
               </div>
@@ -444,9 +444,9 @@ function MapChild(props: {
                     : element["name_en"]}
                 </IonLabel>
                 <br />
-                <IonLabel style={{ color: "blue", 'font-style': "italic", fontSize: "14px"}} onClick={() => openModal(element.id)}>
+                <IonButton shape="round" fill="outline" size="small" onClick={() => openModal(element.id)}>
                   {t("details_button")}
-                </IonLabel>
+                </IonButton>
               </div>
             </Popup>
           </Marker>
