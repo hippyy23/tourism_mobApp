@@ -11,12 +11,12 @@ Eseguire il progetto su browser:
 ionic serve
 ```
 
-## Modifiche da effettuare alla prima installazione
+## Modifiche da effettuare alla prima installazione o in caso di errori
 
 ### Modifiche da apportare ai file interni al progetto
 | Directory  | File | Modifica | Motivo |
 | ------------- | ------------- | ------------- | ------------- |
-| node_modules  | -  | Cancella cartella .cache  | Progetto non si avvia  |
+| node_modules  | -  | Cancella cartella .cache(se presente)  | Progetto non si avvia  |
 | android  | local.properties  | Crea il file ed inserisci dentro questa stringa "sdk.dir=C:\\users\\Michele\\AppData\\Local\\Android\\sdk"  | Errore capacitor, non permette di aprire l'emulatore  |
 | android/app/src/main  | AndroidManifest.xml  | Aggiungi ad <b>application</b> android:usesCleartextTraffic="true"  | Vedere le immagini su android  |
 
@@ -77,11 +77,6 @@ Infine:
 - **leaflet**
 - **react-leaflet**
 
-**NB**: "npx cap sync" ogni volta che si aggiungono nuovi npm<br/><br/>
+<!-- "npx cap sync" ogni volta che si aggiungono nuovi npm --> 
 
-## Ulteriori comandi utili
-Aggiorna il package json:
-
-```
-ncu -u
-```
+<!-- "ncu -u" aggiorna il package json -->
