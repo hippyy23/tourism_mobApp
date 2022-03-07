@@ -1,5 +1,8 @@
 # mappaVerona
 
+## Ambiente necessario
+Per eseguire il codice di questo progetto è necessario installare Node e Ionic CLI. Se si vuole eseguire l'applicazione su un emulatore bisogna installare e configurare Android Studio.
+
 ## Comandi per eseguire il progetto
 Eseguire su un emulatore Android (necessario Android Studio ed un emulatore configurato):
 
