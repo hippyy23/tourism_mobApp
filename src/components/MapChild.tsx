@@ -32,9 +32,6 @@ import POIModal from "./POIModal";
 import { useTranslation } from "react-i18next";
 import { LOCATION_BOUNDS, LANGUAGES } from "../configVar";
 
-var jj =
-  '{  "features": [    {      "properties": {  "classid": "44",   "open_time" : null,    "descr_it": "Detto anche di Cangrande, fu costruito allinizio del XIV sec., ma venne più volte rimaneggiato. Lultimo restauro del 1929-30 ha tentato di restituirgli (attraverso abbattimenti di parti di epoche diverse, il ripristino della merlatura e linserimento di elementi architettonici consoni) le strutture medievali, di cui rimanevano significativi esempi nel cortile.",        "image_url": "http://www.turismoverona.eu/cache/cfx_imagecr3/11A53001AAADD23C941C7A2BDC95F35B.jpg",        "name_it": "Palazzo del Governo e della Prefettura", "name_en": "Palazzo del Governo e della Prefettura"    }    }  ],  "numberReturned": 1}';
-
 const baseData = [
   {
     category_it: "Chiese",
@@ -63,7 +60,7 @@ const baseData = [
 ];
 
 var data: any = baseData;
-var detailedData: any;
+var detailedData: any = undefined;
 var isLoading: boolean = false;
 const onlineBounds = L.latLngBounds(
   [46.82405708134416, 10.194074757395123],
@@ -126,7 +123,7 @@ function MapChild(props: {
             Geolocation.clearWatch({ id: watchId });
             setShowLocationMarker(false);
             presentToast({
-              buttons: [{ text: "hide", handler: () => dismissToast() }],
+              /*buttons: [{ text: "hide", handler: () => dismissToast() }],*/
               message: t("user_not_in_verona"),
               duration: 5000,
             });
@@ -190,7 +187,7 @@ function MapChild(props: {
       } else {
         setOfflineBounds();
         presentToast({
-          buttons: [{ text: "hide", handler: () => dismissToast() }],
+          /*buttons: [{ text: "hide", handler: () => dismissToast() }],*/
           message: t("user_offline"),
           duration: 5000,
         });
@@ -221,7 +218,7 @@ function MapChild(props: {
     } else {
       setOfflineBounds();
       presentToast({
-        buttons: [{ text: "hide", handler: () => dismissToast() }],
+        /*buttons: [{ text: "hide", handler: () => dismissToast() }],*/
         message: t("user_offline"),
         duration: 5000,
       });
@@ -271,10 +268,10 @@ function MapChild(props: {
 
   function getDetails(id: string) {
     if (
-      detailedData === null ||
-      detailedData !== null /*&& detailedData.classid != id*/
+      connectionStatus.connected &&
+      ((detailedData !== undefined && detailedData.classid != id) || detailedData===undefined)
     ) {
-      detailedData = null;
+      detailedData = undefined;
       getDetailsFromWebServer(id)
         .then((json) => {
           if (json.numberReturned === 1) {
@@ -285,21 +282,26 @@ function MapChild(props: {
           }
         })
         .catch(() => {
-          detailedData = JSON.parse(jj).features[0].properties;
-          if (isLoading) {
-            setShowModal(true);
-          }
+          isLoading = false;
+          setShowLoading(false);
         });
     }
   }
 
   function openModal(id: string) {
-    if (detailedData !== null /*&& detailedData.classid == id*/) {
-      setShowModal(true);
-      isLoading = false;
+    if(connectionStatus.connected){
+      if (detailedData !== undefined && detailedData.classid == id) {
+        setShowModal(true);
+        isLoading = false;
+      } else {
+        setShowLoading(true);
+        isLoading = true;
+      }
     } else {
-      setShowLoading(true);
-      isLoading = true;
+      presentToast({
+        message: t("user_offline"),
+        duration: 5000,
+      });
     }
   }
 
