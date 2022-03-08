@@ -345,7 +345,7 @@ function POIModal(props: {
               </IonCard>
             </IonCol>
           </IonRow>
-          <IonRow>
+          {/*<IonRow>
             <IonCol>
               <IonCard>
                 <IonItem
@@ -363,7 +363,7 @@ function POIModal(props: {
 
                 {graphView && (
                   <IonCardContent>
-                    {/*<IonLabel>{(new Date()).toDateString()}</IonLabel>*/}
+                    {/*<IonLabel>{(new Date()).toDateString()}</IonLabel>*//*}
                     <Swiper
                       pagination={{
                         clickable: true,
@@ -393,7 +393,7 @@ function POIModal(props: {
                             onClick={() => swiperInstance?.slidePrev()}
                           >
                             {t("prev")}
-                            {/*<IonIcon icon={arrowBack}/>*/}
+                            {/*<IonIcon icon={arrowBack}/>*//*}
                           </IonButton>
                         </IonCol>
                         <IonCol className="ion-text-right">
@@ -409,7 +409,7 @@ function POIModal(props: {
                 )}
               </IonCard>
             </IonCol>
-          </IonRow>
+          </IonRow>*/}
 
           <IonRow>
             <IonCol>

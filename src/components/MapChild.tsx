@@ -4,6 +4,11 @@ import {
   IonLoading,
   IonActionSheet,
   useIonToast,
+  IonRow,
+  IonCol,
+  IonButton,
+  IonGrid,
+  IonButtons,
 } from "@ionic/react";
 import { TileLayer, useMap, Marker, Popup } from "react-leaflet";
 import { useState } from "react";
@@ -25,7 +30,7 @@ import {
 } from "../components/Functions";
 import POIModal from "./POIModal";
 import { useTranslation } from "react-i18next";
-import { LOCATION_BOUNDS } from "../configVar";
+import { LOCATION_BOUNDS, LANGUAGES } from "../configVar";
 
 var jj =
   '{  "features": [    {      "properties": {  "classid": "44",   "open_time" : null,    "descr_it": "Detto anche di Cangrande, fu costruito allinizio del XIV sec., ma venne più volte rimaneggiato. Lultimo restauro del 1929-30 ha tentato di restituirgli (attraverso abbattimenti di parti di epoche diverse, il ripristino della merlatura e linserimento di elementi architettonici consoni) le strutture medievali, di cui rimanevano significativi esempi nel cortile.",        "image_url": "http://www.turismoverona.eu/cache/cfx_imagecr3/11A53001AAADD23C941C7A2BDC95F35B.jpg",        "name_it": "Palazzo del Governo e della Prefettura", "name_en": "Palazzo del Governo e della Prefettura"    }    }  ],  "numberReturned": 1}';
@@ -105,28 +110,29 @@ function MapChild(props: {
 
   function setCenterPosition() {
     if (permissionGranted) {
-      Geolocation.getCurrentPosition({ enableHighAccuracy: true, maximumAge: 0 }).then(
-        (pos) => {
-          if (pos) {
-            let posll = L.latLng(pos.coords.latitude, pos.coords.longitude);
-            if (locationBounds.contains(posll)) {
-              map.panTo(posll);
-              Geolocation.watchPosition(
-                { enableHighAccuracy: true },
-                updateUserPosition
-              ).then((id) => (watchId = id));
-            } else {
-              Geolocation.clearWatch({ id: watchId });
-              setShowLocationMarker(false);
-              presentToast({
-                buttons: [{ text: 'hide', handler: () => dismissToast() }],
-                message: 'You are not in Verona',
-                duration: 5000
-              })
-            }
+      Geolocation.getCurrentPosition({
+        enableHighAccuracy: true,
+        maximumAge: 0,
+      }).then((pos) => {
+        if (pos) {
+          let posll = L.latLng(pos.coords.latitude, pos.coords.longitude);
+          if (locationBounds.contains(posll)) {
+            map.panTo(posll);
+            Geolocation.watchPosition(
+              { enableHighAccuracy: true },
+              updateUserPosition
+            ).then((id) => (watchId = id));
+          } else {
+            Geolocation.clearWatch({ id: watchId });
+            setShowLocationMarker(false);
+            presentToast({
+              buttons: [{ text: "hide", handler: () => dismissToast() }],
+              message: t("user_not_in_verona"),
+              duration: 5000,
+            });
           }
         }
-      );
+      });
     } else {
       checkLocationPermission();
     }
@@ -184,10 +190,10 @@ function MapChild(props: {
       } else {
         setOfflineBounds();
         presentToast({
-          buttons: [{ text: 'hide', handler: () => dismissToast() }],
-          message: 'You are offline',
-          duration: 5000
-        })
+          buttons: [{ text: "hide", handler: () => dismissToast() }],
+          message: t("user_offline"),
+          duration: 5000,
+        });
       }
     });
 
@@ -197,8 +203,8 @@ function MapChild(props: {
         i18n.changeLanguage(result.value);
       } else {
         Device.getLanguageCode().then((lang) => {
-          deviceLanguage = lang.value.substr(0, 2);
-          if (i18n.languages.includes(deviceLanguage)) {
+          deviceLanguage = lang.value;
+          if (LANGUAGES.includes(deviceLanguage)) {
             i18n.changeLanguage(deviceLanguage);
           }
         });
@@ -215,10 +221,10 @@ function MapChild(props: {
     } else {
       setOfflineBounds();
       presentToast({
-        buttons: [{ text: 'hide', handler: () => dismissToast() }],
-        message: 'You are offline',
-        duration: 5000
-      })
+        buttons: [{ text: "hide", handler: () => dismissToast() }],
+        message: t("user_offline"),
+        duration: 5000,
+      });
     }
     setConnectionStatus(status);
   });
@@ -362,12 +368,20 @@ function MapChild(props: {
               onOpen={() => {
                 getDetails(element.id);
               }}
+              minWidth={125}
+              keepInView
             >
-              <IonLabel onClick={() => openModal(element.id)}>
-                {element["name_" + i18n.language] !== null
-                  ? element["name_" + i18n.language]
-                  : element["name_en"]}
-              </IonLabel>
+              <div style={{ textAlign: "center" }}>
+                <IonLabel style={{ fontSize: "14px" }}>
+                  {element["name_" + i18n.language] !== null
+                    ? element["name_" + i18n.language]
+                    : element["name_en"]}
+                </IonLabel>
+                <br />
+                <IonButton shape="round" fill="outline" size="small" onClick={() => openModal(element.id)}>
+                  {t("details_button")}
+                </IonButton>
+              </div>
             </Popup>
           </Marker>
         ))}
@@ -387,12 +401,20 @@ function MapChild(props: {
               onOpen={() => {
                 getDetails(element.id);
               }}
+              minWidth={125}
+              keepInView
             >
-              <IonLabel onClick={() => openModal(element.id)}>
-                {element["name_" + i18n.language] !== null
-                  ? element["name_" + i18n.language]
-                  : element["name_en"]}
-              </IonLabel>
+              <div style={{ textAlign: "center" }}>
+                <IonLabel style={{ fontSize: "14px"}}>
+                  {element["name_" + i18n.language] !== null
+                    ? element["name_" + i18n.language]
+                    : element["name_en"]}
+                </IonLabel>
+                <br />
+                <IonButton shape="round" fill="outline" size="small" onClick={() => openModal(element.id)}>
+                  {t("details_button")}
+                </IonButton>
+              </div>
             </Popup>
           </Marker>
         ))}
@@ -412,12 +434,20 @@ function MapChild(props: {
               onOpen={() => {
                 getDetails(element.id);
               }}
+              minWidth={125}
+              keepInView
             >
-              <IonLabel onClick={() => openModal(element.id)}>
-                {element["name_" + i18n.language] !== null
-                  ? element["name_" + i18n.language]
-                  : element["name_en"]}
-              </IonLabel>
+              <div style={{ textAlign: "center" }}>
+                <IonLabel style={{ fontSize: "14px" }}>
+                  {element["name_" + i18n.language] !== null
+                    ? element["name_" + i18n.language]
+                    : element["name_en"]}
+                </IonLabel>
+                <br />
+                <IonButton shape="round" fill="outline" size="small" onClick={() => openModal(element.id)}>
+                  {t("details_button")}
+                </IonButton>
+              </div>
             </Popup>
           </Marker>
         ))}

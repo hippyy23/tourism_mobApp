@@ -36,6 +36,9 @@ i18n.use(initReactI18next).init({
         prev: "Precedente",
         next: "Successivo",
         not_supported: "Questo contenuto non è disponibile nella tua lingua.",
+        user_offline: "Sei offline",
+        user_not_in_verona: "Non sei a Verona",
+        details_button: "Dettagli",
       },
     },
     en: {
@@ -67,6 +70,9 @@ i18n.use(initReactI18next).init({
         prev: "Previous",
         next: "Next",
         not_supported: "This content is not available in your language.",
+        user_offline: "You are offline",
+        user_not_in_verona: "You are not in Verona",
+        details_button: "Details",
       },
     },
     de: {
@@ -98,6 +104,9 @@ i18n.use(initReactI18next).init({
         prev: "Previous", // en
         next: "Next", // en
         not_supported: "This content is not available in your language.", // en
+        user_offline: "You are offline",  // en
+        user_not_in_verona: "You are not in Verona", // en
+        details_button: "details", // en
       },
     },
     fr: {
@@ -129,6 +138,9 @@ i18n.use(initReactI18next).init({
         prev: "Previous", // en
         next: "Next", // en
         not_supported: "This content is not available in your language.", // en
+        user_offline: "You are offline",  // en
+        user_not_in_verona: "You are not in Verona", // en
+        details_button: "details", // en
       },
     },
     es: {
@@ -160,6 +172,9 @@ i18n.use(initReactI18next).init({
         prev: "Previous", // en
         next: "Next", // en
         not_supported: "This content is not available in your language.", // en
+        user_offline: "You are offline",  // en
+        user_not_in_verona: "You are not in Verona", // en
+        details_button: "details", // en
       },
     },
   },
