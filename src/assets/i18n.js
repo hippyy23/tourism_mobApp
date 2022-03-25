@@ -12,6 +12,9 @@ i18n.use(initReactI18next).init({
         lang: "Italiano",
         change_language: "Cambia lingua",
         info: "Informazioni",
+        tracking: "Tracciamento",
+        agree: "Accetta",
+        decline: "Non accettare",
         cat_churches: "Chiese",
         cat_monuments: "Monumenti",
         cat_museums: "Musei e Centri Espositivi",
@@ -46,6 +49,9 @@ i18n.use(initReactI18next).init({
         lang: "English",
         change_language: "Change language",
         info: "Information",
+        tracking: "Tracking",
+        agree: "Accept",
+        decline: "Decline",
         cat_churches: "Churches",
         cat_monuments: "Monuments",
         cat_museums: "Museums and Exhibition Centers",
@@ -80,6 +86,9 @@ i18n.use(initReactI18next).init({
         lang: "Deutsch",
         change_language: "Change language", // en
         info: "Information", // en
+        tracking: "Tracciamento", // en
+        agree: "Accept", // en
+        decline: "Decline", // en
         cat_churches: "Kirchen",
         cat_monuments: "Denkmäler",
         cat_museums: "Museen und Ausstellungszentren",
@@ -114,6 +123,9 @@ i18n.use(initReactI18next).init({
         lang: "Français",
         change_language: "Change language", // en
         info: "Information", // en
+        tracking: "Tracciamento", //en
+        agree: "Accept", // en
+        decline: "Decline", // en
         cat_churches: "Église",
         cat_monuments: "Monuments",
         cat_museums: "Musées et Centres d'Exposition",
@@ -148,6 +160,9 @@ i18n.use(initReactI18next).init({
         lang: "Español",
         change_language: "Change language", // en
         info: "Information", // en
+        tracking: "Tracciamento", //en
+        agree: "Accept", // en
+        decline: "Decline", // en
         cat_churches: "Iglesias",
         cat_monuments: "Monumentos",
         cat_museums: "Museos y Centros de Exposiciones",
