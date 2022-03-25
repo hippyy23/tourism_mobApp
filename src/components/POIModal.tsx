@@ -181,34 +181,34 @@ function POIModal(props: {
     setTextPlaying(false);
   }
 
+  {/* Funzioni che restituiscono orari, biglietti e descrizione nel linguaggio scelto,
+      servono anche a controllare se il contenuto è disponibile in quella lingua */}
   const getOpenTime = () => {
     if (props.code === "it") return props.data.open_time;
     return props.data["open_time_" + props.code];
   };
-
   const getTickets = () => {
     if (props.code === "it") return props.data.tickets;
     return props.data["tickets_" + props.code];
   };
-
-  const getOpenTimeFallback = () => {
-    let openTime = getOpenTime();
-    return openTime ? openTime : props.data["open_time_en"];
-  };
-
-  const getTicketsFallback = () => {
-    let tickets = getTickets();
-    return tickets ? tickets : props.data["tickets_en"];
-  };
-
   function getDescription() {
     return props.data["descr_" + props.code];
   }
 
+  {/* Funzioni che restituiscono il contenuto da visualizzare nelle schede, nella propria lingua se presente oppure in inglese */}
+  const getOpenTimeFallback = () => {
+    let openTime = getOpenTime();
+    return openTime ? openTime : props.data["open_time_en"];
+  };
+  const getTicketsFallback = () => {
+    let tickets = getTickets();
+    return tickets ? tickets : props.data["tickets_en"];
+  };
   function getDescriptionFallback(): string {
     let description = getDescription();
     return description ? description : props.data["descr_en"];
   }
+
 
   const removeDoubleSlashN = (str: string) => {
     if (str) return str.replace(/\\n/g, "");
@@ -240,8 +240,10 @@ function POIModal(props: {
         console.log(props.data);
       }}
     >
+      {/* HEADER */}
       <IonHeader>
         <IonToolbar color="primary">
+          {/* FRECCIA INDIETRO */}
           <IonButtons slot="start" className="ion-margin">
             <IonIcon
               slot="icon-only"
@@ -250,14 +252,20 @@ function POIModal(props: {
               onClick={() => props.onDismissConditions(false)}
             />
           </IonButtons>
+
+          {/* LOGO COMUNE */}
           <IonThumbnail slot="start">
             <img src={logoVerona} alt="Logo Comune di Verona" />
           </IonThumbnail>
+
+          {/* NOME POI */}
           <IonLabel slot="start" className="ion-padding-start">
             {props.data["name_" + props.code] !== null
               ? props.data["name_" + props.code]
               : props.data["name_en"]}
           </IonLabel>
+
+          {/* MENU OPZIONI POPOVER */}
           <IonButtons slot="end" className="ion-margin-end">
             <IonIcon
               slot="icon-only"
@@ -274,11 +282,15 @@ function POIModal(props: {
       </IonHeader>
       <IonContent>
         <IonGrid fixed={true}>
+
+          {/* IMMAGINE */}
           <IonRow className="ion-align-items-center">
             <IonCol>
               <IonImg src={props.data.image_url} />
             </IonCol>
           </IonRow>
+
+          {/* SCHEDA ORARI */}
           <IonRow>
             <IonCol>
               <IonCard>
@@ -312,6 +324,8 @@ function POIModal(props: {
               </IonCard>
             </IonCol>
           </IonRow>
+
+          {/* SCHEDA BIGLIETTI */}
           <IonRow>
             <IonCol>
               <IonCard>
@@ -345,6 +359,8 @@ function POIModal(props: {
               </IonCard>
             </IonCol>
           </IonRow>
+
+          {/* SCHEDA OCCUPAZIONE */}
           {/*<IonRow>
             <IonCol>
               <IonCard>
@@ -411,6 +427,7 @@ function POIModal(props: {
             </IonCol>
           </IonRow>*/}
 
+          {/* SCHEDA DESCRIZIONE */}
           <IonRow>
             <IonCol>
               <IonCard>
@@ -447,12 +464,13 @@ function POIModal(props: {
             </IonCol>
           </IonRow>
 
+          {/* Visualizzazione del contenuto multimediale (video) */}
           {urlMedia && (
             <IonRow className="player-wrapper">
               <IonCol>
                 <ReactPlayer
                   className="react-player"
-                  url="https://sitavr.scienze.univr.it/veronapp/ArenaEsterno.mp4"
+                  url="https://sitavr.scienze.univr.it/veronapp/ArenaEsterno.mp4"/*DA INSERIRE urlMedia per utilizzare il PATH CORRETTO*/
                   width="100%"
                   height="100%"
                   controls
