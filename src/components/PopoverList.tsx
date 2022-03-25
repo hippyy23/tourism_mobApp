@@ -65,12 +65,10 @@ const PopoverList: React.FC<{
 
       <IonAlert
         isOpen={showInfo}
-        header={"Informazioni e contatti"}
+        header={i18n.t("info_title")}
         onDidDismiss={() => setShowInfo(false)}
-        buttons={[{ text: "Close", role: "cancel", cssClass: "secondary" }]}
-        message={
-          "Prototipo realizzato dal comune di Verona con la collaborazione dell'Università degli studi di Verona - Dipartimento di Informatica"
-        }
+        buttons={[{ text: i18n.t("close"), role: "cancel", cssClass: "secondary" }]}
+        message={i18n.t("info_message")}
       />
     </>
   );

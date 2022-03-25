@@ -42,6 +42,11 @@ i18n.use(initReactI18next).init({
         user_offline: "Sei offline",
         user_not_in_verona: "Non sei a Verona",
         details_button: "Dettagli",
+        tracking_title: "Privacy alert",
+        tracking_message: "TurismoVerona vorrebbe tracciare in maniera anonima i dati della vostra esprerienza.<br/>" +
+                          "I dati raccolti sono: identificatore anonimo, posizione, lingua e sistema operativo.<br/>Vuoi partecipare?",
+        info_title: "Informazioni e contatti" ,
+        info_message: "Prototipo realizzato dal comune di Verona con la collaborazione dell'Università degli studi di Verona - Dipartimento di Informatica",
       },
     },
     en: {
@@ -79,6 +84,11 @@ i18n.use(initReactI18next).init({
         user_offline: "You are offline",
         user_not_in_verona: "You are not in Verona",
         details_button: "Details",
+        tracking_title: "Privacy alert", // it
+        tracking_message: "TurismoVerona vorrebbe tracciare in maniera anonima i dati della vostra esprerienza.<br/>" +
+                          "I dati raccolti sono: identificatore anonimo, posizione, lingua e sistema operativo.<br/>Vuoi partecipare?", // it
+        info_title: "Informazioni e contatti" , // it
+        info_message: "Prototipo realizzato dal comune di Verona con la collaborazione dell'Università degli studi di Verona - Dipartimento di Informatica", // it
       },
     },
     de: {
@@ -116,6 +126,11 @@ i18n.use(initReactI18next).init({
         user_offline: "You are offline",  // en
         user_not_in_verona: "You are not in Verona", // en
         details_button: "details", // en
+        tracking_title: "Privacy alert", // it
+        tracking_message: "TurismoVerona vorrebbe tracciare in maniera anonima i dati della vostra esprerienza.<br/>" +
+                          "I dati raccolti sono: identificatore anonimo, posizione, lingua e sistema operativo.<br/>Vuoi partecipare?", // it
+        info_title: "Informazioni e contatti" , // it
+        info_message: "Prototipo realizzato dal comune di Verona con la collaborazione dell'Università degli studi di Verona - Dipartimento di Informatica", // it
       },
     },
     fr: {
@@ -153,6 +168,11 @@ i18n.use(initReactI18next).init({
         user_offline: "You are offline",  // en
         user_not_in_verona: "You are not in Verona", // en
         details_button: "details", // en
+        tracking_title: "Privacy alert", // it
+        tracking_message: "TurismoVerona vorrebbe tracciare in maniera anonima i dati della vostra esprerienza.<br/>" +
+                          "I dati raccolti sono: identificatore anonimo, posizione, lingua e sistema operativo.<br/>Vuoi partecipare?", // it
+        info_title: "Informazioni e contatti" , // it
+        info_message: "Prototipo realizzato dal comune di Verona con la collaborazione dell'Università degli studi di Verona - Dipartimento di Informatica", // it
       },
     },
     es: {
@@ -190,6 +210,11 @@ i18n.use(initReactI18next).init({
         user_offline: "You are offline",  // en
         user_not_in_verona: "You are not in Verona", // en
         details_button: "details", // en
+        tracking_title: "Privacy alert", // it
+        tracking_message: "TurismoVerona vorrebbe tracciare in maniera anonima i dati della vostra esprerienza.<br/>" +
+                          "I dati raccolti sono: identificatore anonimo, posizione, lingua e sistema operativo.<br/>Vuoi partecipare?", // it
+        info_title: "Informazioni e contatti" , // it
+        info_message: "Prototipo realizzato dal comune di Verona con la collaborazione dell'Università degli studi di Verona - Dipartimento di Informatica", // it
       },
     },
   },

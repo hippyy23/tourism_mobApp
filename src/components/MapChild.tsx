@@ -31,6 +31,7 @@ import {
 import POIModal from "./POIModal";
 import { useTranslation } from "react-i18next";
 import { LOCATION_BOUNDS, LANGUAGES } from "../configVar";
+import PrivacyAlert from "./PrivacyAlert";
 
 var jj =
   '{  "features": [    {      "properties": {  "classid": "44",   "open_time" : null,    "descr_it": "Detto anche di Cangrande, fu costruito allinizio del XIV sec., ma venne più volte rimaneggiato. Lultimo restauro del 1929-30 ha tentato di restituirgli (attraverso abbattimenti di parti di epoche diverse, il ripristino della merlatura e linserimento di elementi architettonici consoni) le strutture medievali, di cui rimanevano significativi esempi nel cortile.",        "image_url": "http://www.turismoverona.eu/cache/cfx_imagecr3/11A53001AAADD23C941C7A2BDC95F35B.jpg",        "name_it": "Palazzo del Governo e della Prefettura", "name_en": "Palazzo del Governo e della Prefettura"    }    }  ],  "numberReturned": 1}';
@@ -94,9 +95,11 @@ function MapChild(props: {
   const [position, setPosition] = useState<Position>(); // Variabile che contiene la posizione dell'utente
   const [permissionGranted, setPermissionGranted] = useState<boolean>(false); // Variabile che contiene se si ha il permesso di ottenere la posizione dell'utente
   const [showLocationMarker, setShowLocationMarker] = useState<boolean>(false); // Indica se è da mostrare il marker della posizione dell'utente
+  const [showPrivacyAlert, setShowPrivacyAlert] = useState<boolean>(false); // Indica se mostrare o meno l'alert della privacy
   const map = useMap();
   const { t, i18n } = useTranslation();
   const [presentToast, dismissToast] = useIonToast();
+  var trackingEnable = true;
 
   function setCenterData() {
     map.panTo(findCenter(data));
@@ -141,7 +144,7 @@ function MapChild(props: {
 
   function updateUserPosition(pos: Position | null) {
     if (pos) {
-      Device.getId().then((id) => sendPosition(id, pos));
+      if(trackingEnable){sendPosition(pos);}
       setPosition(pos);
       let posll = L.latLng(pos.coords.latitude, pos.coords.longitude);
       if (!locationBounds.contains(posll)) {
@@ -208,6 +211,16 @@ function MapChild(props: {
             i18n.changeLanguage(deviceLanguage);
           }
         });
+      }
+    });
+
+    Storage.get({ key: "tracking" }).then((result) => {
+      if (result.value !== null) {
+        // Impostare di non tracciare l'utente
+        trackingEnable = result.value==='y';
+      } else {
+        // L'utente deve ancora esprimere la sua preferenza
+        setShowPrivacyAlert(true);
       }
     });
   });
@@ -305,6 +318,15 @@ function MapChild(props: {
 
   return (
     <>
+      {/** Alert che richiede all'utente se vuole essere tracciato anonimamente */}
+      {showPrivacyAlert && (
+        <PrivacyAlert
+          i18n={i18n}
+          onDismiss={() => setShowPrivacyAlert(false)}
+          backdropDismiss={true}
+        />
+      )}
+
       {props.centerPosition && setCenterPosition()}
 
       {connectionStatus?.connected && (
@@ -378,7 +400,12 @@ function MapChild(props: {
                     : element["name_en"]}
                 </IonLabel>
                 <br />
-                <IonButton shape="round" fill="outline" size="small" onClick={() => openModal(element.id)}>
+                <IonButton
+                  shape="round"
+                  fill="outline"
+                  size="small"
+                  onClick={() => openModal(element.id)}
+                >
                   {t("details_button")}
                 </IonButton>
               </div>
@@ -405,13 +432,18 @@ function MapChild(props: {
               keepInView
             >
               <div style={{ textAlign: "center" }}>
-                <IonLabel style={{ fontSize: "14px"}}>
+                <IonLabel style={{ fontSize: "14px" }}>
                   {element["name_" + i18n.language] !== null
                     ? element["name_" + i18n.language]
                     : element["name_en"]}
                 </IonLabel>
                 <br />
-                <IonButton shape="round" fill="outline" size="small" onClick={() => openModal(element.id)}>
+                <IonButton
+                  shape="round"
+                  fill="outline"
+                  size="small"
+                  onClick={() => openModal(element.id)}
+                >
                   {t("details_button")}
                 </IonButton>
               </div>
@@ -444,7 +476,12 @@ function MapChild(props: {
                     : element["name_en"]}
                 </IonLabel>
                 <br />
-                <IonButton shape="round" fill="outline" size="small" onClick={() => openModal(element.id)}>
+                <IonButton
+                  shape="round"
+                  fill="outline"
+                  size="small"
+                  onClick={() => openModal(element.id)}
+                >
                   {t("details_button")}
                 </IonButton>
               </div>

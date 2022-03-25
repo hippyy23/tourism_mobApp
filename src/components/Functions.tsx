@@ -40,27 +40,6 @@ export function findCenter(data: any) {
   return new L.LatLng(lan, lon);
 }
 
-var lastPos: Position;
-// Invia la posizione del device al server se ci si sposta di più di 100 metri oppure ogni 30 secondi
-export async function sendPosition(id: DeviceId, pos: Position) {
-  if (lastPos) {
-    let lastPosll = L.latLng(lastPos.coords.latitude, lastPos.coords.longitude);
-    let posll = L.latLng(pos.coords.latitude, pos.coords.longitude);
-    let timeDiff = pos.timestamp - lastPos.timestamp;
-    if (posll.distanceTo(lastPosll) < 100 && timeDiff < 30000) return;
-  }
-  //alert("Invio al server i dati " + { id: id, position: pos });
-  let deviceId = await Device.getId();
-  sendToLogServer("location" , {
-    id: deviceId.uuid,
-    timestamp: new Date(pos.timestamp).toISOString(),
-    coords: pos.coords,
-  }).catch(() => {
-    console.log("Impossibile contattare il server di log");
-  });
-  lastPos = pos;
-}
-
 // Ritorna la lista di tutti i punti di interesse con le coordinate e i nomi
 export async function getListFromWebServer() {
   const artCategoryRequest =
@@ -116,6 +95,28 @@ export async function getCrowdingFromWebServer(id: string) {
     "&outputFormat=json";
 
   return fetch(classIdRequest).then((response) => response.json());
+}
+
+
+var lastPos: Position;
+// Invia la posizione del device al server se ci si sposta di più di 100 metri oppure ogni 30 secondi
+export async function sendPosition(pos: Position) {
+  if (lastPos) {
+    let lastPosll = L.latLng(lastPos.coords.latitude, lastPos.coords.longitude);
+    let posll = L.latLng(pos.coords.latitude, pos.coords.longitude);
+    let timeDiff = pos.timestamp - lastPos.timestamp;
+    if (posll.distanceTo(lastPosll) < 100 && timeDiff < 30000) return;
+  }
+  //alert("Invio al server i dati " + { id: id, position: pos });
+  let deviceId = await Device.getId();
+  sendToLogServer("location" , {
+    id: deviceId.uuid,
+    timestamp: new Date(pos.timestamp).toISOString(),
+    coords: pos.coords,
+  }).catch(() => {
+    console.log("Impossibile contattare il server di log");
+  });
+  lastPos = pos;
 }
 
 export async function sendLanguage(chooseLng: string) {
