@@ -39,6 +39,7 @@ i18n.use(initReactI18next).init({
         user_offline: "Sei offline",
         user_not_in_verona: "Non sei a Verona",
         details_button: "Dettagli",
+        tours: "Itinerari",
       },
     },
     en: {
@@ -73,6 +74,7 @@ i18n.use(initReactI18next).init({
         user_offline: "You are offline",
         user_not_in_verona: "You are not in Verona",
         details_button: "Details",
+        tours: "Tours",
       },
     },
     de: {
@@ -107,6 +109,7 @@ i18n.use(initReactI18next).init({
         user_offline: "You are offline",  // en
         user_not_in_verona: "You are not in Verona", // en
         details_button: "details", // en
+        tours: "Tours", // en
       },
     },
     fr: {
@@ -141,6 +144,7 @@ i18n.use(initReactI18next).init({
         user_offline: "You are offline",  // en
         user_not_in_verona: "You are not in Verona", // en
         details_button: "details", // en
+        tours: "Tours", // en
       },
     },
     es: {
@@ -175,6 +179,7 @@ i18n.use(initReactI18next).init({
         user_offline: "You are offline",  // en
         user_not_in_verona: "You are not in Verona", // en
         details_button: "details", // en
+        tours: "Tours", // en
       },
     },
   },

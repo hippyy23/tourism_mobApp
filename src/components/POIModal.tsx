@@ -21,6 +21,7 @@ import {
   IonButtons,
   IonThumbnail,
   IonNote,
+  IonList,
 } from "@ionic/react";
 import {
   addCircle,
@@ -53,12 +54,16 @@ function POIModal(props: {
 }) {
   const [openTimeView, setOpenTimeView] = useState<boolean>(false); // Mostra o nascondi il testo relativo agli orari del punto di interesse
   const [ticketsView, setTicketsView] = useState<boolean>(false); // Mostra o nascondi il testo relativo al prezzo dei biglietti del punto di interesse
+  const [toursView, setToursView] = useState<boolean>(false); // Mostra o nascondi il testo relativo agli itinerari
   const [graphView, setGraphView] = useState<boolean>(false); // Mostra o nascondi il grafico della popolazione nel POI
   const [urlMedia, setUrlMedia] = useState<string>(); // Imposta la URL da dove caricare il video del POI se è presente
   const [textPlaying, setTextPlaying] = useState<boolean>(false); // Controlla se il TTS è in riproduzione o no
   const [swiperInstance, setSwiperInstance] = useState<SwiperCore>(); //
   const { t, i18n } = useTranslation();
   SwiperCore.use([IonicSwiper, Navigation, Pagination]);
+  const n_tours = props.data.tours_id
+    ? props.data.tours_id.split(",").length
+    : 0;
 
   // DATI DI PROVA
 
@@ -167,12 +172,13 @@ function POIModal(props: {
 
   function speak() {
     setTextPlaying(true);
-    let lngPlay = getDescription() ? (i18n.language + "-" + i18n.language.toUpperCase()) : "en-US";
-    if(lngPlay === "en-EN")
-      lngPlay = "en-US"
+    let lngPlay = getDescription()
+      ? i18n.language + "-" + i18n.language.toUpperCase()
+      : "en-US";
+    if (lngPlay === "en-EN") lngPlay = "en-US";
     TextToSpeech.speak({
       text: removeDoubleSlashN(getDescriptionFallback()),
-      lang: lngPlay ,
+      lang: lngPlay,
     }).then(() => setTextPlaying(false));
   }
 
@@ -181,8 +187,10 @@ function POIModal(props: {
     setTextPlaying(false);
   }
 
-  {/* Funzioni che restituiscono orari, biglietti e descrizione nel linguaggio scelto,
-      servono anche a controllare se il contenuto è disponibile in quella lingua */}
+  {
+    /* Funzioni che restituiscono orari, biglietti e descrizione nel linguaggio scelto,
+      servono anche a controllare se il contenuto è disponibile in quella lingua */
+  }
   const getOpenTime = () => {
     if (props.code === "it") return props.data.open_time;
     return props.data["open_time_" + props.code];
@@ -195,7 +203,9 @@ function POIModal(props: {
     return props.data["descr_" + props.code];
   }
 
-  {/* Funzioni che restituiscono il contenuto da visualizzare nelle schede, nella propria lingua se presente oppure in inglese */}
+  {
+    /* Funzioni che restituiscono il contenuto da visualizzare nelle schede, nella propria lingua se presente oppure in inglese */
+  }
   const getOpenTimeFallback = () => {
     let openTime = getOpenTime();
     return openTime ? openTime : props.data["open_time_en"];
@@ -209,15 +219,26 @@ function POIModal(props: {
     return description ? description : props.data["descr_en"];
   }
 
-
   const removeDoubleSlashN = (str: string) => {
     if (str) return str.replace(/\\n/g, "");
     return "No description for this POI.";
   };
 
   const [present, dismiss] = useIonPopover(PopoverList, {
-    onHide: () => dismiss()
+    onHide: () => dismiss(),
   });
+
+  /** Creazione della lista di itinerari cliccabili */
+  function TourList() {
+    const tours_id = props.data.tours_id.split(",");
+    const tours_name =  props.data["tours_name_" + props.code] ?  props.data["tours_name_" + props.code].split(',') :  props.data.tours_name_en.split(',');
+    const listItems = tours_id.map((id: number, index: number) => (
+      <IonItem button={true} key={id} lines={index<n_tours-1 ? "inset" : "none"} onClick={()=>console.log(id)}>
+        <IonLabel>{tours_name[index]}</IonLabel>
+      </IonItem>
+    ));
+    return <IonList className="ion-no-padding">{listItems}</IonList>;
+  }
 
   return (
     <IonModal
@@ -282,7 +303,6 @@ function POIModal(props: {
       </IonHeader>
       <IonContent>
         <IonGrid fixed={true}>
-
           {/* IMMAGINE */}
           <IonRow className="ion-align-items-center">
             <IonCol>
@@ -360,6 +380,34 @@ function POIModal(props: {
             </IonCol>
           </IonRow>
 
+          {/* SCHEDA ITINERARI */}
+          {n_tours > 0 && (
+            <IonRow>
+              <IonCol>
+                <IonCard>
+                  <IonItem
+                    color="primary" //TITOLO MENU COLORATO
+                    lines={toursView ? "inset" : "none"}
+                    onClick={() => setToursView(!toursView)}
+                  >
+                    <IonLabel>{t("tours")}:</IonLabel>
+                    <IonIcon
+                      slot="end"
+                      icon={toursView ? removeCircle : addCircle}
+                      // color="primary" BOTTONE BIANCO CON TITOLO COLORATO
+                    />
+                  </IonItem>
+
+                  {toursView && (
+                    <IonCardContent className="ion-no-padding">
+                      <TourList />
+                    </IonCardContent>
+                  )}
+                </IonCard>
+              </IonCol>
+            </IonRow>
+          )}
+
           {/* SCHEDA OCCUPAZIONE */}
           {/*<IonRow>
             <IonCol>
@@ -379,7 +427,8 @@ function POIModal(props: {
 
                 {graphView && (
                   <IonCardContent>
-                    {/*<IonLabel>{(new Date()).toDateString()}</IonLabel>*//*}
+                    {/*<IonLabel>{(new Date()).toDateString()}</IonLabel>*/
+          /*}
                     <Swiper
                       pagination={{
                         clickable: true,
@@ -409,7 +458,8 @@ function POIModal(props: {
                             onClick={() => swiperInstance?.slidePrev()}
                           >
                             {t("prev")}
-                            {/*<IonIcon icon={arrowBack}/>*//*}
+                            {/*<IonIcon icon={arrowBack}/>*/
+          /*}
                           </IonButton>
                         </IonCol>
                         <IonCol className="ion-text-right">
@@ -470,7 +520,7 @@ function POIModal(props: {
               <IonCol>
                 <ReactPlayer
                   className="react-player"
-                  url="https://sitavr.scienze.univr.it/veronapp/ArenaEsterno.mp4"/*DA INSERIRE urlMedia per utilizzare il PATH CORRETTO*/
+                  url="https://sitavr.scienze.univr.it/veronapp/ArenaEsterno.mp4" /*DA INSERIRE urlMedia per utilizzare il PATH CORRETTO*/
                   width="100%"
                   height="100%"
                   controls
@@ -480,7 +530,6 @@ function POIModal(props: {
           )}
         </IonGrid>
       </IonContent>
-
     </IonModal>
   );
 }
