@@ -44,6 +44,10 @@ import "swiper/swiper-bundle.min.css";
 import "@ionic/react/css/ionic-swiper.css";
 import PopoverList from "./PopoverList";
 import logoVerona from "../assets/images/logo_stemma.png";
+import TourModal from "./TourModal";
+
+var testTourData : any = { "descr_it": "Testo di prova per descrizione itinerario.", "name_it" : "Nome itinerario", "image_url": 'http://www.turismoverona.eu/cache/cfx_imagecr3/550D95483B9D06901698D6EB863303E0.jpg'  }
+
 
 function POIModal(props: {
   openCondition: boolean;
@@ -58,6 +62,7 @@ function POIModal(props: {
   const [graphView, setGraphView] = useState<boolean>(false); // Mostra o nascondi il grafico della popolazione nel POI
   const [urlMedia, setUrlMedia] = useState<string>(); // Imposta la URL da dove caricare il video del POI se è presente
   const [textPlaying, setTextPlaying] = useState<boolean>(false); // Controlla se il TTS è in riproduzione o no
+  const [showTourModal, setShowTourModal] = useState<boolean>(false); // Controlla se il TTS è in riproduzione o no
   const [swiperInstance, setSwiperInstance] = useState<SwiperCore>(); //
   const { t, i18n } = useTranslation();
   SwiperCore.use([IonicSwiper, Navigation, Pagination]);
@@ -233,7 +238,7 @@ function POIModal(props: {
     const tours_id = props.data.tours_id.split(",");
     const tours_name =  props.data["tours_name_" + props.code] ?  props.data["tours_name_" + props.code].split(',') :  props.data.tours_name_en.split(',');
     const listItems = tours_id.map((id: number, index: number) => (
-      <IonItem button={true} key={id} lines={index<n_tours-1 ? "inset" : "none"} onClick={()=>console.log(id)}>
+      <IonItem button={true} key={id} lines={index<n_tours-1 ? "inset" : "none"} onClick={()=>{testTourData.name_it = tours_name[index]; setShowTourModal(true)}}>
         <IonLabel>{tours_name[index]}</IonLabel>
       </IonItem>
     ));
@@ -261,6 +266,15 @@ function POIModal(props: {
         console.log(props.data);
       }}
     >
+      {showTourModal && (
+        <TourModal
+          openCondition={showTourModal}
+          onDismissConditions={setShowTourModal}
+          data={testTourData}
+          code={i18n.language}
+        />
+      )}
+
       {/* HEADER */}
       <IonHeader>
         <IonToolbar color="primary">
