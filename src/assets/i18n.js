@@ -12,6 +12,9 @@ i18n.use(initReactI18next).init({
         lang: "Italiano",
         change_language: "Cambia lingua",
         info: "Informazioni",
+        tracking: "Tracciamento",
+        agree: "Accetta",
+        decline: "Non accettare",
         cat_churches: "Chiese",
         cat_monuments: "Monumenti",
         cat_museums: "Musei e Centri Espositivi",
@@ -39,6 +42,11 @@ i18n.use(initReactI18next).init({
         user_offline: "Sei offline",
         user_not_in_verona: "Non sei a Verona",
         details_button: "Dettagli",
+        tracking_title: "Privacy alert",
+        tracking_message: "TurismoVerona vorrebbe tracciare in maniera anonima i dati della vostra esprerienza.<br/>" +
+                          "I dati raccolti sono: identificatore anonimo, posizione, lingua e sistema operativo.<br/>Vuoi partecipare?",
+        info_title: "Informazioni e contatti" ,
+        info_message: "Prototipo realizzato dal comune di Verona con la collaborazione dell'Università degli studi di Verona - Dipartimento di Informatica",
       },
     },
     en: {
@@ -46,6 +54,9 @@ i18n.use(initReactI18next).init({
         lang: "English",
         change_language: "Change language",
         info: "Information",
+        tracking: "Tracking",
+        agree: "Accept",
+        decline: "Decline",
         cat_churches: "Churches",
         cat_monuments: "Monuments",
         cat_museums: "Museums and Exhibition Centers",
@@ -73,6 +84,11 @@ i18n.use(initReactI18next).init({
         user_offline: "You are offline",
         user_not_in_verona: "You are not in Verona",
         details_button: "Details",
+        tracking_title: "Privacy alert", // it
+        tracking_message: "TurismoVerona vorrebbe tracciare in maniera anonima i dati della vostra esprerienza.<br/>" +
+                          "I dati raccolti sono: identificatore anonimo, posizione, lingua e sistema operativo.<br/>Vuoi partecipare?", // it
+        info_title: "Informazioni e contatti" , // it
+        info_message: "Prototipo realizzato dal comune di Verona con la collaborazione dell'Università degli studi di Verona - Dipartimento di Informatica", // it
       },
     },
     de: {
@@ -80,6 +96,9 @@ i18n.use(initReactI18next).init({
         lang: "Deutsch",
         change_language: "Change language", // en
         info: "Information", // en
+        tracking: "Tracciamento", // en
+        agree: "Accept", // en
+        decline: "Decline", // en
         cat_churches: "Kirchen",
         cat_monuments: "Denkmäler",
         cat_museums: "Museen und Ausstellungszentren",
@@ -107,6 +126,11 @@ i18n.use(initReactI18next).init({
         user_offline: "You are offline",  // en
         user_not_in_verona: "You are not in Verona", // en
         details_button: "details", // en
+        tracking_title: "Privacy alert", // it
+        tracking_message: "TurismoVerona vorrebbe tracciare in maniera anonima i dati della vostra esprerienza.<br/>" +
+                          "I dati raccolti sono: identificatore anonimo, posizione, lingua e sistema operativo.<br/>Vuoi partecipare?", // it
+        info_title: "Informazioni e contatti" , // it
+        info_message: "Prototipo realizzato dal comune di Verona con la collaborazione dell'Università degli studi di Verona - Dipartimento di Informatica", // it
       },
     },
     fr: {
@@ -114,6 +138,9 @@ i18n.use(initReactI18next).init({
         lang: "Français",
         change_language: "Change language", // en
         info: "Information", // en
+        tracking: "Tracciamento", //en
+        agree: "Accept", // en
+        decline: "Decline", // en
         cat_churches: "Église",
         cat_monuments: "Monuments",
         cat_museums: "Musées et Centres d'Exposition",
@@ -141,6 +168,11 @@ i18n.use(initReactI18next).init({
         user_offline: "You are offline",  // en
         user_not_in_verona: "You are not in Verona", // en
         details_button: "details", // en
+        tracking_title: "Privacy alert", // it
+        tracking_message: "TurismoVerona vorrebbe tracciare in maniera anonima i dati della vostra esprerienza.<br/>" +
+                          "I dati raccolti sono: identificatore anonimo, posizione, lingua e sistema operativo.<br/>Vuoi partecipare?", // it
+        info_title: "Informazioni e contatti" , // it
+        info_message: "Prototipo realizzato dal comune di Verona con la collaborazione dell'Università degli studi di Verona - Dipartimento di Informatica", // it
       },
     },
     es: {
@@ -148,6 +180,9 @@ i18n.use(initReactI18next).init({
         lang: "Español",
         change_language: "Change language", // en
         info: "Information", // en
+        tracking: "Tracciamento", //en
+        agree: "Accept", // en
+        decline: "Decline", // en
         cat_churches: "Iglesias",
         cat_monuments: "Monumentos",
         cat_museums: "Museos y Centros de Exposiciones",
@@ -175,6 +210,11 @@ i18n.use(initReactI18next).init({
         user_offline: "You are offline",  // en
         user_not_in_verona: "You are not in Verona", // en
         details_button: "details", // en
+        tracking_title: "Privacy alert", // it
+        tracking_message: "TurismoVerona vorrebbe tracciare in maniera anonima i dati della vostra esprerienza.<br/>" +
+                          "I dati raccolti sono: identificatore anonimo, posizione, lingua e sistema operativo.<br/>Vuoi partecipare?", // it
+        info_title: "Informazioni e contatti" , // it
+        info_message: "Prototipo realizzato dal comune di Verona con la collaborazione dell'Università degli studi di Verona - Dipartimento di Informatica", // it
       },
     },
   },
