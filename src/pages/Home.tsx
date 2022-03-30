@@ -14,6 +14,7 @@ import {
 import {
   ellipsisHorizontal,
   ellipsisVertical,
+  footsteps,
   layers,
   locationOutline,
 } from "ionicons/icons";
@@ -28,8 +29,11 @@ import toolbarIcon from "../assets/images/logo.png";
 import MapChild from "../components/MapChild";
 import PopoverList from "../components/PopoverList";
 import { useTranslation } from "react-i18next";
+import TourListModal from "../components/TourListModal";
+import { getTourListFromWebServer } from "../components/Functions";
 
 var isOpen = false;
+var tourListData: any = null;
 
 const Home: React.FC = () => {
   const [churchersFilter, setChurchersFilter] = useState<boolean>(true); // Variabile che indica se mostrate sulla mappa le chiese
@@ -37,26 +41,44 @@ const Home: React.FC = () => {
   const [museumsFilter, setMuseumsFilter] = useState<boolean>(true); // Variabile che indica se mostrate sulla mappa i musei
   const [dataObtained, setDataObtained] = useState<boolean>(false); // True se possiedo la lista dei punti con le loro coordinate, o sono stati caricati dalla memoria oppure scaricati dal webserver
   const [centerPosition, setCenterPosition] = useState<boolean>(false);
+  const [showTourListModal, setShowTourListModal] = useState<boolean>(false); // Controlla se il TTS è in riproduzione o no
   const fabRef = useRef<HTMLIonFabElement>(null);
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
 
   const [present, dismiss] = useIonPopover(PopoverList, {
     onHide: () => dismiss(),
   });
 
+  function getTourList() {
+    if (tourListData === null) {
+      getTourListFromWebServer()
+        .then((json) => {
+          tourListData = json.features;
+          setShowTourListModal(true);
+        })
+        .catch(() => {
+          //TODO: Gestire errore
+        });
+    } else {
+      setShowTourListModal(true);
+    }
+  }
+
   return (
-    <IonPage onClick={(event) => {
-      if (fabRef.current) {
-        if(isOpen){
-          fabRef.current.activated = false;
+    <IonPage
+      onClick={(event) => {
+        if (fabRef.current) {
+          if (isOpen) {
+            fabRef.current.activated = false;
+          }
+          if (fabRef.current.activated) {
+            isOpen = true;
+          } else {
+            isOpen = false;
+          }
         }
-        if (fabRef.current.activated){
-          isOpen=true;
-        } else {
-          isOpen = false;
-        }
-      }
-    }}>
+      }}
+    >
       {/* Utilizzo di css e javascript di leaflet online
       <link
         rel="stylesheet"
@@ -71,11 +93,10 @@ const Home: React.FC = () => {
         crossOrigin=""
       ></script>
       */}
-      <IonHeader
-      >
+      <IonHeader>
         <IonToolbar color="primary">
           <IonItem slot="start" lines="none" color="primary">
-            <IonImg src={toolbarIcon} style={{height: "80%"}}/>
+            <IonImg src={toolbarIcon} style={{ height: "80%" }} />
           </IonItem>
 
           <IonButtons slot="end" className="ion-margin-end">
@@ -110,96 +131,117 @@ const Home: React.FC = () => {
           centerPosition={centerPosition}
           setCenterPosition={setCenterPosition}
         />
-      </MapContainer>
 
-      {/* Pulsante per centrare nell propria posizione */}
-      <IonFab
-        vertical="bottom"
-        horizontal="start"
-        className="ion-margin-bottom"
-        onClick={() => {
-          setCenterPosition(true);
-        }}
-      >
-        <IonFabButton color="light">
-          <IonIcon icon={locationOutline} />
-        </IonFabButton>
-      </IonFab>
+        {/* Pulsante per aprire la lista di itinerari */}
+        <IonFab
+          vertical="top"
+          horizontal="end"
+          onClick={() => {
+            getTourList();
+          }}
+        >
+          <IonFabButton color="light">
+            <IonIcon icon={footsteps} color="primary"/>
+          </IonFabButton>
+        </IonFab>
 
-      {/* Filtro dei marker */}
-      <IonFab
-        vertical="bottom"
-        horizontal="end"
-        className="ion-margin-bottom"
-        ref={fabRef}
-      >
-        <IonFabButton>
-          <IonIcon icon={layers} />
-        </IonFabButton>
-        <IonFabList side="top">
-          <IonFabButton
-            class={
-              churchersFilter
-                ? "my-ion-fab-button ion-color ion-color-success md fab-button-in-list ion-activatable ion-focusable hydrated"
-                : "my-ion-fab-button-opacity ion-color ion-color-danger md fab-button-in-list ion-activatable ion-focusable hydrated"
-            }
-            onClick={() => {
-              setChurchersFilter(!churchersFilter);
-            }}
-            disabled={!dataObtained}
-            data-desc={t("cat_churches")}
-            data-bool={churchersFilter}
-          >
-            <IonIcon
-              icon={churchIconFilter}
+        {/* Pulsante per centrare nell propria posizione */}
+        <IonFab
+          vertical="bottom"
+          horizontal="start"
+          className="ion-margin-bottom"
+          onClick={() => {
+            setCenterPosition(true);
+          }}
+        >
+          <IonFabButton color="light">
+            <IonIcon icon={locationOutline} color="primary"/>
+          </IonFabButton>
+        </IonFab>
+
+        {/* Filtro dei marker */}
+        <IonFab
+          vertical="bottom"
+          horizontal="end"
+          className="ion-margin-bottom"
+          ref={fabRef}
+        >
+          <IonFabButton>
+            <IonIcon icon={layers} />
+          </IonFabButton>
+          <IonFabList side="top">
+            <IonFabButton
               class={
                 churchersFilter
-                  ? "my-icon md hydrated"
-                  : "my-icon-opacity md hydrated"
+                  ? "my-ion-fab-button ion-color ion-color-success md fab-button-in-list ion-activatable ion-focusable hydrated"
+                  : "my-ion-fab-button-opacity ion-color ion-color-danger md fab-button-in-list ion-activatable ion-focusable hydrated"
               }
-            />
-          </IonFabButton>
-          <IonFabButton
-            class={
-              monumentsFilter
-                ? "my-ion-fab-button ion-color ion-color-success md fab-button-in-list ion-activatable ion-focusable hydrated"
-                : "my-ion-fab-button-opacity ion-color ion-color-danger md fab-button-in-list ion-activatable ion-focusable hydrated"
-            }
-            onClick={() => setMonumentsFilter(!monumentsFilter)}
-            disabled={!dataObtained}
-            data-desc={t("cat_monuments")}
-          >
-            <IonIcon
-              icon={monumentIconFilter}
+              onClick={() => {
+                setChurchersFilter(!churchersFilter);
+              }}
+              disabled={!dataObtained}
+              data-desc={t("cat_churches")}
+              data-bool={churchersFilter}
+            >
+              <IonIcon
+                icon={churchIconFilter}
+                class={
+                  churchersFilter
+                    ? "my-icon md hydrated"
+                    : "my-icon-opacity md hydrated"
+                }
+              />
+            </IonFabButton>
+            <IonFabButton
               class={
                 monumentsFilter
-                  ? "my-icon md hydrated"
-                  : "my-icon-opacity md hydrated"
+                  ? "my-ion-fab-button ion-color ion-color-success md fab-button-in-list ion-activatable ion-focusable hydrated"
+                  : "my-ion-fab-button-opacity ion-color ion-color-danger md fab-button-in-list ion-activatable ion-focusable hydrated"
               }
-            />
-          </IonFabButton>
-          <IonFabButton
-            class={
-              museumsFilter
-                ? "my-ion-fab-button ion-color ion-color-success md fab-button-in-list ion-activatable ion-focusable hydrated"
-                : "my-ion-fab-button-opacity ion-color ion-color-danger md fab-button-in-list ion-activatable ion-focusable hydrated"
-            }
-            onClick={() => setMuseumsFilter(!museumsFilter)}
-            disabled={!dataObtained}
-            data-desc={t("cat_museums")}
-          >
-            <IonIcon
-              icon={museumIconFilter}
+              onClick={() => setMonumentsFilter(!monumentsFilter)}
+              disabled={!dataObtained}
+              data-desc={t("cat_monuments")}
+            >
+              <IonIcon
+                icon={monumentIconFilter}
+                class={
+                  monumentsFilter
+                    ? "my-icon md hydrated"
+                    : "my-icon-opacity md hydrated"
+                }
+              />
+            </IonFabButton>
+            <IonFabButton
               class={
                 museumsFilter
-                  ? "my-icon md hydrated"
-                  : "my-icon-opacity md hydrated"
+                  ? "my-ion-fab-button ion-color ion-color-success md fab-button-in-list ion-activatable ion-focusable hydrated"
+                  : "my-ion-fab-button-opacity ion-color ion-color-danger md fab-button-in-list ion-activatable ion-focusable hydrated"
               }
-            />
-          </IonFabButton>
-        </IonFabList>
-      </IonFab>
+              onClick={() => setMuseumsFilter(!museumsFilter)}
+              disabled={!dataObtained}
+              data-desc={t("cat_museums")}
+            >
+              <IonIcon
+                icon={museumIconFilter}
+                class={
+                  museumsFilter
+                    ? "my-icon md hydrated"
+                    : "my-icon-opacity md hydrated"
+                }
+              />
+            </IonFabButton>
+          </IonFabList>
+        </IonFab>
+      </MapContainer>
 
+      {showTourListModal && (
+        <TourListModal
+          openCondition={showTourListModal}
+          onDismissConditions={setShowTourListModal}
+          data={tourListData}
+          code={i18n.language}
+        />
+      )}
     </IonPage>
   );
 };

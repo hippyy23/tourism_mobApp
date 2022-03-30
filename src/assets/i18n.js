@@ -40,6 +40,8 @@ i18n.use(initReactI18next).init({
         user_not_in_verona: "Non sei a Verona",
         details_button: "Dettagli",
         tours: "Itinerari",
+        a_tempo: "A tempo",
+        storico: "Storico",
       },
     },
     en: {
@@ -75,6 +77,8 @@ i18n.use(initReactI18next).init({
         user_not_in_verona: "You are not in Verona",
         details_button: "Details",
         tours: "Tours",
+        a_tempo: "A tempo", // it
+        storico: "Storico", // it
       },
     },
     de: {
@@ -110,6 +114,8 @@ i18n.use(initReactI18next).init({
         user_not_in_verona: "You are not in Verona", // en
         details_button: "details", // en
         tours: "Tours", // en
+        a_tempo: "A tempo", // it
+        storico: "Storico", // it
       },
     },
     fr: {
@@ -145,6 +151,8 @@ i18n.use(initReactI18next).init({
         user_not_in_verona: "You are not in Verona", // en
         details_button: "details", // en
         tours: "Tours", // en
+        a_tempo: "A tempo", // it
+        storico: "Storico", // it
       },
     },
     es: {
@@ -180,6 +188,8 @@ i18n.use(initReactI18next).init({
         user_not_in_verona: "You are not in Verona", // en
         details_button: "details", // en
         tours: "Tours", // en
+        a_tempo: "A tempo", // it
+        storico: "Storico", // it
       },
     },
   },

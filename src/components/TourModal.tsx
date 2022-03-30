@@ -19,11 +19,9 @@ import {
   IonThumbnail,
   IonToolbar,
   useIonPopover,
-  useIonViewDidEnter,
 } from "@ionic/react";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { present } from "@ionic/core/dist/types/utils/overlays";
 import {
   chevronBack,
   arrowBack,
@@ -38,6 +36,10 @@ import logoVerona from "../assets/images/logo_stemma.png";
 import PopoverList from "./PopoverList";
 import { TextToSpeech } from "@capacitor-community/text-to-speech";
 import { MapContainer, TileLayer, useMap } from "react-leaflet";
+import { getPOIDetailsFromWebServer } from "./Functions";
+import POIModal from "./POIModal";
+
+var poi_details: any;
 
 function TourModal(props: {
   openCondition: any;
@@ -51,8 +53,7 @@ function TourModal(props: {
   const [present, dismiss] = useIonPopover(PopoverList, {
     onHide: () => dismiss(),
   });
-  const n_poi = 1; //TODO: Calcolare il numero di poi
-  const map = useRef(null);
+  const [showPOIModal, setShowPOIModal] = useState<boolean>(false); // Mostra la POIModal in cui sono presenti i dettagli di un punto di interesse
 
   function speak() {
     setTextPlaying(true);
@@ -85,23 +86,34 @@ function TourModal(props: {
     return "No description for this POI.";
   };
 
+  function getPOIDetail(id_tour: string) {
+    getPOIDetailsFromWebServer(id_tour)
+      .then((json) => {
+        poi_details = json.features[0].properties;
+        setShowPOIModal(true);
+      })
+      .catch(() => {
+        //TODO: Gestire errore
+      });
+  }
+
   /** Creazione della lista di itinerari cliccabili TODO*/
   function PoiList() {
-    /*const tours_id = props.data.tours_id.split(",");
-        const tours_name = props.data["tours_name_" + props.code] ? props.data["tours_name_" + props.code].split(',') : props.data.tours_name_en.split(',');
-        const listItems = tours_id.map((id: number, index: number) => (
-            <IonItem button={true} key={id} lines={index < n_poi - 1 ? "inset" : "none"} onClick={() => console.log(id)}>
-                <IonLabel>{tours_name[index]}</IonLabel>
-            </IonItem>
-        ));
-        return <IonList className="ion-no-padding">{listItems}</IonList>;*/
-    return (
-      <IonList className="ion-no-padding">
-        <IonItem button={true}>
-          <IonLabel>poi 1</IonLabel>
-        </IonItem>
-      </IonList>
-    );
+    const tours_id = props.data.points_tour_id.split(",");
+    const tours_name = props.data["points_tour_name_" + props.code]
+      ? props.data["points_tour_name_" + props.code].split(",")
+      : props.data.points_tour_name_en.split(",");
+    const listItems = tours_id.map((id: string, index: number) => (
+      <IonItem
+        button={true}
+        key={id}
+        lines={index < tours_id.length - 1 ? "inset" : "none"}
+        onClick={() => getPOIDetail(id)}
+      >
+        <IonLabel>{(index+1)+ ". " + tours_name[index]}</IonLabel>
+      </IonItem>
+    ));
+    return <IonList className="ion-no-padding">{listItems}</IonList>;
   }
 
   return (
@@ -109,6 +121,17 @@ function TourModal(props: {
       isOpen={props.openCondition}
       onDidDismiss={() => props.onDismissConditions(false)}
     >
+      {/* Modal delle informazioni riguardanti il punto di interesse cliccato */}
+      {showPOIModal && (
+        <POIModal
+          openCondition={showPOIModal}
+          onPresent={() => {}}
+          onDismissConditions={setShowPOIModal}
+          data={poi_details}
+          code={i18n.language}
+        />
+      )}
+
       {/* HEADER */}
       <IonHeader>
         <IonToolbar color="primary">
@@ -160,32 +183,31 @@ function TourModal(props: {
           </IonRow>
 
           {/* SCHEDA PUNTI DI INTERESSE   TODO */}
-          {n_poi > 0 && (
-            <IonRow>
-              <IonCol>
-                <IonCard>
-                  <IonItem
-                    color="primary" //TITOLO MENU COLORATO
-                    lines={poiView ? "inset" : "none"}
-                    onClick={() => setPoiView(!poiView)}
-                  >
-                    <IonLabel>Punti di interesse:</IonLabel>
-                    <IonIcon
-                      slot="end"
-                      icon={poiView ? removeCircle : addCircle}
-                      // color="primary" BOTTONE BIANCO CON TITOLO COLORATO
-                    />
-                  </IonItem>
 
-                  {poiView && (
-                    <IonCardContent className="ion-no-padding">
-                      <PoiList />
-                    </IonCardContent>
-                  )}
-                </IonCard>
-              </IonCol>
-            </IonRow>
-          )}
+          <IonRow>
+            <IonCol>
+              <IonCard>
+                <IonItem
+                  color="primary" //TITOLO MENU COLORATO
+                  lines={poiView ? "inset" : "none"}
+                  onClick={() => setPoiView(!poiView)}
+                >
+                  <IonLabel>Punti di interesse:</IonLabel>
+                  <IonIcon
+                    slot="end"
+                    icon={poiView ? removeCircle : addCircle}
+                    // color="primary" BOTTONE BIANCO CON TITOLO COLORATO
+                  />
+                </IonItem>
+
+                {poiView && (
+                  <IonCardContent className="ion-no-padding">
+                    <PoiList />
+                  </IonCardContent>
+                )}
+              </IonCard>
+            </IonCol>
+          </IonRow>
 
           {/* SCHEDA DESCRIZIONE */}
           <IonRow>
@@ -224,7 +246,7 @@ function TourModal(props: {
             </IonCol>
           </IonRow>
 
-          {/* SCHEDA MAPPA ITINERARIO */}
+          {/* SCHEDA MAPPA ITINERARIO 
           <IonRow>
             <IonCol>
               <IonCard onClick={()=>console.log("aaa")}>
@@ -254,7 +276,7 @@ function TourModal(props: {
                 </IonCardContent>
               </IonCard>
             </IonCol>
-          </IonRow>
+          </IonRow>*/}
         </IonGrid>
       </IonContent>
     </IonModal>
