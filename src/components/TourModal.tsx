@@ -19,9 +19,9 @@ import {
   IonThumbnail,
   IonToolbar,
   useIonPopover,
+  useIonViewDidEnter,
 } from "@ionic/react";
-import React, { useState } from "react";
-import { i18n } from "i18next";
+import React, { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { present } from "@ionic/core/dist/types/utils/overlays";
 import {
@@ -37,6 +37,7 @@ import {
 import logoVerona from "../assets/images/logo_stemma.png";
 import PopoverList from "./PopoverList";
 import { TextToSpeech } from "@capacitor-community/text-to-speech";
+import { MapContainer, TileLayer, useMap } from "react-leaflet";
 
 function TourModal(props: {
   openCondition: any;
@@ -50,7 +51,8 @@ function TourModal(props: {
   const [present, dismiss] = useIonPopover(PopoverList, {
     onHide: () => dismiss(),
   });
-  const n_poi = 1; //TODO
+  const n_poi = 1; //TODO: Calcolare il numero di poi
+  const map = useRef(null);
 
   function speak() {
     setTextPlaying(true);
@@ -217,6 +219,38 @@ function TourModal(props: {
                   <IonText color="dark" class="format-text">
                     {removeDoubleSlashN(getDescriptionFallback())}
                   </IonText>
+                </IonCardContent>
+              </IonCard>
+            </IonCol>
+          </IonRow>
+
+          {/* SCHEDA MAPPA ITINERARIO */}
+          <IonRow>
+            <IonCol>
+              <IonCard onClick={()=>console.log("aaa")}>
+                <IonItem
+                  color="primary" //TITOLO MENU COLORATO
+                  
+                >
+                  <IonLabel>{t("mappa")}:</IonLabel>
+                </IonItem>
+
+                <IonCardContent>
+                  <MapContainer
+                    center={[45.43895, 10.99439]}
+                    zoom={15}
+                    minZoom={13}
+                    scrollWheelZoom={true}
+                    style={{ height: "200px", width: "100%" }}
+                    zoomControl={true}
+                    onDragEnd={useMap().invalidateSize}
+                    ref={map}
+                  >
+                    <TileLayer
+                      attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+                      url="https://tile.openstreetmap.org/{z}/{x}/{y}.png"
+                    />
+                  </MapContainer>
                 </IonCardContent>
               </IonCard>
             </IonCol>

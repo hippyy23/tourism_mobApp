@@ -35,7 +35,7 @@ import {
 } from "ionicons/icons";
 import ReactHtmlParser from "react-html-parser";
 import { useTranslation } from "react-i18next";
-import { getMediaFromWebServer } from "./Functions";
+import { getPOIMediaFromWebServer } from "./Functions";
 import { Swiper, SwiperSlide } from "swiper/react";
 import SwiperCore, { Navigation, Pagination } from "swiper";
 import { TextToSpeech } from "@capacitor-community/text-to-speech";
@@ -253,7 +253,7 @@ function POIModal(props: {
       }}
       onWillPresent={() => {
         props.onPresent(false);
-        getMediaFromWebServer(props.data.classid)
+        getPOIMediaFromWebServer(props.data.classid)
           .then((json) => {
             if (json.numberReturned === 1) {
               console.log(json.features[0].properties);
