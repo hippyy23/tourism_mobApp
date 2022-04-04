@@ -13,6 +13,7 @@ import {
   IonModal,
   IonRow,
   IonThumbnail,
+  IonTitle,
   IonToolbar,
   useIonPopover,
 } from "@ionic/react";
@@ -52,7 +53,7 @@ function TourListModal(props: {
   function getTourDetail(id_tour: string) {
     getTourDetailsFromWebServer(id_tour)
       .then((json) => {
-        tour_details = json.features[0].properties;
+        tour_details = json.features[0];
         setShowTourModal(true);
       })
       .catch(() => {
@@ -62,10 +63,10 @@ function TourListModal(props: {
 
   /** Creazione delle sezioni delle categorie dei poi*/
   function TourList(pr: any) {
-    const n_tours = props.data.length;
     const filteredTour = props.data.filter(
       (tour: any) => tour.properties.type === pr.type
     );
+    const n_tours = filteredTour.length;
     const listItems = filteredTour.map((tour: any, index: number) => (
       <IonItem
         button={true}
@@ -114,9 +115,9 @@ function TourListModal(props: {
           </IonThumbnail>
 
           {/* TITOLO */}
-          <IonLabel slot="start" className="ion-padding-start">
+          {/* <IonLabel slot="start" className="ion-padding-start">
             {t("tours")}
-          </IonLabel>
+          </IonLabel> */}
 
           {/* MENU OPZIONI POPOVER */}
           <IonButtons slot="end" className="ion-margin-end">
@@ -136,6 +137,16 @@ function TourListModal(props: {
 
       <IonContent>
         <IonGrid fixed={true}>
+
+          {/* TITOLO ITINERARI */}
+          <IonRow>
+            <IonCol>
+              <IonTitle>
+                <h1>{t("tours")}</h1>
+              </IonTitle>
+            </IonCol>
+          </IonRow>
+
           {/* SCHEDA ITINERARI A TEMPO */}
           <IonRow>
             <IonCol>

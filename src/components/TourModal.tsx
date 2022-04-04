@@ -35,9 +35,17 @@ import {
 import logoVerona from "../assets/images/logo_stemma.png";
 import PopoverList from "./PopoverList";
 import { TextToSpeech } from "@capacitor-community/text-to-speech";
-import { MapContainer, TileLayer, useMap } from "react-leaflet";
+import {
+  MapContainer,
+  Marker,
+  Polyline,
+  TileLayer,
+  useMap,
+} from "react-leaflet";
 import { getPOIDetailsFromWebServer } from "./Functions";
 import POIModal from "./POIModal";
+import L from "leaflet";
+import monumentIcon from "../assets/images/art_monument.png"; // Icona monumento
 
 var poi_details: any;
 
@@ -73,12 +81,12 @@ function TourModal(props: {
   }
 
   function getDescription() {
-    return props.data["descr_" + props.code];
+    return props.data.properties["descr_" + props.code];
   }
 
   function getDescriptionFallback(): string {
     let description = getDescription();
-    return description ? description : props.data["descr_en"];
+    return description ? description : props.data.properties["descr_en"];
   }
 
   const removeDoubleSlashN = (str: string) => {
@@ -97,12 +105,34 @@ function TourModal(props: {
       });
   }
 
+  const polylineTour = props.data.geometry.coordinates[0].map(
+    (coordinates: any[]) => [coordinates[1], coordinates[0]]
+  ); // Coordinate del tour
+
+  function PoiMarker() {
+    const tour_coordinates = props.data.properties.points_geom
+      .split(",")
+      .map((coordinate: string) =>
+        coordinate.substring(6, coordinate.length - 1).split(" ")
+      );
+    const listItems = tour_coordinates.map(
+      (coordinates: any, index: number) => (
+        <Marker key={index} position={[coordinates[1], coordinates[0]]} 
+        icon={L.icon({
+          iconUrl: monumentIcon,
+          iconSize: [30, 30], // size of the icon
+        })}/>
+      )
+    );
+    return <>{listItems}</>;
+  }
+
   /** Creazione della lista di itinerari cliccabili TODO*/
   function PoiList() {
-    const tours_id = props.data.points_tour_id.split(",");
-    const tours_name = props.data["points_tour_name_" + props.code]
-      ? props.data["points_tour_name_" + props.code].split(",")
-      : props.data.points_tour_name_en.split(",");
+    const tours_id = props.data.properties.points_tour_id.split(",");
+    const tours_name = props.data.properties["points_tour_name_" + props.code]
+      ? props.data.properties["points_tour_name_" + props.code].split(",")
+      : props.data.properties.points_tour_name_en.split(",");
     const listItems = tours_id.map((id: string, index: number) => (
       <IonItem
         button={true}
@@ -110,7 +140,7 @@ function TourModal(props: {
         lines={index < tours_id.length - 1 ? "inset" : "none"}
         onClick={() => getPOIDetail(id)}
       >
-        <IonLabel>{(index+1)+ ". " + tours_name[index]}</IonLabel>
+        <IonLabel>{index + 1 + ". " + tours_name[index]}</IonLabel>
       </IonItem>
     ));
     return <IonList className="ion-no-padding">{listItems}</IonList>;
@@ -152,9 +182,9 @@ function TourModal(props: {
 
           {/* NOME TOUR */}
           <IonLabel slot="start" className="ion-padding-start">
-            {props.data["name_" + props.code] !== null
-              ? props.data["name_" + props.code]
-              : props.data["name_en"]}
+            {props.data.properties["name_" + props.code] !== null
+              ? props.data.properties["name_" + props.code]
+              : props.data.properties["name_en"]}
           </IonLabel>
 
           {/* MENU OPZIONI POPOVER */}
@@ -178,11 +208,11 @@ function TourModal(props: {
           {/* IMMAGINE */}
           <IonRow className="ion-align-items-center">
             <IonCol>
-              <IonImg src={props.data.image_url} />
+              <IonImg src={props.data.properties.image_url} />
             </IonCol>
           </IonRow>
 
-          {/* SCHEDA PUNTI DI INTERESSE   TODO */}
+          {/* SCHEDA PUNTI DI INTERESSE */}
 
           <IonRow>
             <IonCol>
@@ -246,13 +276,12 @@ function TourModal(props: {
             </IonCol>
           </IonRow>
 
-          {/* SCHEDA MAPPA ITINERARIO 
-          <IonRow>
+          {/* SCHEDA MAPPA ITINERARIO */}
+          {/* <IonRow>
             <IonCol>
-              <IonCard onClick={()=>console.log("aaa")}>
+              <IonCard onClick={() => console.log("aaa")}>
                 <IonItem
                   color="primary" //TITOLO MENU COLORATO
-                  
                 >
                   <IonLabel>{t("mappa")}:</IonLabel>
                 </IonItem>
@@ -265,18 +294,24 @@ function TourModal(props: {
                     scrollWheelZoom={true}
                     style={{ height: "200px", width: "100%" }}
                     zoomControl={true}
-                    onDragEnd={useMap().invalidateSize}
-                    ref={map}
                   >
                     <TileLayer
                       attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
                       url="https://tile.openstreetmap.org/{z}/{x}/{y}.png"
                     />
+                    <Polyline positions={polylineTour} />
+                    <PoiMarker />
                   </MapContainer>
                 </IonCardContent>
               </IonCard>
             </IonCol>
-          </IonRow>*/}
+          </IonRow> */}
+
+          <IonRow>
+            <IonCol>
+              <IonButton style={{ width: "100%" }}>Apri la mappa</IonButton>
+            </IonCol>
+          </IonRow>
         </IonGrid>
       </IonContent>
     </IonModal>

@@ -235,7 +235,7 @@ function POIModal(props: {
   function getTourDetail(id_tour: string) {
     getTourDetailsFromWebServer(id_tour)
       .then((json) => {
-        tour_details = json.features[0].properties;
+        tour_details = json.features[0];
         setShowTourModal(true);
       })
       .catch(() => {
