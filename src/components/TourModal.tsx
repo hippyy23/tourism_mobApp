@@ -43,6 +43,7 @@ import {
   useMap,
 } from "react-leaflet";
 import { getPOIDetailsFromWebServer } from "./Functions";
+import ReactHtmlParser from "react-html-parser";
 import POIModal from "./POIModal";
 import L from "leaflet";
 import monumentIcon from "../assets/images/art_monument.png"; // Icona monumento
@@ -70,7 +71,7 @@ function TourModal(props: {
       : "en-US";
     if (lngPlay === "en-EN") lngPlay = "en-US";
     TextToSpeech.speak({
-      text: removeDoubleSlashN(getDescriptionFallback()),
+      text: document.getElementById("description-text")!.innerText.replaceAll("\n", " "),
       lang: lngPlay,
     }).then(() => setTextPlaying(false));
   }
@@ -126,6 +127,8 @@ function TourModal(props: {
     );
     return <>{listItems}</>;
   }
+
+  
 
   /** Creazione della lista di itinerari cliccabili TODO*/
   function PoiList() {
@@ -268,8 +271,8 @@ function TourModal(props: {
                       <br />
                     </IonNote>
                   )}
-                  <IonText color="dark" class="format-text">
-                    {removeDoubleSlashN(getDescriptionFallback())}
+                  <IonText color="dark" class="format-text" id="description-text">
+                    {ReactHtmlParser(removeDoubleSlashN(getDescriptionFallback()))}
                   </IonText>
                 </IonCardContent>
               </IonCard>
