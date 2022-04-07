@@ -7,6 +7,7 @@ import {
   IonGrid,
   IonHeader,
   IonIcon,
+  IonImg,
   IonItem,
   IonLabel,
   IonList,
@@ -25,7 +26,7 @@ import {
   ellipsisHorizontal,
   ellipsisVertical,
 } from "ionicons/icons";
-import logoVerona from "../assets/images/logo_stemma.png";
+import toolbarIcon from "../assets/images/logo.png";
 import PopoverList from "./PopoverList";
 import { getTourDetailsFromWebServer } from "./Functions";
 import TourModal from "./TourModal";
@@ -110,9 +111,9 @@ function TourListModal(props: {
           </IonButtons>
 
           {/* LOGO COMUNE */}
-          <IonThumbnail slot="start">
-            <img src={logoVerona} alt="Logo Comune di Verona" />
-          </IonThumbnail>
+          <IonItem slot="start" lines="none" color="primary">
+            <IonImg src={toolbarIcon} style={{ height: "80%" }} />
+          </IonItem>
 
           {/* TITOLO */}
           {/* <IonLabel slot="start" className="ion-padding-start">

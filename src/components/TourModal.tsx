@@ -47,6 +47,7 @@ import ReactHtmlParser from "react-html-parser";
 import POIModal from "./POIModal";
 import L from "leaflet";
 import monumentIcon from "../assets/images/art_monument.png"; // Icona monumento
+import TourMapModal from "./TourMapModal";
 
 var poi_details: any;
 
@@ -63,6 +64,7 @@ function TourModal(props: {
     onHide: () => dismiss(),
   });
   const [showPOIModal, setShowPOIModal] = useState<boolean>(false); // Mostra la POIModal in cui sono presenti i dettagli di un punto di interesse
+  const [showTourMapModal, setShowTourMapModal] = useState<boolean>(false); // Mostra la POIModal in cui sono presenti i dettagli di un punto di interesse
 
   function speak() {
     setTextPlaying(true);
@@ -161,6 +163,16 @@ function TourModal(props: {
           onPresent={() => {}}
           onDismissConditions={setShowPOIModal}
           data={poi_details}
+          code={i18n.language}
+        />
+      )}
+
+      {/* Modal della mappa del tour */}
+      {showTourMapModal && (
+        <TourMapModal
+          openCondition={showTourMapModal}
+          onDismissConditions={setShowTourMapModal}
+          data={{points_geom: props.data.properties.points_geom, polylineTour: polylineTour}}
           code={i18n.language}
         />
       )}
@@ -279,40 +291,9 @@ function TourModal(props: {
             </IonCol>
           </IonRow>
 
-          {/* SCHEDA MAPPA ITINERARIO */}
-          {/* <IonRow>
-            <IonCol>
-              <IonCard onClick={() => console.log("aaa")}>
-                <IonItem
-                  color="primary" //TITOLO MENU COLORATO
-                >
-                  <IonLabel>{t("mappa")}:</IonLabel>
-                </IonItem>
-
-                <IonCardContent>
-                  <MapContainer
-                    center={[45.43895, 10.99439]}
-                    zoom={15}
-                    minZoom={13}
-                    scrollWheelZoom={true}
-                    style={{ height: "200px", width: "100%" }}
-                    zoomControl={true}
-                  >
-                    <TileLayer
-                      attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-                      url="https://tile.openstreetmap.org/{z}/{x}/{y}.png"
-                    />
-                    <Polyline positions={polylineTour} />
-                    <PoiMarker />
-                  </MapContainer>
-                </IonCardContent>
-              </IonCard>
-            </IonCol>
-          </IonRow> */}
-
           <IonRow>
             <IonCol>
-              <IonButton style={{ width: "100%" }}>Apri la mappa</IonButton>
+              <IonButton style={{ width: "100%" }} onClick={() => setShowTourMapModal(true)}>Apri la mappa</IonButton>
             </IonCol>
           </IonRow>
         </IonGrid>
