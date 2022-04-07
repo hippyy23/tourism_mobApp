@@ -47,6 +47,9 @@ i18n.use(initReactI18next).init({
                           "I dati raccolti sono: identificatore anonimo, posizione, lingua e sistema operativo.<br/>Vuoi partecipare?",
         info_title: "Informazioni e contatti" ,
         info_message: "Prototipo realizzato dal comune di Verona con la collaborazione dell'Università degli studi di Verona - Dipartimento di Informatica",
+        tours: "Itinerari",
+        a_tempo: "A tempo",
+        storico: "Storico",
       },
     },
     en: {
@@ -89,6 +92,9 @@ i18n.use(initReactI18next).init({
                           "I dati raccolti sono: identificatore anonimo, posizione, lingua e sistema operativo.<br/>Vuoi partecipare?", // it
         info_title: "Informazioni e contatti" , // it
         info_message: "Prototipo realizzato dal comune di Verona con la collaborazione dell'Università degli studi di Verona - Dipartimento di Informatica", // it
+        tours: "Tours",
+        a_tempo: "A tempo", // it
+        storico: "Storico", // it
       },
     },
     de: {
@@ -131,6 +137,9 @@ i18n.use(initReactI18next).init({
                           "I dati raccolti sono: identificatore anonimo, posizione, lingua e sistema operativo.<br/>Vuoi partecipare?", // it
         info_title: "Informazioni e contatti" , // it
         info_message: "Prototipo realizzato dal comune di Verona con la collaborazione dell'Università degli studi di Verona - Dipartimento di Informatica", // it
+        tours: "Tours", // en
+        a_tempo: "A tempo", // it
+        storico: "Storico", // it
       },
     },
     fr: {
@@ -173,6 +182,9 @@ i18n.use(initReactI18next).init({
                           "I dati raccolti sono: identificatore anonimo, posizione, lingua e sistema operativo.<br/>Vuoi partecipare?", // it
         info_title: "Informazioni e contatti" , // it
         info_message: "Prototipo realizzato dal comune di Verona con la collaborazione dell'Università degli studi di Verona - Dipartimento di Informatica", // it
+        tours: "Tours", // en
+        a_tempo: "A tempo", // it
+        storico: "Storico", // it
       },
     },
     es: {
@@ -215,6 +227,9 @@ i18n.use(initReactI18next).init({
                           "I dati raccolti sono: identificatore anonimo, posizione, lingua e sistema operativo.<br/>Vuoi partecipare?", // it
         info_title: "Informazioni e contatti" , // it
         info_message: "Prototipo realizzato dal comune di Verona con la collaborazione dell'Università degli studi di Verona - Dipartimento di Informatica", // it
+        tours: "Tours", // en
+        a_tempo: "A tempo", // it
+        storico: "Storico", // it
       },
     },
   },

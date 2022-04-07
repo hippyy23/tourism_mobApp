@@ -2,13 +2,8 @@ import {
   IonLabel,
   useIonViewDidEnter,
   IonLoading,
-  IonActionSheet,
   useIonToast,
-  IonRow,
-  IonCol,
   IonButton,
-  IonGrid,
-  IonButtons,
 } from "@ionic/react";
 import { TileLayer, useMap, Marker, Popup } from "react-leaflet";
 import { useState } from "react";
@@ -24,8 +19,8 @@ import { Storage } from "@capacitor/storage";
 import { Geolocation, Position } from "@capacitor/geolocation";
 import {
   findCenter,
-  getListFromWebServer,
-  getDetailsFromWebServer,
+  getPOIListFromWebServer,
+  getPOIDetailsFromWebServer,
   sendPosition,
 } from "../components/Functions";
 import POIModal from "./POIModal";
@@ -244,7 +239,7 @@ function MapChild(props: {
 
   function getList() {
     if (downloadedData) return;
-    getListFromWebServer()
+    getPOIListFromWebServer()
       .then((json: { features: [] }) => {
         let result = json.features;
         data = baseData;
@@ -288,7 +283,7 @@ function MapChild(props: {
       detailedData !== null /*&& detailedData.classid != id*/
     ) {
       detailedData = null;
-      getDetailsFromWebServer(id)
+      getPOIDetailsFromWebServer(id)
         .then((json) => {
           if (json.numberReturned === 1) {
             detailedData = json.features[0].properties;
