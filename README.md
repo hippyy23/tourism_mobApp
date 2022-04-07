@@ -1,97 +1,85 @@
 # mappaVerona
 
-<h3>Pacchetti npm da installare:</h3>
--npm install @capacitor/device            // Permette di leggere la lingua del dispositivo<br/>
--npm install @capacitor/network           // Permette di leggere i dati riguardanti la connessione<br/>
--npm install @capacitor/storage           // Permette di salvare i dati sul dispositivo<br/>
--npm install @capacitor/geolocation       // Permette di usare la posizione<br/>
+## Ambiente necessario
+Per eseguire il codice di questo progetto è necessario installare Node e Ionic CLI. Se si vuole eseguire l'applicazione su un emulatore bisogna installare e configurare Android Studio.
 
-<b>NB</b>: "npx cap sync" ogni volta che si aggiungono nuovi npm<br/><br/>
+## Comandi per eseguire il progetto
+Eseguire su un emulatore Android (necessario Android Studio ed un emulatore configurato):
 
+```
+ionic cap run android
+```
+Eseguire il progetto su browser:
+```
+ionic serve
+```
 
-<h3>Librerie da installare:</h3>
--node<br/>
--ionic<br/>
--capacitor<br/>
--leaflet<br/>
--react-leaflet<br/><br/>
+## Modifiche da effettuare alla prima installazione o in caso di errori
 
+### Modifiche da apportare ai file interni al progetto
+| Directory  | File | Modifica | Motivo |
+| ------------- | ------------- | ------------- | ------------- |
+| node_modules  | -  | Cancella cartella .cache(se presente)  | Progetto non si avvia  |
+| android  | local.properties  | Crea il file ed inserisci dentro questa stringa "sdk.dir=C:\\users\\Michele\\AppData\\Local\\Android\\sdk"  | Errore capacitor, non permette di aprire l'emulatore  |
+| android/app/src/main  | AndroidManifest.xml  | Aggiungi ad <b>application</b> android:usesCleartextTraffic="true"  | Vedere le immagini su android  |
 
-<h3>Modifiche da apportare ai file interni al progetto:</h3>
-<table>
-  <tr>
-    <th>Directory</th>
-    <th>File</th>
-    <th>Modifica</th>
-    <th>Motivo</th>
-  </tr>
-  <tr>
-    <td>node_modules</td>
-    <td>-</td>
-    <td>Cancella cartella .cache</td>
-    <td>Progetto non si avvia</td>
-  </tr>
-  <tr>
-    <td>android</td>
-    <td>local.properties</td>
-    <td>Crea il file ed inserisci dentro questa stringa "sdk.dir=C:\\users\\Michele\\AppData\\Local\\Android\\sdk"</td>
-    <td>Errore capacitor, non permette di aprire l'emulatore</td>
-  </tr>
-  <tr>
-    <td>android/app/src/main</td>
-    <td>AndroidManifest.xml</td>
-    <td>Aggiungi ad <b>application</b> android:usesCleartextTraffic="true"</td>
-    <td>Vedere le immagini su android</td>
-  </tr>
-  <tr>
-    <td>android/app/src/main</td>
-    <td>AndroidManifest.xml</td>
-    <td>
-      <pre>
-      &lt;!-- Geolocation API --&gt;
-        &lt;uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" /&gt;
-        &lt;uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" /&gt;
-      </pre>
-    </td>
-    <td>Vedere le immagini su android</td>
-  </tr>
-  <tr>
-    <td>-</td>
-    <td>package.json</td>
-    <td>
-     <b>Cancella:</b><br/>
-     "browserslist": {<br/>
-       "production": [<br/>
-          ">0.2%",<br/>
-          "not dead",<br/>
-          "not op_mini all"<br/>
-        ],<br/>
-        "development": [<br/>
-          "last 1 chrome version",<br/>
-          "last 1 firefox version",<br/>
-          "last 1 safari version"<br/>
-        ]<br/>
-      },
-<br/><br/>
-<b>Aggiungi:</b><br/>
-"browserslist": [<br/>
-   ">0.2%",<br/>
-  "not dead",<br/>
-  "not op_mini all"<br/>
+### Ulteriori modifiche:
+- Modifica Manifest<br/>
+Directory: android/app/src/main<br/>
+File: AndroidManifest.xml  <br/>
+Codice:
+
+```
+<!-- Geolocation API -->
+  <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+  <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+```
+
+Motivo: Vedere le immagini su android 
+
+- Modifica `package.json`<br/>
+Cancella:
+
+```
+"browserslist": {
+  "production": [
+    ">0.2%",
+    "not dead",
+    "not op_mini all"
+  ],
+  "development": [
+    "last 1 chrome version",
+    "last 1 firefox version",
+    "last 1 safari version"
+  ]
+},
+```
+
+Aggiungi:
+
+```
+"browserslist": [
+   ">0.2%",
+  "not dead",
+  "not op_mini all"
 ],
-<br/><br/>
+```
 
-<b>Infine:</b><br/>
-  npm install<br/>
-  npm start
-</td>
-    <td></td>
-  </tr>
-</table><br/><br/>
+Infine:
+- npm install
+- npm start
 
+## Librerie installate (npm install)
+- **@capacitor/device**            // Permette di leggere la lingua del dispositivo
+- **@capacitor/network**           // Permette di leggere i dati riguardanti la connessione
+- **@capacitor/storage**           // Permette di salvare i dati sul dispositivo
+- **@capacitor/geolocation**       // Permette di usare la posizione
+- **node**
+- **ionic**
+- **capacitor**
+- **leaflet**
+- **react-leaflet**
 
-<h3>Comandi per eseguire il progetto:</h3>
--ionic serve            // Esegue il progetto sul browser<br/>
--ionic cap run android  // Compila ed esegue il progetto su dispositivo Android
+<!-- "npx cap sync" ogni volta che si aggiungono nuovi npm --> 
 
--ncu -u                 // Aggiorna il package json
+<!-- "ncu -u" aggiorna il package json -->
