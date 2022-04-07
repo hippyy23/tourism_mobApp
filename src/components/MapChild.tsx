@@ -136,7 +136,7 @@ function MapChild(props: {
 
   function updateUserPosition(pos: Position | null) {
     if (pos) {
-      if(trackingEnable){sendPosition(pos);}
+      if(trackingEnable){Device.getId().then((id) => sendPosition(id, pos));}
       setPosition(pos);
       let posll = L.latLng(pos.coords.latitude, pos.coords.longitude);
       if (!locationBounds.contains(posll)) {
@@ -280,7 +280,7 @@ function MapChild(props: {
       ((detailedData !== undefined && detailedData.classid != id) || detailedData===undefined)
     ) {
       detailedData = undefined;
-      getDetailsFromWebServer(id)
+      getPOIDetailsFromWebServer(id)
         .then((json) => {
           if (json.numberReturned === 1) {
             detailedData = json.features[0].properties;
