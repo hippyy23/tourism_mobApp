@@ -23,7 +23,7 @@ function PrivacyAlert(props: {
         onDidDismiss={props.onDismiss}
         buttons={[
           {
-            text: props.i18n.t("accept"),
+            text: props.i18n.t("agree"),
             handler: () => {
               Storage.set({
                 key: "tracking",
