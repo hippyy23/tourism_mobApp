@@ -27,14 +27,14 @@ import { MapContainer, Marker, Polyline, TileLayer } from "react-leaflet";
 import L from "leaflet";
 import toolbarIcon from "../assets/images/logo.png";
 import monumentIcon from "../assets/images/art_monument.png"; // Icona monumento
+import { i18n } from "i18next";
 
 function TourModal(props: {
   openCondition: any;
   onDismissConditions: React.Dispatch<React.SetStateAction<boolean>>;
   data: { polylineTour: any; points_geom: string };
-  code: any;
+  i18n: i18n;
 }) {
-  const { t, i18n } = useTranslation();
   const [present, dismiss] = useIonPopover(PopoverList, {
     onHide: () => dismiss(),
   });

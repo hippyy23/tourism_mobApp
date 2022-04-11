@@ -130,6 +130,7 @@ const Home: React.FC = () => {
           setDataObtained={setDataObtained}
           centerPosition={centerPosition}
           setCenterPosition={setCenterPosition}
+          i18n={i18n}
         />
 
         {/* Pulsante per aprire la lista di itinerari */}
@@ -239,7 +240,7 @@ const Home: React.FC = () => {
           openCondition={showTourListModal}
           onDismissConditions={setShowTourListModal}
           data={tourListData}
-          code={i18n.language}
+          i18n={i18n}
         />
       )}
     </IonPage>

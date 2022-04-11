@@ -36,11 +36,7 @@ import logoVerona from "../assets/images/logo_stemma.png";
 import PopoverList from "./PopoverList";
 import { TextToSpeech } from "@capacitor-community/text-to-speech";
 import {
-  MapContainer,
-  Marker,
-  Polyline,
-  TileLayer,
-  useMap,
+  Marker
 } from "react-leaflet";
 import { getPOIDetailsFromWebServer } from "./Functions";
 import ReactHtmlParser from "react-html-parser";
@@ -48,6 +44,7 @@ import POIModal from "./POIModal";
 import L from "leaflet";
 import monumentIcon from "../assets/images/art_monument.png"; // Icona monumento
 import TourMapModal from "./TourMapModal";
+import { i18n } from "i18next";
 
 var poi_details: any;
 
@@ -55,9 +52,8 @@ function TourModal(props: {
   openCondition: any;
   onDismissConditions: React.Dispatch<React.SetStateAction<boolean>>;
   data: any;
-  code: any;
+  i18n: i18n;
 }) {
-  const { t, i18n } = useTranslation();
   const [textPlaying, setTextPlaying] = useState<boolean>(false); // Controlla se il TTS è in riproduzione o no
   const [poiView, setPoiView] = useState<boolean>(false); // Mostra i poi dell'itinerario o no
   const [present, dismiss] = useIonPopover(PopoverList, {
@@ -66,10 +62,12 @@ function TourModal(props: {
   const [showPOIModal, setShowPOIModal] = useState<boolean>(false); // Mostra la POIModal in cui sono presenti i dettagli di un punto di interesse
   const [showTourMapModal, setShowTourMapModal] = useState<boolean>(false); // Mostra la POIModal in cui sono presenti i dettagli di un punto di interesse
 
+  const lng = props.i18n.language;
+
   function speak() {
     setTextPlaying(true);
     let lngPlay = getDescription()
-      ? i18n.language + "-" + i18n.language.toUpperCase()
+      ? lng + "-" + lng.toUpperCase()
       : "en-US";
     if (lngPlay === "en-EN") lngPlay = "en-US";
     TextToSpeech.speak({
@@ -84,7 +82,7 @@ function TourModal(props: {
   }
 
   function getDescription() {
-    return props.data.properties["descr_" + props.code];
+    return props.data.properties["descr_" + lng];
   }
 
   function getDescriptionFallback(): string {
@@ -135,8 +133,8 @@ function TourModal(props: {
   /** Creazione della lista di itinerari cliccabili TODO*/
   function PoiList() {
     const tours_id = props.data.properties.points_tour_id.split(",");
-    const tours_name = props.data.properties["points_tour_name_" + props.code]
-      ? props.data.properties["points_tour_name_" + props.code].split(",")
+    const tours_name = props.data.properties["points_tour_name_" + lng]
+      ? props.data.properties["points_tour_name_" + lng].split(",")
       : props.data.properties.points_tour_name_en.split(",");
     const listItems = tours_id.map((id: string, index: number) => (
       <IonItem
@@ -163,7 +161,7 @@ function TourModal(props: {
           onPresent={() => {}}
           onDismissConditions={setShowPOIModal}
           data={poi_details}
-          code={i18n.language}
+          i18n={props.i18n}
         />
       )}
 
@@ -173,7 +171,7 @@ function TourModal(props: {
           openCondition={showTourMapModal}
           onDismissConditions={setShowTourMapModal}
           data={{points_geom: props.data.properties.points_geom, polylineTour: polylineTour}}
-          code={i18n.language}
+          i18n={props.i18n}
         />
       )}
 
@@ -197,8 +195,8 @@ function TourModal(props: {
 
           {/* NOME TOUR */}
           <IonLabel slot="start" className="ion-padding-start">
-            {props.data.properties["name_" + props.code] !== null
-              ? props.data.properties["name_" + props.code]
+            {props.data.properties["name_" + lng] !== null
+              ? props.data.properties["name_" + lng]
               : props.data.properties["name_en"]}
           </IonLabel>
 
@@ -261,7 +259,7 @@ function TourModal(props: {
                 <IonItem
                   color="primary" //TITOLO MENU COLORATO
                 >
-                  <IonLabel>{t("description")}:</IonLabel>
+                  <IonLabel>{props.i18n.t("description")}:</IonLabel>
                   <IonButton
                     slot="end"
                     fill="clear"
@@ -278,7 +276,7 @@ function TourModal(props: {
                 <IonCardContent>
                   {!getDescription() && (
                     <IonNote color="danger">
-                      {t("not_supported")}
+                      {props.i18n.t("not_supported")}
                       <br />
                       <br />
                     </IonNote>

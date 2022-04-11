@@ -30,6 +30,7 @@ import toolbarIcon from "../assets/images/logo.png";
 import PopoverList from "./PopoverList";
 import { getTourDetailsFromWebServer } from "./Functions";
 import TourModal from "./TourModal";
+import { i18n } from "i18next";
 
 var tour_details: any;
 
@@ -37,16 +38,15 @@ function TourListModal(props: {
   openCondition: any;
   onDismissConditions: React.Dispatch<React.SetStateAction<boolean>>;
   data: any;
-  code: any;
+  i18n: i18n;
 }) {
   const [showTourModal, setShowTourModal] = useState<boolean>(false); // Mostra o nascondi il modale dell'itinerario
-  const { t, i18n } = useTranslation();
   const [present, dismiss] = useIonPopover(PopoverList, {
     onHide: () => dismiss(),
   });
 
   function getPOINameFallback(tour: any): string {
-    const name = tour.properties["name_" + props.code];
+    const name = tour.properties["name_" + props.i18n.language];
     return name ? name : tour.properties["name_en"];
   }
 
@@ -93,7 +93,7 @@ function TourListModal(props: {
           openCondition={showTourModal}
           onDismissConditions={setShowTourModal}
           data={tour_details}
-          code={i18n.language}
+          i18n={props.i18n}
         />
       )}
 
@@ -143,7 +143,7 @@ function TourListModal(props: {
           <IonRow>
             <IonCol>
               <IonTitle>
-                <h1>{t("tours")}</h1>
+                <h1>{props.i18n.t("tours")}</h1>
               </IonTitle>
             </IonCol>
           </IonRow>
@@ -155,7 +155,7 @@ function TourListModal(props: {
                 <IonItem
                   color="primary" //TITOLO MENU COLORATO
                 >
-                  <IonLabel>{t("a_tempo")}</IonLabel>
+                  <IonLabel>{props.i18n.t("a_tempo")}</IonLabel>
                 </IonItem>
 
                 <IonCardContent className="ion-no-padding">
@@ -172,7 +172,7 @@ function TourListModal(props: {
                 <IonItem
                   color="primary" //TITOLO MENU COLORATO
                 >
-                  <IonLabel>{t("storico")}</IonLabel>
+                  <IonLabel>{props.i18n.t("storico")}</IonLabel>
                 </IonItem>
 
                 <IonCardContent className="ion-no-padding">

@@ -48,6 +48,7 @@ import "@ionic/react/css/ionic-swiper.css";
 import PopoverList from "./PopoverList";
 import logoVerona from "../assets/images/logo_stemma.png";
 import TourModal from "./TourModal";
+import { i18n } from "i18next";
 
 var tour_details: any;
 
@@ -56,7 +57,7 @@ function POIModal(props: {
   onPresent: React.Dispatch<React.SetStateAction<boolean>>;
   onDismissConditions: React.Dispatch<React.SetStateAction<boolean>>;
   data: any;
-  code: string;
+  i18n: i18n;
 }) {
   const [openTimeView, setOpenTimeView] = useState<boolean>(false); // Mostra o nascondi il testo relativo agli orari del punto di interesse
   const [ticketsView, setTicketsView] = useState<boolean>(false); // Mostra o nascondi il testo relativo al prezzo dei biglietti del punto di interesse
@@ -64,7 +65,6 @@ function POIModal(props: {
   const [urlMedia, setUrlMedia] = useState<string>(); // Imposta la URL da dove caricare il video del POI se è presente
   const [textPlaying, setTextPlaying] = useState<boolean>(false); // Controlla se il TTS è in riproduzione o no
   const [showTourModal, setShowTourModal] = useState<boolean>(false); // Mostra o nascondi il modale dell'itinerario
-  const { t, i18n } = useTranslation();
   const n_tours = props.data.tours_id
     ? props.data.tours_id.split(",").length
     : 0;
@@ -181,7 +181,7 @@ function POIModal(props: {
   function speak() {
     setTextPlaying(true);
     let lngPlay = getDescription()
-      ? i18n.language + "-" + i18n.language.toUpperCase()
+      ? props.i18n.language + "-" + props.i18n.language.toUpperCase()
       : "en-US";
     if (lngPlay === "en-EN") lngPlay = "en-US";
     TextToSpeech.speak({
@@ -194,19 +194,20 @@ function POIModal(props: {
     TextToSpeech.stop();
     setTextPlaying(false);
   }
+  const code = props.i18n.language;
 
   /** Funzioni che restituiscono orari, biglietti e descrizione nel linguaggio scelto,
       servono anche a controllare se il contenuto è disponibile in quella lingua */
   const getOpenTime = () => {
-    if (props.code === "it") return props.data.open_time;
-    return props.data["open_time_" + props.code];
+    if (code === "it") return props.data.open_time;
+    return props.data["open_time_" + code];
   };
   const getTickets = () => {
-    if (props.code === "it") return props.data.tickets;
-    return props.data["tickets_" + props.code];
+    if (code === "it") return props.data.tickets;
+    return props.data["tickets_" + code];
   };
   function getDescription() {
-    return props.data["descr_" + props.code];
+    return props.data["descr_" + code];
   }
 
   /** Funzioni che restituiscono il contenuto da visualizzare nelle schede, nella propria lingua se presente oppure in inglese */
@@ -246,8 +247,8 @@ function POIModal(props: {
   /** Creazione della lista di itinerari cliccabili */
   function TourList() {
     const tours_id = props.data.tours_id.split(",");
-    const tours_name = props.data["tours_name_" + props.code]
-      ? props.data["tours_name_" + props.code].split(",")
+    const tours_name = props.data["tours_name_" + code]
+      ? props.data["tours_name_" + code].split(",")
       : props.data.tours_name_en.split(",");
     const listItems = tours_id.map((id: string, index: number) => (
       <IonItem
@@ -290,7 +291,7 @@ function POIModal(props: {
           openCondition={showTourModal}
           onDismissConditions={setShowTourModal}
           data={tour_details}
-          code={i18n.language}
+          i18n={props.i18n}
         />
       )}
 
@@ -314,8 +315,8 @@ function POIModal(props: {
 
           {/* NOME POI */}
           <IonLabel slot="start" className="ion-padding-start">
-            {props.data["name_" + props.code] !== null
-              ? props.data["name_" + props.code]
+            {props.data["name_" + code] !== null
+              ? props.data["name_" + code]
               : props.data["name_en"]}
           </IonLabel>
 
@@ -352,7 +353,7 @@ function POIModal(props: {
                   lines={openTimeView ? "inset" : "none"}
                   onClick={() => setOpenTimeView(!openTimeView)}
                 >
-                  <IonLabel>{t("open_time")}:</IonLabel>
+                  <IonLabel>{props.i18n.t("open_time")}:</IonLabel>
                   <IonIcon
                     slot="end"
                     icon={openTimeView ? removeCircle : addCircle}
@@ -364,7 +365,7 @@ function POIModal(props: {
                   <IonCardContent>
                     {!getOpenTime() && (
                       <IonNote color="danger">
-                        {t("not_supported")}
+                        {props.i18n.t("not_supported")}
                         <br />
                         <br />
                       </IonNote>
@@ -387,7 +388,7 @@ function POIModal(props: {
                   lines={ticketsView ? "inset" : "none"}
                   onClick={() => setTicketsView(!ticketsView)}
                 >
-                  <IonLabel>{t("tickets")}:</IonLabel>
+                  <IonLabel>{props.i18n.t("tickets")}:</IonLabel>
                   <IonIcon
                     slot="end"
                     icon={ticketsView ? removeCircle : addCircle}
@@ -399,7 +400,7 @@ function POIModal(props: {
                   <IonCardContent>
                     {!getTickets() && (
                       <IonNote color="danger">
-                        {t("not_supported")}
+                        {props.i18n.t("not_supported")}
                         <br />
                         <br />
                       </IonNote>
@@ -423,7 +424,7 @@ function POIModal(props: {
                     lines={toursView ? "inset" : "none"}
                     onClick={() => setToursView(!toursView)}
                   >
-                    <IonLabel>{t("tours")}:</IonLabel>
+                    <IonLabel>{props.i18n.t("tours")}:</IonLabel>
                     <IonIcon
                       slot="end"
                       icon={toursView ? removeCircle : addCircle}
@@ -516,7 +517,7 @@ function POIModal(props: {
                 <IonItem
                   color="primary" //TITOLO MENU COLORATO
                 >
-                  <IonLabel>{t("description")}:</IonLabel>
+                  <IonLabel>{props.i18n.t("description")}:</IonLabel>
                   <IonButton
                     slot="end"
                     fill="clear"
@@ -533,7 +534,7 @@ function POIModal(props: {
                 <IonCardContent>
                   {!getDescription() && (
                     <IonNote color="danger">
-                      {t("not_supported")}
+                      {props.i18n.t("not_supported")}
                       <br />
                       <br />
                     </IonNote>

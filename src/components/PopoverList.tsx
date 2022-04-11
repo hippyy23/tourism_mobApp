@@ -56,7 +56,11 @@ const PopoverList: React.FC<{
       </IonList>
 
       {showPrivacyAlert && (
-        <PrivacyAlert i18n={i18n} onDismiss={() => setShowPrivacyAlert(false)} backdropDismiss={true} />
+        <PrivacyAlert
+          i18n={i18n}
+          onDismiss={() => setShowPrivacyAlert(false)}
+          backdropDismiss={true}
+        />
       )}
 
       {chooseLanguage && (
@@ -65,10 +69,10 @@ const PopoverList: React.FC<{
 
       <IonAlert
         isOpen={showInfo}
-        header={i18n.t("info_title")}
+        header={t("info_title")}
         onDidDismiss={() => setShowInfo(false)}
-        buttons={[{ text: i18n.t("close"), role: "cancel", cssClass: "secondary" }]}
-        message={i18n.t("info_message")}
+        buttons={[{ text: t("close"), role: "cancel", cssClass: "secondary" }]}
+        message={t("info_message")}
       />
     </>
   );
