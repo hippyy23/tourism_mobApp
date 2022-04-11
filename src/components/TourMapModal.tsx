@@ -27,9 +27,9 @@ import monumentIcon from "../assets/images/art_monument.png"; // Icona monumento
 import { i18n } from "i18next";
 
 function TourModal(props: {
-  openCondition: any;
-  onDismissConditions: React.Dispatch<React.SetStateAction<boolean>>;
-  data: { polylineTour: any; points_geom: string };
+  openCondition: boolean;
+  onDismissConditions: (arg0: boolean) => void;
+  data: { polylineTour: [number, number][]; points_geom: string };
   i18n: i18n;
 }) {
   const [present, dismiss] = useIonPopover(PopoverList, {
@@ -43,10 +43,10 @@ function TourModal(props: {
         coordinate.substring(6, coordinate.length - 1).split(" ")
       );
     const listItems = tour_coordinates.map(
-      (coordinates: any, index: number) => (
+      (coordinates:string[], index: number) => (
         <Marker
           key={index}
-          position={[coordinates[1], coordinates[0]]}
+          position={[Number(coordinates[1]), Number(coordinates[0])]}
           icon={L.icon({
             iconUrl: monumentIcon,
             iconSize: [30, 30], // size of the icon

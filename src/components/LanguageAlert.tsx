@@ -1,4 +1,5 @@
 import {
+  AlertInput,
   IonAlert,
 } from "@ionic/react";
 import { Storage } from "@capacitor/storage";
@@ -6,12 +7,12 @@ import { i18n } from "i18next";
 import { LANGUAGES } from "../configVar";
 import { sendLanguage } from "./Functions";
 
-function LanguageAlert(props: { i18n: i18n; onDismiss: any }) {
+function LanguageAlert(props: { i18n: i18n; onDismiss: () => void }) {
   var languageChoice: string;
 
-  var inputs: any[] = [];
+  var inputs: AlertInput[] = [];
 
-  LANGUAGES.forEach((language) => {
+  LANGUAGES.forEach((language: string) => {
     inputs.push({
       name: language,
       type: "radio",

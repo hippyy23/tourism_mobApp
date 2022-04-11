@@ -4,7 +4,7 @@ import { i18n } from "i18next";
 
 function PrivacyAlert(props: {
   i18n: i18n;
-  onDismiss: any;
+  onDismiss: () => void;
   backdropDismiss: boolean;
 }) {
   //const [showPrivacyAlert, setShowPrivacyAlert] = useState<boolean>(false); // Indica se mostrare o meno l'alert della privacy

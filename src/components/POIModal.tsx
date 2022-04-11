@@ -48,9 +48,9 @@ import PopoverList from "./PopoverList";
 import logoVerona from "../assets/images/logo_stemma.png";
 import TourModal from "./TourModal";
 import { i18n } from "i18next";
-import { LanguageCode, POIDetails } from "../types/app_types";
+import { LanguageCode, POIDetails, TourDetails } from "../types/app_types";
 
-var tour_details: any;
+var tour_details: TourDetails;
 
 function POIModal(props: {
   openCondition: boolean;
@@ -284,7 +284,6 @@ function POIModal(props: {
           .catch(() => {
             console.log("Catch");
           });
-        console.log(props.data);
       }}
     >
       {showTourModal && (

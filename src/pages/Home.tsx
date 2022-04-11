@@ -31,9 +31,10 @@ import PopoverList from "../components/PopoverList";
 import { useTranslation } from "react-i18next";
 import TourListModal from "../components/TourListModal";
 import { getTourListFromWebServer } from "../components/Functions";
+import { Tour } from "../types/app_types";
 
 var isOpen = false;
-var tourListData: any = null;
+var tourListData: Tour[];
 
 const Home: React.FC = () => {
   const [churchersFilter, setChurchersFilter] = useState<boolean>(true); // Variabile che indica se mostrate sulla mappa le chiese
@@ -50,9 +51,9 @@ const Home: React.FC = () => {
   });
 
   function getTourList() {
-    if (tourListData === null) {
+    if (tourListData === undefined) {
       getTourListFromWebServer()
-        .then((json) => {
+        .then((json: {features : Tour[]}) => {
           tourListData = json.features;
           setShowTourListModal(true);
         })

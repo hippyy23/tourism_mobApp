@@ -39,13 +39,14 @@ import ReactHtmlParser from "react-html-parser";
 import POIModal from "./POIModal";
 import TourMapModal from "./TourMapModal";
 import { i18n } from "i18next";
+import { LanguageCode, POIDetails, TourDetails } from "../types/app_types";
 
-var poi_details: any;
+var poi_details: POIDetails;
 
 function TourModal(props: {
-  openCondition: any;
+  openCondition: boolean;
   onDismissConditions: React.Dispatch<React.SetStateAction<boolean>>;
-  data: any;
+  data: TourDetails;
   i18n: i18n;
 }) {
   const [textPlaying, setTextPlaying] = useState<boolean>(false); // Controlla se il TTS è in riproduzione o no
@@ -56,7 +57,7 @@ function TourModal(props: {
   const [showPOIModal, setShowPOIModal] = useState<boolean>(false); // Mostra la POIModal in cui sono presenti i dettagli di un punto di interesse
   const [showTourMapModal, setShowTourMapModal] = useState<boolean>(false); // Mostra la POIModal in cui sono presenti i dettagli di un punto di interesse
 
-  const lng = props.i18n.language;
+  const lng = props.i18n.language as LanguageCode;
 
   function speak() {
     setTextPlaying(true);
@@ -76,7 +77,7 @@ function TourModal(props: {
   }
 
   function getDescription() {
-    return props.data.properties["descr_" + lng];
+    return props.data.properties[`descr_${lng}`];
   }
 
   function getDescriptionFallback(): string {
@@ -91,7 +92,7 @@ function TourModal(props: {
 
   function getPOIDetail(id_tour: string) {
     getPOIDetailsFromWebServer(id_tour)
-      .then((json) => {
+      .then((json: {features: {properties: POIDetails}[]}) => {
         poi_details = json.features[0].properties;
         setShowPOIModal(true);
       })
@@ -100,16 +101,16 @@ function TourModal(props: {
       });
   }
 
-  const polylineTour = props.data.geometry.coordinates[0].map(
-    (coordinates: any[]) => [coordinates[1], coordinates[0]]
+  const polylineTour : [number, number][]= props.data.geometry.coordinates[0].map(
+    (coordinates: [number, number]) => [coordinates[1], coordinates[0]]
   ); // Coordinate del tour
  
 
-  /** Creazione della lista di itinerari cliccabili TODO*/
+  /** Creazione della lista di itinerari cliccabili */
   function PoiList() {
     const tours_id = props.data.properties.points_tour_id.split(",");
-    const tours_name = props.data.properties["points_tour_name_" + lng]
-      ? props.data.properties["points_tour_name_" + lng].split(",")
+    const tours_name = props.data.properties[`points_tour_name_${lng}`]
+      ? props.data.properties[`points_tour_name_${lng}`].split(",")
       : props.data.properties.points_tour_name_en.split(",");
     const listItems = tours_id.map((id: string, index: number) => (
       <IonItem
@@ -170,8 +171,8 @@ function TourModal(props: {
 
           {/* NOME TOUR */}
           <IonLabel slot="start" className="ion-padding-start">
-            {props.data.properties["name_" + lng] !== null
-              ? props.data.properties["name_" + lng]
+            {props.data.properties[`name_${lng}`] !== null
+              ? props.data.properties[`name_${lng}`]
               : props.data.properties["name_en"]}
           </IonLabel>
 

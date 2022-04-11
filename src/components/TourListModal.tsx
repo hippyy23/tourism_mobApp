@@ -29,29 +29,31 @@ import PopoverList from "./PopoverList";
 import { getTourDetailsFromWebServer } from "./Functions";
 import TourModal from "./TourModal";
 import { i18n } from "i18next";
+import { LanguageCode, Tour, TourDetails } from "../types/app_types";
 
-var tour_details: any;
+var tour_details: TourDetails;
 
 function TourListModal(props: {
-  openCondition: any;
-  onDismissConditions: React.Dispatch<React.SetStateAction<boolean>>;
-  data: any;
+  openCondition: boolean;
+  onDismissConditions: (arg0: boolean) => void;
+  data: Tour[];
   i18n: i18n;
 }) {
   const [showTourModal, setShowTourModal] = useState<boolean>(false); // Mostra o nascondi il modale dell'itinerario
   const [present, dismiss] = useIonPopover(PopoverList, {
     onHide: () => dismiss(),
   });
+  const lng = props.i18n.language as LanguageCode;
 
-  function getPOINameFallback(tour: any): string {
-    const name = tour.properties["name_" + props.i18n.language];
-    return name ? name : tour.properties["name_en"];
+  function getPOINameFallback(tour: Tour): string {
+    const name = tour.properties[`name_${lng}`];
+    return name ? name : tour.properties.name_en;
   }
 
   /** Richiedi al server i dettagli di un itinerario */
   function getTourDetail(id_tour: string) {
     getTourDetailsFromWebServer(id_tour)
-      .then((json) => {
+      .then((json : {features: TourDetails[]}) => {
         tour_details = json.features[0];
         setShowTourModal(true);
       })
@@ -61,12 +63,12 @@ function TourListModal(props: {
   }
 
   /** Creazione delle sezioni delle categorie dei poi*/
-  function TourList(pr: any) {
+  function TourList(pr: {type : string}) {
     const filteredTour = props.data.filter(
-      (tour: any) => tour.properties.type === pr.type
+      (tour: Tour) => tour.properties.type === pr.type
     );
     const n_tours = filteredTour.length;
-    const listItems = filteredTour.map((tour: any, index: number) => (
+    const listItems = filteredTour.map((tour: Tour, index: number) => (
       <IonItem
         button={true}
         key={tour.properties.id_tour}

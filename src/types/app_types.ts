@@ -63,3 +63,47 @@ export interface POI {
     coordinates: [number, number];
   };
 }
+
+export interface TourDetails {
+  geometry: {
+    coordinates: [number, number][][];
+  };
+
+  properties: {
+    classid: string;
+    image_url: string;
+
+    name_it: string;
+    name_en: string;
+    name_de: string;
+    name_fr: string;
+    name_es: string;
+
+    descr_it: string;
+    descr_en: string;
+    descr_de: string;
+    descr_fr: string;
+    descr_es: string;
+
+    points_tour_id: string;
+    points_tour_name_it: string;
+    points_tour_name_en: string;
+    points_tour_name_de: string;
+    points_tour_name_fr: string;
+    points_tour_name_es: string;
+    points_geom: string;
+  };
+}
+
+export interface Tour {
+  properties: {
+    id_tour: string;
+    type: string;
+
+    name_it: string;
+    name_en: string;
+    name_de: string;
+    name_fr: string;
+    name_es: string;
+  };
+}

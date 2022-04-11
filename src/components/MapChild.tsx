@@ -236,7 +236,7 @@ function MapChild(props: {
         POIDetailsData === undefined)
     ) {
       getPOIDetailsFromWebServer(id)
-        .then((json : any) => {
+        .then((json : {numberReturned: number; features: {properties: POIDetails}[]}) => {
           if (json.numberReturned === 1) {
             POIDetailsData = json.features[0].properties;
             if (isLoading) {
