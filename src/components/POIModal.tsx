@@ -34,7 +34,6 @@ import {
   volumeMute,
 } from "ionicons/icons";
 import ReactHtmlParser from "react-html-parser";
-import { useTranslation } from "react-i18next";
 import {
   getPOIMediaFromWebServer,
   getTourDetailsFromWebServer,
@@ -49,14 +48,15 @@ import PopoverList from "./PopoverList";
 import logoVerona from "../assets/images/logo_stemma.png";
 import TourModal from "./TourModal";
 import { i18n } from "i18next";
+import { LanguageCode, POIDetails } from "../types/app_types";
 
 var tour_details: any;
 
 function POIModal(props: {
   openCondition: boolean;
-  onPresent: React.Dispatch<React.SetStateAction<boolean>>;
-  onDismissConditions: React.Dispatch<React.SetStateAction<boolean>>;
-  data: any;
+  onPresent: (arg0: boolean) => void;
+  onDismissConditions: (arg0: boolean) => void;
+  data: POIDetails;
   i18n: i18n;
 }) {
   const [openTimeView, setOpenTimeView] = useState<boolean>(false); // Mostra o nascondi il testo relativo agli orari del punto di interesse
@@ -65,6 +65,7 @@ function POIModal(props: {
   const [urlMedia, setUrlMedia] = useState<string>(); // Imposta la URL da dove caricare il video del POI se è presente
   const [textPlaying, setTextPlaying] = useState<boolean>(false); // Controlla se il TTS è in riproduzione o no
   const [showTourModal, setShowTourModal] = useState<boolean>(false); // Mostra o nascondi il modale dell'itinerario
+
   const n_tours = props.data.tours_id
     ? props.data.tours_id.split(",").length
     : 0;
@@ -194,20 +195,20 @@ function POIModal(props: {
     TextToSpeech.stop();
     setTextPlaying(false);
   }
-  const code = props.i18n.language;
+  const code = props.i18n.language as LanguageCode;
 
   /** Funzioni che restituiscono orari, biglietti e descrizione nel linguaggio scelto,
       servono anche a controllare se il contenuto è disponibile in quella lingua */
   const getOpenTime = () => {
     if (code === "it") return props.data.open_time;
-    return props.data["open_time_" + code];
+    return props.data[`open_time_${code}`];
   };
   const getTickets = () => {
     if (code === "it") return props.data.tickets;
-    return props.data["tickets_" + code];
+    return props.data[`tickets_${code}`];
   };
   function getDescription() {
-    return props.data["descr_" + code];
+    return props.data[`descr_${code}`];
   }
 
   /** Funzioni che restituiscono il contenuto da visualizzare nelle schede, nella propria lingua se presente oppure in inglese */
@@ -247,8 +248,8 @@ function POIModal(props: {
   /** Creazione della lista di itinerari cliccabili */
   function TourList() {
     const tours_id = props.data.tours_id.split(",");
-    const tours_name = props.data["tours_name_" + code]
-      ? props.data["tours_name_" + code].split(",")
+    const tours_name = props.data[`tours_name_${code}`]
+      ? props.data[`tours_name_${code}`].split(",")
       : props.data.tours_name_en.split(",");
     const listItems = tours_id.map((id: string, index: number) => (
       <IonItem
@@ -315,8 +316,8 @@ function POIModal(props: {
 
           {/* NOME POI */}
           <IonLabel slot="start" className="ion-padding-start">
-            {props.data["name_" + code] !== null
-              ? props.data["name_" + code]
+            {props.data[`name_${code}`] !== null
+              ? props.data[`name_${code}`]
               : props.data["name_en"]}
           </IonLabel>
 

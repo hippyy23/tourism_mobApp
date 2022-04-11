@@ -8,12 +8,10 @@ import {
   IonImg,
   IonItem,
   IonModal,
-  IonThumbnail,
   IonToolbar,
   useIonPopover,
 } from "@ionic/react";
 import React from "react";
-import { useTranslation } from "react-i18next";
 import {
   chevronBack,
   arrowBack,
@@ -21,7 +19,6 @@ import {
   ellipsisVertical,
   locationOutline,
 } from "ionicons/icons";
-import logoVerona from "../assets/images/logo_stemma.png";
 import PopoverList from "./PopoverList";
 import { MapContainer, Marker, Polyline, TileLayer } from "react-leaflet";
 import L from "leaflet";

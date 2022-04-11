@@ -13,13 +13,11 @@ import {
   IonList,
   IonModal,
   IonRow,
-  IonThumbnail,
   IonTitle,
   IonToolbar,
   useIonPopover,
 } from "@ionic/react";
 import React, { useState } from "react";
-import { useTranslation } from "react-i18next";
 import {
   chevronBack,
   arrowBack,

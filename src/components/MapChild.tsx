@@ -1,16 +1,11 @@
 import {
-  IonLabel,
   useIonViewDidEnter,
   IonLoading,
   useIonToast,
-  IonButton,
 } from "@ionic/react";
 import { TileLayer, useMap, Marker, Popup } from "react-leaflet";
 import { useState } from "react";
 import L from "leaflet";
-import churchIcon from "../assets/images/art_church.png"; // Icona chiesa
-import monumentIcon from "../assets/images/art_monument.png"; // Icona monumento
-import museumIcon from "../assets/images/art_museum.png"; // Icona museo
 import locationIcon from "../assets/images/location-sharp.svg";
 import "../assets/leaflet/leaflet.css";
 import { ConnectionStatus, Network } from "@capacitor/network";
@@ -24,14 +19,14 @@ import {
   sendPosition,
 } from "../components/Functions";
 import POIModal from "./POIModal";
-import { useTranslation } from "react-i18next";
 import { LOCATION_BOUNDS, LANGUAGES } from "../configVar";
 import PrivacyAlert from "./PrivacyAlert";
-import { LanguageCode, POI } from "../types/app_types";
+import { POI, POIDetails } from "../types/app_types";
 import { i18n } from "i18next";
+import POIMarker from "./POIMarker";
 
-var data: POI[];
-var detailedData: any = undefined;
+var POIListData: POI[];
+var POIDetailsData: POIDetails;
 var isLoading: boolean = false;
 const onlineBounds = L.latLngBounds(
   [46.82405708134416, 10.194074757395123],
@@ -47,9 +42,9 @@ function MapChild(props: {
   monumentsFilter: boolean;
   museumsFilter: boolean;
   dataObtained: boolean;
-  setDataObtained: React.Dispatch<React.SetStateAction<boolean>>;
+  setDataObtained: (arg0: boolean) => void;
   centerPosition: boolean;
-  setCenterPosition: React.Dispatch<React.SetStateAction<boolean>>;
+  setCenterPosition: (arg0: boolean) => void;
   i18n: i18n;
 }) {
   const [downloadedData, setDownloadedData] = useState<boolean>(false); // True se la lista dei punti con le loro coordinate sono stati scaricati dal webserver
@@ -65,11 +60,11 @@ function MapChild(props: {
   const [showLocationMarker, setShowLocationMarker] = useState<boolean>(false); // Indica se è da mostrare il marker della posizione dell'utente
   const [showPrivacyAlert, setShowPrivacyAlert] = useState<boolean>(false); // Indica se mostrare o meno l'alert della privacy
   const map = useMap();
-  const [presentToast, dismissToast] = useIonToast();
+  const [presentToast, ] = useIonToast();
   var trackingEnable = true;
 
   function setCenterData() {
-    map.panTo(findCenter(data));
+    map.panTo(findCenter(POIListData));
   }
   function setOfflineBounds() {
     map.setMaxBounds(offlineBounds);
@@ -150,7 +145,7 @@ function MapChild(props: {
       setConnectionStatus(netStatus);
       Storage.get({ key: "baseData" }).then((result) => {
         if (result.value !== null) {
-          data = JSON.parse(result.value);
+          POIListData = JSON.parse(result.value);
           props.setDataObtained(true);
           setCenterData();
           setOnlineBounds();
@@ -215,11 +210,11 @@ function MapChild(props: {
     if (downloadedData) return;
     getPOIListFromWebServer()
       .then((json: { features: POI[] }) => {
-        data = json.features;
+        POIListData = json.features;
 
         Storage.set({
           key: "baseData",
-          value: JSON.stringify(data),
+          value: JSON.stringify(POIListData),
         });
         setDownloadedData(true);
         props.setDataObtained(false);
@@ -237,14 +232,13 @@ function MapChild(props: {
   function getDetails(id: string) {
     if (
       connectionStatus.connected &&
-      ((detailedData !== undefined && detailedData.classid != id) ||
-        detailedData === undefined)
+      ((POIDetailsData !== undefined && POIDetailsData.classid !== id) ||
+        POIDetailsData === undefined)
     ) {
-      detailedData = undefined;
       getPOIDetailsFromWebServer(id)
-        .then((json) => {
+        .then((json : any) => {
           if (json.numberReturned === 1) {
-            detailedData = json.features[0].properties;
+            POIDetailsData = json.features[0].properties;
             if (isLoading) {
               setShowModal(true);
             }
@@ -259,7 +253,7 @@ function MapChild(props: {
 
   function openModal(id: string) {
     if (connectionStatus.connected) {
-      if (detailedData !== undefined && detailedData.classid == id) {
+      if (POIDetailsData !== undefined && POIDetailsData.classid === id) {
         setShowModal(true);
         isLoading = false;
       } else {
@@ -272,79 +266,6 @@ function MapChild(props: {
         duration: 5000,
       });
     }
-  }
-
-  function POIMarker() {
-    data = data.filter((element: POI) =>
-      [
-        props.i18n.t("cat_churches"),
-        props.i18n.t("cat_monuments"),
-        props.i18n.t("cat_museums"),
-      ].includes(element.properties.category_it)
-    );
-    const icon = (category: string) => {
-      if (category === props.i18n.t("cat_churches", { lng: "it" })) {
-        return churchIcon;
-      } else if (category === props.i18n.t("cat_monuments", { lng: "it" })) {
-        return monumentIcon;
-      } /*if (category === t("cat_museums", {"lng": "it"}))*/ else {
-        return museumIcon;
-      }
-    };
-    const filter = (category: string) => {
-      if (category === props.i18n.t("cat_churches", { lng: "it" })) {
-        return props.churchersFilter;
-      } else if (category === props.i18n.t("cat_monuments", { lng: "it" })) {
-        return props.monumentsFilter;
-      } /*if (category === t("cat_museums", {"lng": "it"}))*/ else {
-        return props.museumsFilter;
-      }
-    };
-    const lang_code: LanguageCode = props.i18n
-      .language as unknown as LanguageCode;
-    const listMarkers = data.map((element: POI, index: number) => (
-      <div key={element.properties.id_art}>
-        {filter(element.properties.category_it) && (
-          <Marker
-            position={[
-              element.geometry.coordinates[1],
-              element.geometry.coordinates[0],
-            ]}
-            icon={L.icon({
-              iconUrl: icon(element.properties.category_it),
-              iconSize: [30, 30], // size of the icon
-            })}
-          >
-            <Popup
-              autoClose={false}
-              onOpen={() => {
-                getDetails(element.properties.id_art);
-              }}
-              minWidth={125}
-              keepInView
-            >
-              <div style={{ textAlign: "center" }}>
-                <IonLabel style={{ fontSize: "14px" }}>
-                  {element.properties[`name_${lang_code}`] !== null
-                    ? element.properties[`name_${lang_code}`]
-                    : element.properties.name_en}
-                </IonLabel>
-                <br />
-                <IonButton
-                  shape="round"
-                  fill="outline"
-                  size="small"
-                  onClick={() => openModal(element.properties.id_art)}
-                >
-                  {props.i18n.t("details_button")}
-                </IonButton>
-              </div>
-            </Popup>
-          </Marker>
-        )}
-      </div>
-    ));
-    return <>{listMarkers}</>;
   }
 
   return (
@@ -386,7 +307,7 @@ function MapChild(props: {
           openCondition={showModal}
           onPresent={setShowLoading}
           onDismissConditions={setShowModal}
-          data={detailedData}
+          data={POIDetailsData}
           i18n={props.i18n}
         />
       )}
@@ -405,7 +326,17 @@ function MapChild(props: {
       )}
 
       {/* Creazione dinamica dei marker dei POI */}
-      {props.dataObtained && <POIMarker />}
+      {props.dataObtained && (
+        <POIMarker
+          POIList={POIListData}
+          i18n={props.i18n}
+          churchersFilter={props.churchersFilter}
+          monumentsFilter={props.monumentsFilter}
+          museumsFilter={props.museumsFilter}
+          getDetails={getDetails}
+          openModal={openModal}
+        />
+      )}
     </>
   );
 }

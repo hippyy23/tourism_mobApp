@@ -21,7 +21,6 @@ import {
   useIonPopover,
 } from "@ionic/react";
 import React, { useState } from "react";
-import { useTranslation } from "react-i18next";
 import {
   chevronBack,
   arrowBack,
@@ -35,14 +34,9 @@ import {
 import logoVerona from "../assets/images/logo_stemma.png";
 import PopoverList from "./PopoverList";
 import { TextToSpeech } from "@capacitor-community/text-to-speech";
-import {
-  Marker
-} from "react-leaflet";
 import { getPOIDetailsFromWebServer } from "./Functions";
 import ReactHtmlParser from "react-html-parser";
 import POIModal from "./POIModal";
-import L from "leaflet";
-import monumentIcon from "../assets/images/art_monument.png"; // Icona monumento
 import TourMapModal from "./TourMapModal";
 import { i18n } from "i18next";
 
@@ -109,26 +103,7 @@ function TourModal(props: {
   const polylineTour = props.data.geometry.coordinates[0].map(
     (coordinates: any[]) => [coordinates[1], coordinates[0]]
   ); // Coordinate del tour
-
-  function PoiMarker() {
-    const tour_coordinates = props.data.properties.points_geom
-      .split(",")
-      .map((coordinate: string) =>
-        coordinate.substring(6, coordinate.length - 1).split(" ")
-      );
-    const listItems = tour_coordinates.map(
-      (coordinates: any, index: number) => (
-        <Marker key={index} position={[coordinates[1], coordinates[0]]} 
-        icon={L.icon({
-          iconUrl: monumentIcon,
-          iconSize: [30, 30], // size of the icon
-        })}/>
-      )
-    );
-    return <>{listItems}</>;
-  }
-
-  
+ 
 
   /** Creazione della lista di itinerari cliccabili TODO*/
   function PoiList() {

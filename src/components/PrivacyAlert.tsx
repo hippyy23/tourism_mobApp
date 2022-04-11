@@ -1,8 +1,6 @@
 import { IonAlert } from "@ionic/react";
 import { Storage } from "@capacitor/storage";
 import { i18n } from "i18next";
-import { useTranslation } from "react-i18next";
-import { useState } from "react";
 
 function PrivacyAlert(props: {
   i18n: i18n;
