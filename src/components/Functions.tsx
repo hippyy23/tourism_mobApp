@@ -2,9 +2,10 @@ import { Device, DeviceId } from "@capacitor/device";
 import { Position } from "@capacitor/geolocation";
 import L from "leaflet";
 import { LOG_SERVER_DOMAIN, SERVER_DOMAIN } from "../configVar";
+import { POI } from "../types/app_types";
 
 // Trova il centro rispetto a tutti i punti di interesse
-export function findCenter(data: any) {
+export function findCenter(data: POI[]) {
   let x;
   let y;
   let z;
@@ -13,18 +14,16 @@ export function findCenter(data: any) {
   let sumz = 0;
   let latitude;
   let longitude;
-  data.forEach((element: any) => {
-    element.elements.forEach((value: any) => {
-      longitude = (value.coordinates[0] * Math.PI) / 180;
-      latitude = (value.coordinates[1] * Math.PI) / 180;
-      x = Math.cos(latitude) * Math.cos(longitude);
-      y = Math.cos(latitude) * Math.sin(longitude);
-      z = Math.sin(latitude);
+  data.forEach((element: POI) => {
+    longitude = (element.geometry.coordinates[0] * Math.PI) / 180;
+    latitude = (element.geometry.coordinates[1] * Math.PI) / 180;
+    x = Math.cos(latitude) * Math.cos(longitude);
+    y = Math.cos(latitude) * Math.sin(longitude);
+    z = Math.sin(latitude);
 
-      sumx += x;
-      sumy += y;
-      sumz += z;
-    });
+    sumx += x;
+    sumy += y;
+    sumz += z;
   });
 
   sumx /= data.length;

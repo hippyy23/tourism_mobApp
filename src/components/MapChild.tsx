@@ -27,6 +27,7 @@ import POIModal from "./POIModal";
 import { useTranslation } from "react-i18next";
 import { LOCATION_BOUNDS, LANGUAGES } from "../configVar";
 import PrivacyAlert from "./PrivacyAlert";
+import { LanguageCode, POI } from "../types/app_types";
 
 const baseData = [
   {
@@ -55,7 +56,7 @@ const baseData = [
   },
 ];
 
-var data: any = baseData;
+var data: POI[];
 var detailedData: any = undefined;
 var isLoading: boolean = false;
 const onlineBounds = L.latLngBounds(
@@ -136,7 +137,9 @@ function MapChild(props: {
 
   function updateUserPosition(pos: Position | null) {
     if (pos) {
-      if(trackingEnable){Device.getId().then((id) => sendPosition(id, pos));}
+      if (trackingEnable) {
+        Device.getId().then((id) => sendPosition(id, pos));
+      }
       setPosition(pos);
       let posll = L.latLng(pos.coords.latitude, pos.coords.longitude);
       if (!locationBounds.contains(posll)) {
@@ -209,7 +212,7 @@ function MapChild(props: {
     Storage.get({ key: "tracking" }).then((result) => {
       if (result.value !== null) {
         // Impostare di non tracciare l'utente
-        trackingEnable = result.value==='y';
+        trackingEnable = result.value === "y";
       } else {
         // L'utente deve ancora esprimere la sua preferenza
         setShowPrivacyAlert(true);
@@ -237,26 +240,9 @@ function MapChild(props: {
   function getList() {
     if (downloadedData) return;
     getPOIListFromWebServer()
-      .then((json: { features: [] }) => {
-        let result = json.features;
-        data = baseData;
-        result.forEach((element: any) => {
-          let index = data.findIndex(
-            (value: { category_it: string }) =>
-              value.category_it === element.properties.category_it
-          );
-          if (index !== -1) {
-            data[index].elements.push({
-              name_it: element.properties.name_it,
-              name_en: element.properties.name_en,
-              name_de: element.properties.name_de,
-              name_fr: element.properties.name_fr,
-              name_es: element.properties.name_es,
-              coordinates: element.geometry.coordinates,
-              id: element.properties.id_art,
-            });
-          }
-        });
+      .then((json: { features: POI[] }) => {
+        data = json.features;
+        
         Storage.set({
           key: "baseData",
           value: JSON.stringify(data),
@@ -277,7 +263,8 @@ function MapChild(props: {
   function getDetails(id: string) {
     if (
       connectionStatus.connected &&
-      ((detailedData !== undefined && detailedData.classid != id) || detailedData===undefined)
+      ((detailedData !== undefined && detailedData.classid != id) ||
+        detailedData === undefined)
     ) {
       detailedData = undefined;
       getPOIDetailsFromWebServer(id)
@@ -297,7 +284,7 @@ function MapChild(props: {
   }
 
   function openModal(id: string) {
-    if(connectionStatus.connected){
+    if (connectionStatus.connected) {
       if (detailedData !== undefined && detailedData.classid == id) {
         setShowModal(true);
         isLoading = false;
@@ -311,6 +298,65 @@ function MapChild(props: {
         duration: 5000,
       });
     }
+  }
+
+  function POIMarker() {
+    const icon = (category: string) => {
+      if (category === t("cat_churches", {"lng": "it"})) {
+        return churchIcon;
+      } else if (category === t("cat_monuments", {"lng": "it"})) {
+        return monumentIcon;
+      } else /*if (category === t("cat_museums", {"lng": "it"}))*/ {
+        return museumIcon;
+      }
+    };
+    const filter = (category: string) => {
+      if (category === t("cat_churches", {"lng": "it"})) {
+        return props.churchersFilter;
+      } else if (category === t("cat_monuments", {"lng": "it"})) {
+        return props.monumentsFilter;
+      } else /*if (category === t("cat_museums", {"lng": "it"}))*/ {
+        return props.museumsFilter;
+      }
+    };
+    const lang_code : LanguageCode = i18n.language as unknown as LanguageCode;
+    const listMarkers = data.map((element: POI, index: number) => (
+      <>{filter(element.properties.category_it) && <Marker
+        key={index}
+        position={[element.geometry.coordinates[1], element.geometry.coordinates[0]]}
+        icon={L.icon({
+          iconUrl: icon(element.properties.category_it),
+          iconSize: [30, 30], // size of the icon
+        })}
+      >
+        <Popup
+          autoClose={false}
+          onOpen={() => {
+            getDetails(element.properties.id_art);
+          }}
+          minWidth={125}
+          keepInView
+        >
+          <div style={{ textAlign: "center" }}>
+            <IonLabel style={{ fontSize: "14px" }}>
+              {element.properties[`name_${lang_code}`] !== null
+                ? element.properties[`name_${lang_code}`]
+                : element.properties.name_en}
+            </IonLabel>
+            <br />
+            <IonButton
+              shape="round"
+              fill="outline"
+              size="small"
+              onClick={() => openModal(element.properties.id_art)}
+            >
+              {t("details_button")}
+            </IonButton>
+          </div>
+        </Popup>
+      </Marker>}</>
+    ));
+    return <>{listMarkers}</>;
   }
 
   return (
@@ -370,121 +416,9 @@ function MapChild(props: {
         </Marker>
       )}
 
-      {/* Creazione dinamica dei marker delle chiese */}
-      {props.dataObtained &&
-        props.churchersFilter &&
-        data[0].elements.map((element: any) => (
-          <Marker
-            key={element.id}
-            position={[element.coordinates[1], element.coordinates[0]]}
-            icon={L.icon({
-              iconUrl: churchIcon,
-              iconSize: [30, 30], // size of the icon
-            })}
-          >
-            <Popup
-              autoClose={false}
-              onOpen={() => {
-                getDetails(element.id);
-              }}
-              minWidth={125}
-              keepInView
-            >
-              <div style={{ textAlign: "center" }}>
-                <IonLabel style={{ fontSize: "14px" }}>
-                  {element["name_" + i18n.language] !== null
-                    ? element["name_" + i18n.language]
-                    : element["name_en"]}
-                </IonLabel>
-                <br />
-                <IonButton
-                  shape="round"
-                  fill="outline"
-                  size="small"
-                  onClick={() => openModal(element.id)}
-                >
-                  {t("details_button")}
-                </IonButton>
-              </div>
-            </Popup>
-          </Marker>
-        ))}
-      {/* Creazione dinamica dei marker dei monumenti */}
-      {props.dataObtained &&
-        props.monumentsFilter &&
-        data[1].elements.map((element: any) => (
-          <Marker
-            key={element.id}
-            position={[element.coordinates[1], element.coordinates[0]]}
-            icon={L.icon({
-              iconUrl: monumentIcon,
-              iconSize: [30, 30], // size of the icon
-            })}
-          >
-            <Popup
-              onOpen={() => {
-                getDetails(element.id);
-              }}
-              minWidth={125}
-              keepInView
-            >
-              <div style={{ textAlign: "center" }}>
-                <IonLabel style={{ fontSize: "14px" }}>
-                  {element["name_" + i18n.language] !== null
-                    ? element["name_" + i18n.language]
-                    : element["name_en"]}
-                </IonLabel>
-                <br />
-                <IonButton
-                  shape="round"
-                  fill="outline"
-                  size="small"
-                  onClick={() => openModal(element.id)}
-                >
-                  {t("details_button")}
-                </IonButton>
-              </div>
-            </Popup>
-          </Marker>
-        ))}
-      {/* Creazione dinamica dei marker dei musei */}
-      {props.dataObtained &&
-        props.museumsFilter &&
-        data[2].elements.map((element: any) => (
-          <Marker
-            key={element.id}
-            position={[element.coordinates[1], element.coordinates[0]]}
-            icon={L.icon({
-              iconUrl: museumIcon,
-              iconSize: [30, 30], // size of the icon
-            })}
-          >
-            <Popup
-              onOpen={() => {
-                getDetails(element.id);
-              }}
-              minWidth={125}
-              keepInView
-            >
-              <div style={{ textAlign: "center" }}>
-                <IonLabel style={{ fontSize: "14px" }}>
-                  {element["name_" + i18n.language] !== null
-                    ? element["name_" + i18n.language]
-                    : element["name_en"]}
-                </IonLabel>
-                <br />
-                <IonButton
-                  shape="round"
-                  fill="outline"
-                  size="small"
-                  onClick={() => openModal(element.id)}
-                >
-                  {t("details_button")}
-                </IonButton>
-              </div>
-            </Popup>
-          </Marker>
-        ))}
+      {/* Creazione dinamica dei marker dei POI */}
+      {props.dataObtained && <POIMarker />}
+      
     </>
   );
 }
