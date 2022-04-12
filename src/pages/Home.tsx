@@ -53,7 +53,7 @@ const Home: React.FC = () => {
   function getTourList() {
     if (tourListData === undefined) {
       getTourListFromWebServer()
-        .then((json: {features : Tour[]}) => {
+        .then((json: { features: Tour[] }) => {
           tourListData = json.features;
           setShowTourListModal(true);
         })
@@ -143,7 +143,7 @@ const Home: React.FC = () => {
           }}
         >
           <IonFabButton color="light">
-            <IonIcon icon={footsteps} color="primary"/>
+            <IonIcon icon={footsteps} color="primary" />
           </IonFabButton>
         </IonFab>
 
@@ -157,7 +157,7 @@ const Home: React.FC = () => {
           }}
         >
           <IonFabButton color="light">
-            <IonIcon icon={locationOutline} color="primary"/>
+            <IonIcon icon={locationOutline} color="primary" />
           </IonFabButton>
         </IonFab>
 

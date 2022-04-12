@@ -1,7 +1,4 @@
-import {
-  AlertInput,
-  IonAlert,
-} from "@ionic/react";
+import { AlertInput, IonAlert } from "@ionic/react";
 import { Storage } from "@capacitor/storage";
 import { i18n } from "i18next";
 import { LANGUAGES } from "../configVar";
@@ -16,7 +13,7 @@ function LanguageAlert(props: { i18n: i18n; onDismiss: () => void }) {
     inputs.push({
       name: language,
       type: "radio",
-      label: props.i18n.t("lang", {lng: language}),
+      label: props.i18n.t("lang", { lng: language }),
       checked: props.i18n.language === language,
       handler: () => {
         languageChoice = language;

@@ -1,8 +1,4 @@
-import {
-  useIonViewDidEnter,
-  IonLoading,
-  useIonToast,
-} from "@ionic/react";
+import { useIonViewDidEnter, IonLoading, useIonToast } from "@ionic/react";
 import { TileLayer, useMap, Marker, Popup } from "react-leaflet";
 import { useState } from "react";
 import L from "leaflet";
@@ -60,7 +56,7 @@ function MapChild(props: {
   const [showLocationMarker, setShowLocationMarker] = useState<boolean>(false); // Indica se è da mostrare il marker della posizione dell'utente
   const [showPrivacyAlert, setShowPrivacyAlert] = useState<boolean>(false); // Indica se mostrare o meno l'alert della privacy
   const map = useMap();
-  const [presentToast, ] = useIonToast();
+  const [presentToast] = useIonToast();
   var trackingEnable = true;
 
   function setCenterData() {
@@ -73,6 +69,11 @@ function MapChild(props: {
     map.setMaxBounds(onlineBounds);
   }
 
+  /**
+   * Se lutente ha già dato il permesso di ottenere la posizione, viene richiamata questa funzione quando viene
+   * premuto il pulsante di posizione. Viene centrata la mappa sulla posizione dell'utente e si tiene
+   * aggiornato il marker della posizione dell'utente.
+   */
   function setCenterPosition() {
     if (permissionGranted) {
       Geolocation.getCurrentPosition({
@@ -104,6 +105,11 @@ function MapChild(props: {
     props.setCenterPosition(false);
   }
 
+  /**
+   * Funzione che permette di aggiornare la posizione dell'utente, se l'utente è fuori dal bound della città di Verona
+   * non viene più aggiornata la posizione dell'utente
+   * @param pos Posizione dell'utente
+   */
   function updateUserPosition(pos: Position | null) {
     if (pos) {
       if (trackingEnable) {
@@ -118,6 +124,10 @@ function MapChild(props: {
     }
   }
 
+  /**
+   * Funzione che controlla se l'utente ha dato il permesso di ottenere la posizione,
+   * se non ha dato alcuna preferenza viene mostrato un alert per chiedere il permesso
+   */
   function checkLocationPermission() {
     Geolocation.requestPermissions()
       .then((permission) => {
@@ -136,11 +146,20 @@ function MapChild(props: {
       .catch(() => console.log("Browser not implemented"));
   }
 
+  /**
+   * Funzione invocata quando viene creato il componente
+   */
   useIonViewDidEnter(() => {
+    // Ridisegna la mappa, senza questa funzione non viene mostrata correttamente la mappa
     map.invalidateSize();
 
     checkLocationPermission();
 
+    /**
+     * Controlla se l'utente è online o offline
+     * Nel primo caso, viene caricata la lista dei punti di interesse e salvata in locale
+     * Nel secondo caso, viene caricata la lista dei punti di interesse salvata in locale se possibile
+     */
     Network.getStatus().then((netStatus) => {
       setConnectionStatus(netStatus);
       Storage.get({ key: "baseData" }).then((result) => {
@@ -164,7 +183,7 @@ function MapChild(props: {
       }
     });
 
-    // Recupera la lingua del dispositivo
+    // Recupera la lingua scelta precedentemente e salvata, oppure quella del dispositivo, oppure quella di default
     Storage.get({ key: "languageCode" }).then((result) => {
       if (result.value !== null) {
         props.i18n.changeLanguage(result.value);
@@ -178,6 +197,7 @@ function MapChild(props: {
       }
     });
 
+    // Tracciamento dell'utente
     Storage.get({ key: "tracking" }).then((result) => {
       if (result.value !== null) {
         // Impostare di non tracciare l'utente
@@ -189,7 +209,11 @@ function MapChild(props: {
     });
   });
 
-  // Intercetta il cambiamento dello stato della connessione
+  /**
+   * Intercetta il cambiamento dello stato della connessione, se l'utente torna online,
+   * si ricarica la lista dei punti di interesse e cambia i limiti della mappa, altrimenti
+   * si mostra un toast che indica che l'utente non è connesso a internet
+   */
   Network.addListener("networkStatusChange", (status) => {
     console.log("Network status changed", status);
     if (status.connected) {
@@ -206,6 +230,9 @@ function MapChild(props: {
     setConnectionStatus(status);
   });
 
+  /**
+   * Scarica la lista dei POI dal server e li salva in locale
+   */
   function getList() {
     if (downloadedData) return;
     getPOIListFromWebServer()
@@ -229,6 +256,10 @@ function MapChild(props: {
       });
   }
 
+  /**
+   * Scarica i dettagli di un POI dal server
+   * @param id Identificatore del punto di interesse
+   */
   function getDetails(id: string) {
     if (
       connectionStatus.connected &&
@@ -236,14 +267,19 @@ function MapChild(props: {
         POIDetailsData === undefined)
     ) {
       getPOIDetailsFromWebServer(id)
-        .then((json : {numberReturned: number; features: {properties: POIDetails}[]}) => {
-          if (json.numberReturned === 1) {
-            POIDetailsData = json.features[0].properties;
-            if (isLoading) {
-              setShowModal(true);
+        .then(
+          (json: {
+            numberReturned: number;
+            features: { properties: POIDetails }[];
+          }) => {
+            if (json.numberReturned === 1) {
+              POIDetailsData = json.features[0].properties;
+              if (isLoading) {
+                setShowModal(true);
+              }
             }
           }
-        })
+        )
         .catch(() => {
           isLoading = false;
           setShowLoading(false);
@@ -251,6 +287,10 @@ function MapChild(props: {
     }
   }
 
+  /**
+   * Funzione che apre la modale di dettaglio del POI selezionato
+   * @param id Identificatore del punto di cui si vogliono i dettagli
+   */
   function openModal(id: string) {
     if (connectionStatus.connected) {
       if (POIDetailsData !== undefined && POIDetailsData.classid === id) {

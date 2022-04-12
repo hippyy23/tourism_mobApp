@@ -32,10 +32,10 @@ function PrivacyAlert(props: {
           {
             text: props.i18n.t("decline"),
             handler: () => {
-                Storage.set({
-                    key: "tracking",
-                    value: "n",
-                  });
+              Storage.set({
+                key: "tracking",
+                value: "n",
+              });
             },
           },
           /*

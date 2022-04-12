@@ -1,7 +1,4 @@
-import {
-  IonLabel,
-  IonButton,
-} from "@ionic/react";
+import { IonLabel, IonButton } from "@ionic/react";
 import { Marker, Popup } from "react-leaflet";
 import L from "leaflet";
 import { i18n } from "i18next";
@@ -20,6 +17,9 @@ function POIMarker(props: {
   getDetails: (id: string) => void;
   openModal: (id: string) => void;
 }) {
+  /**
+   * Vengono filtrati i POI e tolti quelli non appartenti alle tre categorie
+   */
   var data = props.POIList.filter((element: POI) =>
     [
       props.i18n.t("cat_churches", { lng: "it" }),
@@ -28,10 +28,20 @@ function POIMarker(props: {
     ].includes(element.properties.category_it)
   );
 
+  /**
+   * Se presente l'attr POIIds, vengono filtrati i POI e tolti quelli non appartenti all'array
+   */
   if (props.POIIds !== undefined) {
-    data = data.filter((element: POI) => props.POIIds!.includes(element.properties.id_art))
+    data = data.filter((element: POI) =>
+      props.POIIds!.includes(element.properties.id_art)
+    );
   }
 
+  /**
+   * Restituisce l'icona corretta in base alla categoria del POI
+   * @param category Categoria del POI
+   * @returns Icona
+   */
   const icon = (category: string) => {
     if (category === props.i18n.t("cat_churches", { lng: "it" })) {
       return churchIcon;
@@ -41,6 +51,12 @@ function POIMarker(props: {
       return museumIcon;
     }
   };
+
+  /**
+   * Restituisce la variabile del filtro in base alla categoria del POI
+   * @param category Categoria del POI
+   * @returns Filtro della categoria
+   */
   const filter = (category: string) => {
     if (category === props.i18n.t("cat_churches", { lng: "it" })) {
       return props.churchersFilter;
@@ -50,8 +66,12 @@ function POIMarker(props: {
       return props.museumsFilter;
     }
   };
-  const lang_code: LanguageCode = props.i18n
-    .language as unknown as LanguageCode;
+
+  const lang_code: LanguageCode = props.i18n.language as LanguageCode;
+
+  /**
+   * Crea il marker del POI con il relativo popup
+   */
   const listMarkers = data.map((element: POI, index: number) => (
     <div key={element.properties.id_art}>
       {filter(element.properties.category_it) && (

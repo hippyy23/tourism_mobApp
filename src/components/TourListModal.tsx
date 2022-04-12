@@ -53,7 +53,7 @@ function TourListModal(props: {
   /** Richiedi al server i dettagli di un itinerario */
   function getTourDetail(id_tour: string) {
     getTourDetailsFromWebServer(id_tour)
-      .then((json : {features: TourDetails[]}) => {
+      .then((json: { features: TourDetails[] }) => {
         tour_details = json.features[0];
         setShowTourModal(true);
       })
@@ -63,7 +63,7 @@ function TourListModal(props: {
   }
 
   /** Creazione delle sezioni delle categorie dei poi*/
-  function TourList(pr: {type : string}) {
+  function TourList(pr: { type: string }) {
     const filteredTour = props.data.filter(
       (tour: Tour) => tour.properties.type === pr.type
     );
@@ -138,7 +138,6 @@ function TourListModal(props: {
 
       <IonContent>
         <IonGrid fixed={true}>
-
           {/* TITOLO ITINERARI */}
           <IonRow>
             <IonCol>

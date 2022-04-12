@@ -59,18 +59,24 @@ function TourModal(props: {
 
   const lng = props.i18n.language as LanguageCode;
 
+  /**
+   * Funzione che manda in riproduzione vocale la descrizione dell'itinerario
+   */
   function speak() {
     setTextPlaying(true);
-    let lngPlay = getDescription()
-      ? lng + "-" + lng.toUpperCase()
-      : "en-US";
+    let lngPlay = getDescription() ? lng + "-" + lng.toUpperCase() : "en-US";
     if (lngPlay === "en-EN") lngPlay = "en-US";
     TextToSpeech.speak({
-      text: document.getElementById("description-text")!.innerText.replaceAll("\n", " "),
+      text: document
+        .getElementById("description-text")!
+        .innerText.replaceAll("\n", " "),
       lang: lngPlay,
     }).then(() => setTextPlaying(false));
   }
 
+  /**
+   * Ferma la riproduzione vocale
+   */
   function stop() {
     TextToSpeech.stop();
     setTextPlaying(false);
@@ -90,8 +96,12 @@ function TourModal(props: {
     return "No description for this POI.";
   };
 
-  function getPOIDetail(id_tour: string) {
-    getPOIDetailsFromWebServer(id_tour)
+  /**
+   * Scarica i dettagli di un punto di interesse e apre la modale per visualizzarli
+   * @param id_poi Identificativo del poi
+   */
+  function getPOIDetail(id_poi: string) {
+    getPOIDetailsFromWebServer(id_poi)
       .then((json: { features: { properties: POIDetails }[] }) => {
         poi_details = json.features[0].properties;
         setShowPOIModal(true);
@@ -101,10 +111,12 @@ function TourModal(props: {
       });
   }
 
-  const polylineTour: [number, number][] = props.data.geometry.coordinates[0].map(
-    (coordinates: [number, number]) => [coordinates[1], coordinates[0]]
-  ); // Coordinate del tour
-
+  /** Coordinate che disegnano l'interesse, vengono invertite di posizione rispetto a quelle ricevute */
+  const polylineTour: [number, number][] =
+    props.data.geometry.coordinates[0].map((coordinates: [number, number]) => [
+      coordinates[1],
+      coordinates[0],
+    ]);
 
   /** Creazione della lista di itinerari cliccabili */
   function PoiList() {
@@ -145,7 +157,10 @@ function TourModal(props: {
         <TourMapModal
           openCondition={showTourMapModal}
           onDismissConditions={setShowTourMapModal}
-          data={{ points_geom: props.data.properties.points_geom, polylineTour: polylineTour }}
+          data={{
+            points_geom: props.data.properties.points_geom,
+            polylineTour: polylineTour,
+          }}
           i18n={props.i18n}
         />
       )}
@@ -214,7 +229,7 @@ function TourModal(props: {
                   <IonIcon
                     slot="end"
                     icon={poiView ? removeCircle : addCircle}
-                  // color="primary" BOTTONE BIANCO CON TITOLO COLORATO
+                    // color="primary" BOTTONE BIANCO CON TITOLO COLORATO
                   />
                 </IonItem>
 
@@ -256,8 +271,14 @@ function TourModal(props: {
                       <br />
                     </IonNote>
                   )}
-                  <IonText color="dark" class="format-text" id="description-text">
-                    {ReactHtmlParser(removeDoubleSlashN(getDescriptionFallback()))}
+                  <IonText
+                    color="dark"
+                    class="format-text"
+                    id="description-text"
+                  >
+                    {ReactHtmlParser(
+                      removeDoubleSlashN(getDescriptionFallback())
+                    )}
                   </IonText>
                 </IonCardContent>
               </IonCard>
@@ -266,7 +287,12 @@ function TourModal(props: {
 
           <IonRow>
             <IonCol>
-              <IonButton style={{ width: "100%" }} onClick={() => setShowTourMapModal(true)}>Apri la mappa</IonButton>
+              <IonButton
+                style={{ width: "100%" }}
+                onClick={() => setShowTourMapModal(true)}
+              >
+                Apri la mappa
+              </IonButton>
             </IonCol>
           </IonRow>
         </IonGrid>

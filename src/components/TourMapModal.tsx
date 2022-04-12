@@ -42,7 +42,7 @@ function TourModal(props: {
         coordinate.substring(6, coordinate.length - 1).split(" ")
       );
     const listItems = tour_coordinates.map(
-      (coordinates:string[], index: number) => (
+      (coordinates: string[], index: number) => (
         <Marker
           key={index}
           position={[Number(coordinates[1]), Number(coordinates[0])]}
@@ -56,9 +56,24 @@ function TourModal(props: {
     return <>{listItems}</>;
   }
 
-  let max = props.data.polylineTour.reduce((max : [number, number], curr : [number, number]) => [max[0]>curr[0]?max[0]:curr[0], max[1]>curr[1]?max[1]:curr[1]], [-100,-100]);
-  let min = props.data.polylineTour.reduce((min : [number, number], curr : [number, number]) => [min[0]<curr[0]?min[0]:curr[0], min[1]<curr[1]?min[1]:curr[1]], [100,100]);
-  const tourCenter : [number, number] = [(max[0]+min[0])/2, (max[1]+min[1])/2];
+  let max = props.data.polylineTour.reduce(
+    (max: [number, number], curr: [number, number]) => [
+      max[0] > curr[0] ? max[0] : curr[0],
+      max[1] > curr[1] ? max[1] : curr[1],
+    ],
+    [-100, -100]
+  );
+  let min = props.data.polylineTour.reduce(
+    (min: [number, number], curr: [number, number]) => [
+      min[0] < curr[0] ? min[0] : curr[0],
+      min[1] < curr[1] ? min[1] : curr[1],
+    ],
+    [100, 100]
+  );
+  const tourCenter: [number, number] = [
+    (max[0] + min[0]) / 2,
+    (max[1] + min[1]) / 2,
+  ];
 
   return (
     <IonModal
@@ -110,10 +125,10 @@ function TourModal(props: {
           }}
         >
           <IonFabButton color="light">
-            <IonIcon icon={locationOutline} color="primary"/>
+            <IonIcon icon={locationOutline} color="primary" />
           </IonFabButton>
         </IonFab>
-        
+
         {/* SCHEDA MAPPA ITINERARIO */}
         <MapContainer
           center={tourCenter}

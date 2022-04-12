@@ -66,6 +66,9 @@ function POIModal(props: {
   const [textPlaying, setTextPlaying] = useState<boolean>(false); // Controlla se il TTS è in riproduzione o no
   const [showTourModal, setShowTourModal] = useState<boolean>(false); // Mostra o nascondi il modale dell'itinerario
 
+  /**
+   * Conta il numero di itinerari in cui il punto di interesse è presente
+   */
   const n_tours = props.data.tours_id
     ? props.data.tours_id.split(",").length
     : 0;
@@ -179,6 +182,9 @@ function POIModal(props: {
   //   );
   // }
 
+  /**
+   * Funzione che manda in riproduzione vocale la descrizione del punto di interesse
+   */
   function speak() {
     setTextPlaying(true);
     let lngPlay = getDescription()
@@ -191,14 +197,19 @@ function POIModal(props: {
     }).then(() => setTextPlaying(false));
   }
 
+  /**
+   * Ferma la riproduzione vocale
+   */
   function stop() {
     TextToSpeech.stop();
     setTextPlaying(false);
   }
   const code = props.i18n.language as LanguageCode;
 
-  /** Funzioni che restituiscono orari, biglietti e descrizione nel linguaggio scelto,
-      servono anche a controllare se il contenuto è disponibile in quella lingua */
+  /**
+   * Funzioni che restituiscono orari, biglietti e descrizione nel linguaggio scelto,
+   * servono anche a controllare se il contenuto è disponibile in quella lingua
+   */
   const getOpenTime = () => {
     if (code === "it") return props.data.open_time;
     return props.data[`open_time_${code}`];
@@ -211,7 +222,10 @@ function POIModal(props: {
     return props.data[`descr_${code}`];
   }
 
-  /** Funzioni che restituiscono il contenuto da visualizzare nelle schede, nella propria lingua se presente oppure in inglese */
+  /**
+   * Funzioni che restituiscono il contenuto da visualizzare nelle schede nella propria lingua,
+   * se presente oppure in inglese
+   */
   const getOpenTimeFallback = () => {
     let openTime = getOpenTime();
     return openTime ? openTime : props.data["open_time_en"];
@@ -230,13 +244,18 @@ function POIModal(props: {
     return "No description for this POI.";
   };
 
+  /** Menu opzioni */
   const [present, dismiss] = useIonPopover(PopoverList, {
     onHide: () => dismiss(),
   });
 
+  /**
+   * Scarica i dettagli di un itinerario e apre la modale per visualizzarli
+   * @param id_tour Identificativo del tour
+   */
   function getTourDetail(id_tour: string) {
     getTourDetailsFromWebServer(id_tour)
-      .then((json) => {
+      .then((json: { features: TourDetails[] }) => {
         tour_details = json.features[0];
         setShowTourModal(true);
       })
@@ -250,7 +269,7 @@ function POIModal(props: {
     var tours_id = props.data.tours_id.split(",");
     tours_id = tours_id.filter(function (item, pos) {
       return tours_id.indexOf(item) === pos;
-    })
+    });
     const tours_name = props.data[`tours_name_${code}`]
       ? props.data[`tours_name_${code}`].split(",")
       : props.data.tours_name_en.split(",");
@@ -278,12 +297,17 @@ function POIModal(props: {
       onWillPresent={() => {
         props.onPresent?.(false);
         getPOIMediaFromWebServer(props.data.classid)
-          .then((json) => {
-            if (json.numberReturned === 1) {
-              console.log(json.features[0].properties);
-              setUrlMedia(json.features[0].properties.path);
+          .then(
+            (json: {
+              numberReturned: number;
+              features: { properties: { path: string } }[];
+            }) => {
+              if (json.numberReturned === 1) {
+                console.log(json.features[0].properties);
+                setUrlMedia(json.features[0].properties.path);
+              }
             }
-          })
+          )
           .catch(() => {
             console.log("Catch");
           });
@@ -360,7 +384,7 @@ function POIModal(props: {
                   <IonIcon
                     slot="end"
                     icon={openTimeView ? removeCircle : addCircle}
-                  // color="primary" BOTTONE BIANCO CON TITOLO COLORATO
+                    // color="primary" BOTTONE BIANCO CON TITOLO COLORATO
                   />
                 </IonItem>
 
@@ -395,7 +419,7 @@ function POIModal(props: {
                   <IonIcon
                     slot="end"
                     icon={ticketsView ? removeCircle : addCircle}
-                  // color="primary" BOTTONE BIANCO CON TITOLO COLORATO
+                    // color="primary" BOTTONE BIANCO CON TITOLO COLORATO
                   />
                 </IonItem>
 
@@ -431,7 +455,7 @@ function POIModal(props: {
                     <IonIcon
                       slot="end"
                       icon={toursView ? removeCircle : addCircle}
-                    // color="primary" BOTTONE BIANCO CON TITOLO COLORATO
+                      // color="primary" BOTTONE BIANCO CON TITOLO COLORATO
                     />
                   </IonItem>
 
