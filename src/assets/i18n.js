@@ -3,7 +3,7 @@ import { initReactI18next } from "react-i18next";
 import { LANGUAGES } from "../configVar";
 
 i18n.use(initReactI18next).init({
-  debug: true,
+  //debug: true,
   lng: "en",
   supportedLngs: LANGUAGES.concat("dev"),
   resources: {

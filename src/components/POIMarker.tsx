@@ -21,9 +21,9 @@ function POIMarker(props: {
 }) {
   var data = props.POIList.filter((element: POI) =>
     [
-      props.i18n.t("cat_churches"),
-      props.i18n.t("cat_monuments"),
-      props.i18n.t("cat_museums"),
+      props.i18n.t("cat_churches", { lng: "it" }),
+      props.i18n.t("cat_monuments", { lng: "it" }),
+      props.i18n.t("cat_museums", { lng: "it" }),
     ].includes(element.properties.category_it)
   );
   const icon = (category: string) => {
