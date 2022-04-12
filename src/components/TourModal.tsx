@@ -92,7 +92,7 @@ function TourModal(props: {
 
   function getPOIDetail(id_tour: string) {
     getPOIDetailsFromWebServer(id_tour)
-      .then((json: {features: {properties: POIDetails}[]}) => {
+      .then((json: { features: { properties: POIDetails }[] }) => {
         poi_details = json.features[0].properties;
         setShowPOIModal(true);
       })
@@ -101,10 +101,10 @@ function TourModal(props: {
       });
   }
 
-  const polylineTour : [number, number][]= props.data.geometry.coordinates[0].map(
+  const polylineTour: [number, number][] = props.data.geometry.coordinates[0].map(
     (coordinates: [number, number]) => [coordinates[1], coordinates[0]]
   ); // Coordinate del tour
- 
+
 
   /** Creazione della lista di itinerari cliccabili */
   function PoiList() {
@@ -134,7 +134,6 @@ function TourModal(props: {
       {showPOIModal && (
         <POIModal
           openCondition={showPOIModal}
-          onPresent={() => {}}
           onDismissConditions={setShowPOIModal}
           data={poi_details}
           i18n={props.i18n}
@@ -146,7 +145,7 @@ function TourModal(props: {
         <TourMapModal
           openCondition={showTourMapModal}
           onDismissConditions={setShowTourMapModal}
-          data={{points_geom: props.data.properties.points_geom, polylineTour: polylineTour}}
+          data={{ points_geom: props.data.properties.points_geom, polylineTour: polylineTour }}
           i18n={props.i18n}
         />
       )}
@@ -215,7 +214,7 @@ function TourModal(props: {
                   <IonIcon
                     slot="end"
                     icon={poiView ? removeCircle : addCircle}
-                    // color="primary" BOTTONE BIANCO CON TITOLO COLORATO
+                  // color="primary" BOTTONE BIANCO CON TITOLO COLORATO
                   />
                 </IonItem>
 

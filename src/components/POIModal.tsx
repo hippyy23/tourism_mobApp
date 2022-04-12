@@ -54,7 +54,7 @@ var tour_details: TourDetails;
 
 function POIModal(props: {
   openCondition: boolean;
-  onPresent: (arg0: boolean) => void;
+  onPresent?: (arg0: boolean) => void;
   onDismissConditions: (arg0: boolean) => void;
   data: POIDetails;
   i18n: i18n;
@@ -247,7 +247,10 @@ function POIModal(props: {
 
   /** Creazione della lista di itinerari cliccabili */
   function TourList() {
-    const tours_id = props.data.tours_id.split(",");
+    var tours_id = props.data.tours_id.split(",");
+    tours_id = tours_id.filter(function (item, pos) {
+      return tours_id.indexOf(item) === pos;
+    })
     const tours_name = props.data[`tours_name_${code}`]
       ? props.data[`tours_name_${code}`].split(",")
       : props.data.tours_name_en.split(",");
@@ -273,7 +276,7 @@ function POIModal(props: {
         props.onDismissConditions(false);
       }}
       onWillPresent={() => {
-        props.onPresent(false);
+        props.onPresent?.(false);
         getPOIMediaFromWebServer(props.data.classid)
           .then((json) => {
             if (json.numberReturned === 1) {
@@ -357,7 +360,7 @@ function POIModal(props: {
                   <IonIcon
                     slot="end"
                     icon={openTimeView ? removeCircle : addCircle}
-                    // color="primary" BOTTONE BIANCO CON TITOLO COLORATO
+                  // color="primary" BOTTONE BIANCO CON TITOLO COLORATO
                   />
                 </IonItem>
 
@@ -392,7 +395,7 @@ function POIModal(props: {
                   <IonIcon
                     slot="end"
                     icon={ticketsView ? removeCircle : addCircle}
-                    // color="primary" BOTTONE BIANCO CON TITOLO COLORATO
+                  // color="primary" BOTTONE BIANCO CON TITOLO COLORATO
                   />
                 </IonItem>
 
@@ -428,7 +431,7 @@ function POIModal(props: {
                     <IonIcon
                       slot="end"
                       icon={toursView ? removeCircle : addCircle}
-                      // color="primary" BOTTONE BIANCO CON TITOLO COLORATO
+                    // color="primary" BOTTONE BIANCO CON TITOLO COLORATO
                     />
                   </IonItem>
 
