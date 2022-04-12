@@ -11,6 +11,7 @@ import monumentIcon from "../assets/images/art_monument.png"; // Icona monumento
 import museumIcon from "../assets/images/art_museum.png"; // Icona museo
 
 function POIMarker(props: {
+  POIIds?: string[];
   POIList: POI[];
   i18n: i18n;
   churchersFilter: boolean;
@@ -26,6 +27,11 @@ function POIMarker(props: {
       props.i18n.t("cat_museums", { lng: "it" }),
     ].includes(element.properties.category_it)
   );
+
+  if (props.POIIds !== undefined) {
+    data = data.filter((element: POI) => props.POIIds!.includes(element.properties.id_art))
+  }
+
   const icon = (category: string) => {
     if (category === props.i18n.t("cat_churches", { lng: "it" })) {
       return churchIcon;

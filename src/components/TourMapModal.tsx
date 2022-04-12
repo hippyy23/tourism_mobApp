@@ -11,7 +11,6 @@ import {
   IonToolbar,
   useIonPopover,
 } from "@ionic/react";
-import React from "react";
 import {
   chevronBack,
   arrowBack,
