@@ -3,6 +3,7 @@ import { Position } from "@capacitor/geolocation";
 import L from "leaflet";
 import { LOG_SERVER_DOMAIN, SERVER_DOMAIN } from "../configVar";
 import { POI } from "../types/app_types";
+import md5 from "crypto-js/md5";
 
 // Trova il centro rispetto a tutti i punti di interesse
 export function findCenter(data: POI[]) {
@@ -48,10 +49,8 @@ export async function sendPosition(id: DeviceId, pos: Position) {
     let timeDiff = pos.timestamp - lastPos.timestamp;
     if (posll.distanceTo(lastPosll) < 100 && timeDiff < 30000) return;
   }
-  //alert("Invio al server i dati " + { id: id, position: pos });
-  let deviceId = await Device.getId();
   sendToLogServer("location", {
-    id: deviceId.uuid,
+    id: md5(id.uuid).toString,
     timestamp: new Date(pos.timestamp).toISOString(),
     coords: pos.coords,
   }).catch(() => {
@@ -150,9 +149,9 @@ export async function sendLanguage(chooseLng: string) {
   let deviceLng = await Device.getLanguageCode();
 
   sendToLogServer("language", {
-    id: deviceId.uuid,
+    id: md5(deviceId.uuid).toString(),
     platform: deviceInfo.platform,
-    deviceLng: deviceLng.value.substr(0, 2),
+    deviceLng: deviceLng.value.substring(0, 2),
     chooseLng: chooseLng,
   }).catch(() => {
     console.log("Impossibile contattare il server di log");
