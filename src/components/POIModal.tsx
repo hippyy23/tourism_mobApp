@@ -144,7 +144,7 @@ function POIModal(props: {
   //   return (
   //     <Bar
   //       data={props.data}
-  //       className="ion-bar-chart"
+  //       class="bar-chart"
   //       options={{
   //         animation: false,
   //         responsive: true,
@@ -297,41 +297,41 @@ function POIModal(props: {
       {/* HEADER */}
       <IonHeader>
         <IonToolbar color="primary">
-          {/* FRECCIA INDIETRO */}
-          <IonButtons slot="start" className="ion-margin">
-            <IonIcon
-              slot="icon-only"
-              ios={chevronBack}
-              md={arrowBack}
-              onClick={() => props.onDismissConditions(false)}
-            />
-          </IonButtons>
+            {/* FRECCIA INDIETRO */}
+            <IonButtons slot="start" class="toolbar_back_button">
+              <IonIcon
+                slot="icon-only"
+                ios={chevronBack}
+                md={arrowBack}
+                onClick={() => props.onDismissConditions(false)}
+              />
+            </IonButtons>
 
-          {/* LOGO COMUNE */}
-          <IonThumbnail slot="start">
-            <img src={logoVerona} alt="Logo Comune di Verona" />
-          </IonThumbnail>
+            {/* LOGO COMUNE */}
+            <IonThumbnail slot="start">
+              <img src={logoVerona} alt="Logo Comune di Verona" />
+            </IonThumbnail>
 
-          {/* NOME POI */}
-          <IonLabel slot="start" className="ion-padding-start">
-            {props.data["name_" + props.code] !== null
-              ? props.data["name_" + props.code]
-              : props.data["name_en"]}
-          </IonLabel>
+            {/* NOME POI */}
+            <IonLabel class="toolbar_label">
+              {props.data["name_" + props.code] !== null
+                ? props.data["name_" + props.code]
+                : props.data["name_en"]}
+            </IonLabel>
 
-          {/* MENU OPZIONI POPOVER */}
-          <IonButtons slot="end" className="ion-margin-end">
-            <IonIcon
-              slot="icon-only"
-              ios={ellipsisHorizontal}
-              md={ellipsisVertical}
-              onClick={(e: any) =>
-                present({
-                  event: e.nativeEvent,
-                })
-              }
-            />
-          </IonButtons>
+            {/* MENU OPZIONI POPOVER */}
+            <IonButtons slot="end" className="ion-margin-end">
+              <IonIcon
+                slot="icon-only"
+                ios={ellipsisHorizontal}
+                md={ellipsisVertical}
+                onClick={(e: any) =>
+                  present({
+                    event: e.nativeEvent,
+                  })
+                }
+              />
+            </IonButtons>
         </IonToolbar>
       </IonHeader>
       <IonContent>
