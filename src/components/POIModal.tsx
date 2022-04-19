@@ -148,7 +148,7 @@ function POIModal(props: {
   //   return (
   //     <Bar
   //       data={props.data}
-  //       className="ion-bar-chart"
+  //       class="bar-chart"
   //       options={{
   //         animation: false,
   //         responsive: true,
@@ -326,7 +326,7 @@ function POIModal(props: {
       <IonHeader>
         <IonToolbar color="primary">
           {/* FRECCIA INDIETRO */}
-          <IonButtons slot="start" className="ion-margin">
+          <IonButtons slot="start" class="toolbar_back_button">
             <IonIcon
               slot="icon-only"
               ios={chevronBack}
@@ -341,7 +341,7 @@ function POIModal(props: {
           </IonThumbnail>
 
           {/* NOME POI */}
-          <IonLabel slot="start" className="ion-padding-start">
+          <IonLabel slot="start" class="toolbar_label">
             {props.data[`name_${code}`] !== null
               ? props.data[`name_${code}`]
               : props.data["name_en"]}

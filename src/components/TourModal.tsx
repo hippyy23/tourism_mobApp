@@ -169,7 +169,7 @@ function TourModal(props: {
       <IonHeader>
         <IonToolbar color="primary">
           {/* FRECCIA INDIETRO */}
-          <IonButtons slot="start" className="ion-margin">
+          <IonButtons slot="start" class="toolbar_back_button">
             <IonIcon
               slot="icon-only"
               ios={chevronBack}
@@ -184,7 +184,7 @@ function TourModal(props: {
           </IonThumbnail>
 
           {/* NOME TOUR */}
-          <IonLabel slot="start" className="ion-padding-start">
+          <IonLabel slot="start" class="toolbar_label">
             {props.data.properties[`name_${lng}`] !== null
               ? props.data.properties[`name_${lng}`]
               : props.data.properties["name_en"]}

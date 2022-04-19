@@ -7,15 +7,6 @@
   --ion-color-primary-tint: #6587b8 !important;
 }
 
-.my-action-sheet {
-  --backdrop-opacity: 0;
-}
-
-.my-scroll {
-  overscroll-behavior: auto;
-  margin-bottom: 50px;
-}
-
 .my-ion-fab-button[data-desc] {
   position: relative;
 }
@@ -58,23 +49,7 @@
   white-space: pre-line !important;
 }
 
-.my-ion-img {
-  align-items: center;
-}
-
-.my-icon {
-  /*opacity: 1; PER RENDERE IL BOTTONE OPACO QUANDO SI CLICCA*/
-}
-
-.my-icon-opacity {
-  /*opacity: 0.6; PER RENDERE IL BOTTONE OPACO QUANDO SI CLICCA*/
-}
-
-.ion-label-toolbar {
-  font-size: 120% !important;
-}
-
-.ion-bar-chart {
+.bar-chart {
   margin-bottom: 35px;
 }
 
@@ -83,6 +58,7 @@
   width: auto; /* Reset width*/
   height: auto; /* Reset height*/
 }
+
 .react-player {
   position: relative; /* Set to relative*/
 }
@@ -91,7 +67,13 @@
   position: absolute; /* Scaling will occur since parent is relative now*/
 }
 
-.poi_description {
-  --padding-start: 0px;
-  --padding-end: 0px;
+.toolbar_back_button{
+  margin-left: 10px;
+  margin-right: 0;
+}
+
+.toolbar_label{
+  --padding-start: 16px;
+  font-size: large;
+  font-weight: bold;
 }

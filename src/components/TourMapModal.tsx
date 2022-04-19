@@ -84,7 +84,7 @@ function TourModal(props: {
       <IonHeader>
         <IonToolbar color="primary">
           {/* FRECCIA INDIETRO */}
-          <IonButtons slot="start" className="ion-margin">
+          <IonButtons slot="start" class="toolbar_back_button">
             <IonIcon
               slot="icon-only"
               ios={chevronBack}
