@@ -45,7 +45,7 @@ var poi_details: POIDetails;
 
 function TourModal(props: {
   openCondition: boolean;
-  onDismissConditions: React.Dispatch<React.SetStateAction<boolean>>;
+  onDismissConditions: (arg0: boolean) => void;
   data: TourDetails;
   i18n: i18n;
 }) {
@@ -289,7 +289,9 @@ function TourModal(props: {
             <IonCol>
               <IonButton
                 style={{ width: "100%" }}
-                onClick={() => setShowTourMapModal(true)}
+                onClick={() => {
+                  props.onDismissConditions(false);
+                }}
               >
                 Apri la mappa
               </IonButton>

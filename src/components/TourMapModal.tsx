@@ -84,7 +84,7 @@ function TourModal(props: {
       <IonHeader>
         <IonToolbar color="primary">
           {/* FRECCIA INDIETRO */}
-          <IonButtons slot="start" class="toolbar_back_button">
+          <IonButtons slot="start" className="ion-margin">
             <IonIcon
               slot="icon-only"
               ios={chevronBack}
@@ -145,6 +145,7 @@ function TourModal(props: {
             attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
             url="https://tile.openstreetmap.org/{z}/{x}/{y}.png"
           />
+
           <Polyline positions={props.data.polylineTour} />
           <PoiMarker />
         </MapContainer>

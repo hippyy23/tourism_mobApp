@@ -1,4 +1,13 @@
-import { useIonViewDidEnter, IonLoading, useIonToast } from "@ionic/react";
+import {
+  useIonViewDidEnter,
+  IonLoading,
+  useIonToast,
+  IonFab,
+  IonChip,
+  IonLabel,
+  IonIcon,
+  IonFabButton,
+} from "@ionic/react";
 import { TileLayer, useMap, Marker, Popup } from "react-leaflet";
 import { useState } from "react";
 import L from "leaflet";
@@ -13,13 +22,16 @@ import {
   getPOIListFromWebServer,
   getPOIDetailsFromWebServer,
   sendPosition,
+  getTourListFromWebServer,
 } from "../components/Functions";
 import POIModal from "./POIModal";
 import { LOCATION_BOUNDS, LANGUAGES } from "../configVar";
 import PrivacyAlert from "./PrivacyAlert";
-import { POI, POIDetails } from "../types/app_types";
+import { POI, POIDetails, Tour } from "../types/app_types";
 import { i18n } from "i18next";
 import POIMarker from "./POIMarker";
+import { footsteps, close } from "ionicons/icons";
+import TourListModal from "./TourListModal";
 
 var POIListData: POI[];
 var POIDetailsData: POIDetails;
@@ -32,6 +44,7 @@ const offlineBounds = L.latLngBounds([45.4568, 10.9625], [45.4203, 11.0227]);
 const locationBounds = L.latLngBounds(LOCATION_BOUNDS);
 var watchId: string;
 var deviceLanguage: string;
+var tourListData: Tour[];
 
 function MapChild(props: {
   churchersFilter: boolean;
@@ -55,6 +68,8 @@ function MapChild(props: {
   const [permissionGranted, setPermissionGranted] = useState<boolean>(false); // Variabile che contiene se si ha il permesso di ottenere la posizione dell'utente
   const [showLocationMarker, setShowLocationMarker] = useState<boolean>(false); // Indica se è da mostrare il marker della posizione dell'utente
   const [showPrivacyAlert, setShowPrivacyAlert] = useState<boolean>(false); // Indica se mostrare o meno l'alert della privacy
+  const [showTour, setShowTour] = useState<boolean>(false); // Indica se mostrare o meno l'alert della privacy
+  const [showTourListModal, setShowTourListModal] = useState<boolean>(false); // Mostra la modale con la lista dei tour
   const map = useMap();
   const [presentToast] = useIonToast();
   var trackingEnable = true;
@@ -308,8 +323,55 @@ function MapChild(props: {
     }
   }
 
+  function getTourList() {
+    if (tourListData === undefined) {
+      getTourListFromWebServer()
+        .then((json: { features: Tour[] }) => {
+          tourListData = json.features;
+          setShowTourListModal(true);
+        })
+        .catch(() => {
+          //TODO: Gestire errore
+        });
+    } else {
+      setShowTourListModal(true);
+    }
+  }
+
   return (
     <>
+      {/* Pulsante per aprire la lista di itinerari */}
+      {!showTour && (
+        <IonFab
+          vertical="top"
+          horizontal="end"
+          onClick={() => {
+            getTourList();
+          }}
+        >
+          <IonFabButton color="light">
+            <IonIcon icon={footsteps} color="primary" />
+          </IonFabButton>
+        </IonFab>
+      )}
+
+      {showTour && (
+        <IonFab style={{ width: "-webkit-fill-available" }}>
+          <IonChip class="chip" className="ion-margin-top ion-margin-end">
+            <IonIcon icon={footsteps} color="primary" />
+            <IonLabel class="chip-label">
+              Funicolare di Castel San Pietro
+            </IonLabel>
+
+            <IonIcon
+              icon={close}
+              className="ion-align-items-end"
+              color="danger"
+            />
+          </IonChip>
+        </IonFab>
+      )}
+
       {/** Alert che richiede all'utente se vuole essere tracciato anonimamente */}
       {showPrivacyAlert && (
         <PrivacyAlert
@@ -375,6 +437,15 @@ function MapChild(props: {
           museumsFilter={props.museumsFilter}
           getDetails={getDetails}
           openModal={openModal}
+        />
+      )}
+
+      {showTourListModal && (
+        <TourListModal
+          openCondition={showTourListModal}
+          onDismissConditions={setShowTourListModal}
+          data={tourListData}
+          i18n={props.i18n}
         />
       )}
     </>

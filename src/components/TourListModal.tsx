@@ -91,7 +91,7 @@ function TourListModal(props: {
       {showTourModal && (
         <TourModal
           openCondition={showTourModal}
-          onDismissConditions={setShowTourModal}
+          onDismissConditions={(arg0: boolean) => {setShowTourModal(arg0); props.onDismissConditions(arg0)}}
           data={tour_details}
           i18n={props.i18n}
         />
