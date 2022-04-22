@@ -58,6 +58,8 @@ function POIModal(props: {
   onDismissConditions: (arg0: boolean) => void;
   data: POIDetails;
   i18n: i18n;
+  setTourDetails: (arg0: TourDetails) => void;
+  closeAllModals: () => void;
 }) {
   const [openTimeView, setOpenTimeView] = useState<boolean>(false); // Mostra o nascondi il testo relativo agli orari del punto di interesse
   const [ticketsView, setTicketsView] = useState<boolean>(false); // Mostra o nascondi il testo relativo al prezzo dei biglietti del punto di interesse
@@ -319,6 +321,11 @@ function POIModal(props: {
           onDismissConditions={setShowTourModal}
           data={tour_details}
           i18n={props.i18n}
+          setTourDetails={props.setTourDetails}
+          closeAllModals={() => {
+            props.closeAllModals();
+            setShowTourModal(false);
+          }}
         />
       )}
 

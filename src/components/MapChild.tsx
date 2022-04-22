@@ -8,7 +8,7 @@ import {
   IonIcon,
   IonFabButton,
 } from "@ionic/react";
-import { TileLayer, useMap, Marker, Popup } from "react-leaflet";
+import { TileLayer, useMap, Marker, Popup, Polyline } from "react-leaflet";
 import { useState } from "react";
 import L from "leaflet";
 import locationIcon from "../assets/images/location-sharp.svg";
@@ -27,11 +27,12 @@ import {
 import POIModal from "./POIModal";
 import { LOCATION_BOUNDS, LANGUAGES } from "../configVar";
 import PrivacyAlert from "./PrivacyAlert";
-import { POI, POIDetails, Tour } from "../types/app_types";
+import { POI, POIDetails, Tour, TourDetails } from "../types/app_types";
 import { i18n } from "i18next";
 import POIMarker from "./POIMarker";
 import { footsteps, close } from "ionicons/icons";
 import TourListModal from "./TourListModal";
+import TourModal from "./TourModal";
 
 var POIListData: POI[];
 var POIDetailsData: POIDetails;
@@ -63,13 +64,16 @@ function MapChild(props: {
     connected: true,
     connectionType: "none",
   });
-  const [showModal, setShowModal] = useState<boolean>(false); // Mostra la POIModal in cui sono presenti i dettagli di un punto di interesse
+  const [showPOIModal, setShowPOIModal] = useState<boolean>(false); // Mostra la POIModal in cui sono presenti i dettagli di un punto di interesse
   const [position, setPosition] = useState<Position>(); // Variabile che contiene la posizione dell'utente
   const [permissionGranted, setPermissionGranted] = useState<boolean>(false); // Variabile che contiene se si ha il permesso di ottenere la posizione dell'utente
   const [showLocationMarker, setShowLocationMarker] = useState<boolean>(false); // Indica se è da mostrare il marker della posizione dell'utente
   const [showPrivacyAlert, setShowPrivacyAlert] = useState<boolean>(false); // Indica se mostrare o meno l'alert della privacy
-  const [showTour, setShowTour] = useState<boolean>(false); // Indica se mostrare o meno l'alert della privacy
+  const [tourDetails, setTourDetails] = useState<TourDetails | undefined>(
+    undefined
+  ); // Indica se mostrare o meno l'alert della privacy
   const [showTourListModal, setShowTourListModal] = useState<boolean>(false); // Mostra la modale con la lista dei tour
+  const [showTourModal, setShowTourModal] = useState<boolean>(false); // Mostra o nascondi il modale dell'itinerario
   const map = useMap();
   const [presentToast] = useIonToast();
   var trackingEnable = true;
@@ -275,7 +279,7 @@ function MapChild(props: {
    * Scarica i dettagli di un POI dal server
    * @param id Identificatore del punto di interesse
    */
-  function getDetails(id: string) {
+  function getPOIDetail(id: string) {
     if (
       connectionStatus.connected &&
       ((POIDetailsData !== undefined && POIDetailsData.classid !== id) ||
@@ -290,7 +294,7 @@ function MapChild(props: {
             if (json.numberReturned === 1) {
               POIDetailsData = json.features[0].properties;
               if (isLoading) {
-                setShowModal(true);
+                setShowPOIModal(true);
               }
             }
           }
@@ -309,7 +313,7 @@ function MapChild(props: {
   function openModal(id: string) {
     if (connectionStatus.connected) {
       if (POIDetailsData !== undefined && POIDetailsData.classid === id) {
-        setShowModal(true);
+        setShowPOIModal(true);
         isLoading = false;
       } else {
         setShowLoading(true);
@@ -323,6 +327,7 @@ function MapChild(props: {
     }
   }
 
+  /** Richiedi al server la lista dei tour */
   function getTourList() {
     if (tourListData === undefined) {
       getTourListFromWebServer()
@@ -338,10 +343,17 @@ function MapChild(props: {
     }
   }
 
+  /** Coordinate che disegnano l'interesse, vengono invertite di posizione rispetto a quelle ricevute */
+  const polylineTour: [number, number][] = tourDetails
+    ? tourDetails.geometry.coordinates[0].map(
+        (coordinates: [number, number]) => [coordinates[1], coordinates[0]]
+      )
+    : [];
+
   return (
     <>
       {/* Pulsante per aprire la lista di itinerari */}
-      {!showTour && (
+      {!tourDetails && (
         <IonFab
           vertical="top"
           horizontal="end"
@@ -355,18 +367,27 @@ function MapChild(props: {
         </IonFab>
       )}
 
-      {showTour && (
+      {tourDetails && (
         <IonFab style={{ width: "-webkit-fill-available" }}>
-          <IonChip class="chip" className="ion-margin-top ion-margin-end">
+          <IonChip
+            class="chip"
+            className="ion-margin-top ion-margin-end"
+            onClick={() => {
+              setShowTourModal(true);
+            }}
+          >
             <IonIcon icon={footsteps} color="primary" />
             <IonLabel class="chip-label">
-              Funicolare di Castel San Pietro
+              {tourDetails.properties.name_it}
             </IonLabel>
 
             <IonIcon
               icon={close}
               className="ion-align-items-end"
               color="danger"
+              onClick={() => {
+                setTourDetails(undefined);
+              }}
             />
           </IonChip>
         </IonFab>
@@ -403,16 +424,6 @@ function MapChild(props: {
           spinner="circular"
         />
       )}
-      {/* Modal delle informazioni riguardanti il punto di interesse cliccato */}
-      {showModal && (
-        <POIModal
-          openCondition={showModal}
-          onPresent={setShowLoading}
-          onDismissConditions={setShowModal}
-          data={POIDetailsData}
-          i18n={props.i18n}
-        />
-      )}
 
       {/* Marker della posizione corrente dell'utente */}
       {showLocationMarker && (
@@ -428,16 +439,33 @@ function MapChild(props: {
       )}
 
       {/* Creazione dinamica dei marker dei POI */}
-      {props.dataObtained && (
+      {!tourDetails && props.dataObtained && (
         <POIMarker
           POIList={POIListData}
           i18n={props.i18n}
           churchersFilter={props.churchersFilter}
           monumentsFilter={props.monumentsFilter}
           museumsFilter={props.museumsFilter}
-          getDetails={getDetails}
+          getDetails={getPOIDetail}
           openModal={openModal}
         />
+      )}
+
+      {/* Creazione dinamica dei marker dei POI */}
+      {tourDetails && props.dataObtained && (
+        <>
+          <POIMarker
+            POIList={POIListData}
+            i18n={props.i18n}
+            churchersFilter={props.churchersFilter}
+            monumentsFilter={props.monumentsFilter}
+            museumsFilter={props.museumsFilter}
+            getDetails={getPOIDetail}
+            openModal={openModal}
+            POIIds={tourDetails.properties.points_tour_id.split(",")}
+          />
+          <Polyline positions={polylineTour} />
+        </>
       )}
 
       {showTourListModal && (
@@ -446,6 +474,44 @@ function MapChild(props: {
           onDismissConditions={setShowTourListModal}
           data={tourListData}
           i18n={props.i18n}
+          setTourDetails={setTourDetails}
+          closeAllModals={() => {
+            setShowTourModal(false);
+            setShowTourListModal(false);
+            setShowPOIModal(false);
+          }}
+        />
+      )}
+
+      {/* Modal delle informazioni riguardanti il punto di interesse cliccato */}
+      {showPOIModal && (
+        <POIModal
+          openCondition={showPOIModal}
+          onPresent={setShowLoading}
+          onDismissConditions={setShowPOIModal}
+          data={POIDetailsData}
+          i18n={props.i18n}
+          setTourDetails={setTourDetails}
+          closeAllModals={() => {
+            setShowTourModal(false);
+            setShowTourListModal(false);
+            setShowPOIModal(false);
+          }}
+        />
+      )}
+
+      {showTourModal && tourDetails && (
+        <TourModal
+          openCondition={showTourModal}
+          onDismissConditions={setShowTourModal}
+          data={tourDetails}
+          i18n={props.i18n}
+          setTourDetails={setTourDetails}
+          closeAllModals={() => {
+            setShowTourModal(false);
+            setShowTourListModal(false);
+            setShowPOIModal(false);
+          }}
         />
       )}
     </>

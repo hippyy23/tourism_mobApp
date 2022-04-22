@@ -25,7 +25,7 @@ import toolbarIcon from "../assets/images/logo.png";
 import monumentIcon from "../assets/images/art_monument.png"; // Icona monumento
 import { i18n } from "i18next";
 
-function TourModal(props: {
+function TourMapModal(props: {
   openCondition: boolean;
   onDismissConditions: (arg0: boolean) => void;
   data: { polylineTour: [number, number][]; points_geom: string };
@@ -154,4 +154,4 @@ function TourModal(props: {
   );
 }
 
-export default TourModal;
+export default TourMapModal;

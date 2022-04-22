@@ -17,7 +17,7 @@ import {
   IonToolbar,
   useIonPopover,
 } from "@ionic/react";
-import React, { useState } from "react";
+import { useState } from "react";
 import {
   chevronBack,
   arrowBack,
@@ -38,6 +38,8 @@ function TourListModal(props: {
   onDismissConditions: (arg0: boolean) => void;
   data: Tour[];
   i18n: i18n;
+  setTourDetails: (arg0: TourDetails) => void;
+  closeAllModals: () => void;
 }) {
   const [showTourModal, setShowTourModal] = useState<boolean>(false); // Mostra o nascondi il modale dell'itinerario
   const [present, dismiss] = useIonPopover(PopoverList, {
@@ -45,7 +47,7 @@ function TourListModal(props: {
   });
   const lng = props.i18n.language as LanguageCode;
 
-  function getPOINameFallback(tour: Tour): string {
+  function getTourNameFallback(tour: Tour): string {
     const name = tour.properties[`name_${lng}`];
     return name ? name : tour.properties.name_en;
   }
@@ -77,7 +79,7 @@ function TourListModal(props: {
           getTourDetail(tour.properties.id_tour);
         }}
       >
-        <IonLabel>{getPOINameFallback(tour)}</IonLabel>
+        <IonLabel>{getTourNameFallback(tour)}</IonLabel>
       </IonItem>
     ));
     return <IonList className="ion-no-padding">{listItems}</IonList>;
@@ -91,9 +93,17 @@ function TourListModal(props: {
       {showTourModal && (
         <TourModal
           openCondition={showTourModal}
-          onDismissConditions={(arg0: boolean) => {setShowTourModal(arg0); props.onDismissConditions(arg0)}}
+          onDismissConditions={(arg0: boolean) => {
+            setShowTourModal(arg0);
+            props.onDismissConditions(arg0);
+          }}
           data={tour_details}
           i18n={props.i18n}
+          setTourDetails={props.setTourDetails}
+          closeAllModals={() => {
+            props.closeAllModals();
+            setShowTourModal(false);
+          }}
         />
       )}
 

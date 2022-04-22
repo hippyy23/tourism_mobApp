@@ -20,7 +20,7 @@ import {
   IonToolbar,
   useIonPopover,
 } from "@ionic/react";
-import React, { useState } from "react";
+import { useState } from "react";
 import {
   chevronBack,
   arrowBack,
@@ -37,7 +37,6 @@ import { TextToSpeech } from "@capacitor-community/text-to-speech";
 import { getPOIDetailsFromWebServer } from "./Functions";
 import ReactHtmlParser from "react-html-parser";
 import POIModal from "./POIModal";
-import TourMapModal from "./TourMapModal";
 import { i18n } from "i18next";
 import { LanguageCode, POIDetails, TourDetails } from "../types/app_types";
 
@@ -48,6 +47,8 @@ function TourModal(props: {
   onDismissConditions: (arg0: boolean) => void;
   data: TourDetails;
   i18n: i18n;
+  setTourDetails: (arg0: TourDetails) => void;
+  closeAllModals: () => void;
 }) {
   const [textPlaying, setTextPlaying] = useState<boolean>(false); // Controlla se il TTS è in riproduzione o no
   const [poiView, setPoiView] = useState<boolean>(false); // Mostra i poi dell'itinerario o no
@@ -55,7 +56,6 @@ function TourModal(props: {
     onHide: () => dismiss(),
   });
   const [showPOIModal, setShowPOIModal] = useState<boolean>(false); // Mostra la POIModal in cui sono presenti i dettagli di un punto di interesse
-  const [showTourMapModal, setShowTourMapModal] = useState<boolean>(false); // Mostra la POIModal in cui sono presenti i dettagli di un punto di interesse
 
   const lng = props.i18n.language as LanguageCode;
 
@@ -111,13 +111,6 @@ function TourModal(props: {
       });
   }
 
-  /** Coordinate che disegnano l'interesse, vengono invertite di posizione rispetto a quelle ricevute */
-  const polylineTour: [number, number][] =
-    props.data.geometry.coordinates[0].map((coordinates: [number, number]) => [
-      coordinates[1],
-      coordinates[0],
-    ]);
-
   /** Creazione della lista di itinerari cliccabili */
   function PoiList() {
     const tours_id = props.data.properties.points_tour_id.split(",");
@@ -149,19 +142,11 @@ function TourModal(props: {
           onDismissConditions={setShowPOIModal}
           data={poi_details}
           i18n={props.i18n}
-        />
-      )}
-
-      {/* Modal della mappa del tour */}
-      {showTourMapModal && (
-        <TourMapModal
-          openCondition={showTourMapModal}
-          onDismissConditions={setShowTourMapModal}
-          data={{
-            points_geom: props.data.properties.points_geom,
-            polylineTour: polylineTour,
+          setTourDetails={props.setTourDetails}
+          closeAllModals={() => {
+            props.closeAllModals();
+            setShowPOIModal(false);
           }}
-          i18n={props.i18n}
         />
       )}
 
@@ -290,10 +275,11 @@ function TourModal(props: {
               <IonButton
                 style={{ width: "100%" }}
                 onClick={() => {
-                  props.onDismissConditions(false);
+                  props.setTourDetails(props.data);
+                  props.closeAllModals();
                 }}
               >
-                Apri la mappa
+                {props.i18n.t("show_tour")}
               </IonButton>
             </IonCol>
           </IonRow>

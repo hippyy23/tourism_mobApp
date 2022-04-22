@@ -52,6 +52,7 @@ i18n.use(initReactI18next).init({
         tours: "Itinerari",
         a_tempo: "A tempo",
         storico: "Storico",
+        show_tour: "Mostra itinerario",
       },
     },
     en: {
@@ -99,6 +100,7 @@ i18n.use(initReactI18next).init({
         tours: "Tours",
         a_tempo: "A tempo", // it
         storico: "Storico", // it
+        show_tour: "Mostra itinerario", // it
       },
     },
     de: {
@@ -146,6 +148,7 @@ i18n.use(initReactI18next).init({
         tours: "Tours", // en
         a_tempo: "A tempo", // it
         storico: "Storico", // it
+        show_tour: "Mostra itinerario", // it
       },
     },
     fr: {
@@ -193,6 +196,7 @@ i18n.use(initReactI18next).init({
         tours: "Tours", // en
         a_tempo: "A tempo", // it
         storico: "Storico", // it
+        show_tour: "Mostra itinerario", // it
       },
     },
     es: {
@@ -240,6 +244,7 @@ i18n.use(initReactI18next).init({
         tours: "Tours", // en
         a_tempo: "A tempo", // it
         storico: "Storico", // it
+        show_tour: "Mostra itinerario", // it
       },
     },
   },
