@@ -53,6 +53,8 @@ i18n.use(initReactI18next).init({
         a_tempo: "A tempo",
         storico: "Storico",
         show_tour: "Mostra itinerario",
+        tour_alert_title: "Attenzione",
+        tour_alert_message: "Sei sicuro di voler chiudere la mappa dell'itinerario?"
       },
     },
     en: {
@@ -101,6 +103,8 @@ i18n.use(initReactI18next).init({
         a_tempo: "A tempo", // it
         storico: "Storico", // it
         show_tour: "Mostra itinerario", // it
+        tour_alert_title: "Attenzione", // it
+        tour_alert_message: "Sei sicuro di voler chiudere la mappa dell'itinerario?" // it
       },
     },
     de: {
@@ -149,6 +153,8 @@ i18n.use(initReactI18next).init({
         a_tempo: "A tempo", // it
         storico: "Storico", // it
         show_tour: "Mostra itinerario", // it
+        tour_alert_title: "Attenzione", // it
+        tour_alert_message: "Sei sicuro di voler chiudere la mappa dell'itinerario?" // it
       },
     },
     fr: {
@@ -197,6 +203,8 @@ i18n.use(initReactI18next).init({
         a_tempo: "A tempo", // it
         storico: "Storico", // it
         show_tour: "Mostra itinerario", // it
+        tour_alert_title: "Attenzione", // it
+        tour_alert_message: "Sei sicuro di voler chiudere la mappa dell'itinerario?" // it
       },
     },
     es: {
@@ -245,6 +253,8 @@ i18n.use(initReactI18next).init({
         a_tempo: "A tempo", // it
         storico: "Storico", // it
         show_tour: "Mostra itinerario", // it
+        tour_alert_title: "Attenzione", // it
+        tour_alert_message: "Sei sicuro di voler chiudere la mappa dell'itinerario?" // it
       },
     },
   },

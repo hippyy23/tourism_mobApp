@@ -7,6 +7,7 @@ import {
   IonLabel,
   IonIcon,
   IonFabButton,
+  IonAlert,
 } from "@ionic/react";
 import { TileLayer, useMap, Marker, Popup, Polyline } from "react-leaflet";
 import { useState } from "react";
@@ -30,7 +31,7 @@ import PrivacyAlert from "./PrivacyAlert";
 import { POI, POIDetails, Tour, TourDetails } from "../types/app_types";
 import { i18n } from "i18next";
 import POIMarker from "./POIMarker";
-import { footsteps, close } from "ionicons/icons";
+import { footsteps, map } from "ionicons/icons";
 import TourListModal from "./TourListModal";
 import TourModal from "./TourModal";
 
@@ -71,21 +72,22 @@ function MapChild(props: {
   const [showPrivacyAlert, setShowPrivacyAlert] = useState<boolean>(false); // Indica se mostrare o meno l'alert della privacy
   const [tourDetails, setTourDetails] = useState<TourDetails | undefined>(
     undefined
-  ); // Indica se mostrare o meno l'alert della privacy
+  ); // Indica se la mappa del tour è aperta
+  const [closeTourAlert, setCloseTourAlert] = useState<boolean>(false); // Indica se mostrare o meno l'alert di conferma chiusura del tour
   const [showTourListModal, setShowTourListModal] = useState<boolean>(false); // Mostra la modale con la lista dei tour
   const [showTourModal, setShowTourModal] = useState<boolean>(false); // Mostra o nascondi il modale dell'itinerario
-  const map = useMap();
+  const mapComponent = useMap();
   const [presentToast] = useIonToast();
   var trackingEnable = true;
 
   function setCenterData() {
-    map.panTo(findCenter(POIListData));
+    mapComponent.panTo(findCenter(POIListData));
   }
   function setOfflineBounds() {
-    map.setMaxBounds(offlineBounds);
+    mapComponent.setMaxBounds(offlineBounds);
   }
   function setOnlineBounds() {
-    map.setMaxBounds(onlineBounds);
+    mapComponent.setMaxBounds(onlineBounds);
   }
 
   /**
@@ -102,7 +104,7 @@ function MapChild(props: {
         if (pos) {
           let posll = L.latLng(pos.coords.latitude, pos.coords.longitude);
           if (locationBounds.contains(posll)) {
-            map.panTo(posll);
+            mapComponent.panTo(posll);
             Geolocation.watchPosition(
               { enableHighAccuracy: true },
               updateUserPosition
@@ -170,7 +172,7 @@ function MapChild(props: {
    */
   useIonViewDidEnter(() => {
     // Ridisegna la mappa, senza questa funzione non viene mostrata correttamente la mappa
-    map.invalidateSize();
+    mapComponent.invalidateSize();
 
     checkLocationPermission();
 
@@ -367,6 +369,7 @@ function MapChild(props: {
         </IonFab>
       )}
 
+      {/* Titolo itinerario */}
       {tourDetails && (
         <IonFab style={{ width: "-webkit-fill-available" }}>
           <IonChip
@@ -380,20 +383,46 @@ function MapChild(props: {
             <IonLabel class="chip-label">
               {tourDetails.properties.name_it}
             </IonLabel>
-
-            <IonIcon
-              icon={close}
-              className="ion-align-items-end"
-              color="danger"
-              onClick={() => {
-                setTourDetails(undefined);
-              }}
-            />
           </IonChip>
         </IonFab>
       )}
 
-      {/** Alert che richiede all'utente se vuole essere tracciato anonimamente */}
+
+      {/* Pulsante per tornare alla mappa originale */}
+      {tourDetails && (
+        <IonFab
+        vertical="top"
+        horizontal="end"
+        onClick={() => setCloseTourAlert(true)}
+        >
+          <IonFabButton color="light">
+            <IonIcon icon={map} color="primary" />
+          </IonFabButton>
+        </IonFab>
+      )}
+
+      {/* Alert di conferma chiusura itinerario */}
+      <IonAlert
+        isOpen={closeTourAlert}
+        header={props.i18n.t("tour_alert_title")}
+        message={props.i18n.t("tour_alert_message")}
+        onDidDismiss={() => {setCloseTourAlert(false)}}
+        buttons={[
+          {
+            text: "Cancel",
+            role: "cancel",
+            cssClass: "secondary",
+          },
+          {
+            text: "Okay",
+            handler: () => {
+              setTourDetails(undefined)
+            },
+          },
+        ]}
+      />
+
+      {/* Alert che richiede all'utente se vuole essere tracciato anonimamente */}
       {showPrivacyAlert && (
         <PrivacyAlert
           i18n={props.i18n}
