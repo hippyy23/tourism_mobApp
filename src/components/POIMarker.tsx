@@ -1,14 +1,15 @@
-import { IonLabel, IonButton, IonLoading } from "@ionic/react";
+import { IonLabel, IonButton, IonLoading, useIonToast } from "@ionic/react";
 import { Marker, Popup } from "react-leaflet";
 import L from "leaflet";
 import { i18n } from "i18next";
-import { LanguageCode, POI, POIDetails } from "../types/app_types";
+import { LanguageCode, POI, POIDetails, TourDetails } from "../types/app_types";
 import churchIcon from "../assets/images/art_church.png"; // Icona chiesa
 import monumentIcon from "../assets/images/art_monument.png"; // Icona monumento
 import museumIcon from "../assets/images/art_museum.png"; // Icona museo
 import { useState } from "react";
 import { getPOIDetailsFromWebServer } from "./Functions";
 import POIModal from "../modals/POIModal";
+import { ConnectionStatus } from "@capacitor/network";
 
 var POIDetailsData: POIDetails;
 var isLoading: boolean = false;
@@ -20,10 +21,12 @@ function POIMarker(props: {
   churchersFilter: boolean;
   monumentsFilter: boolean;
   museumsFilter: boolean;
-  setTourDetails: (arg0: POIDetails | undefined) => void;
+  setTourDetails: (arg0: TourDetails) => void;
+  connectionStatus: ConnectionStatus;
 }) {
   const [showLoading, setShowLoading] = useState<boolean>(false); // Permette di mostrare il componente di caricamento
   const [showPOIModal, setShowPOIModal] = useState<boolean>(false); // Mostra la modale con i dettagli del punto di interesse
+  const [presentToast] = useIonToast();
 
   /**
    * Scarica i dettagli di un POI dal server
@@ -31,7 +34,7 @@ function POIMarker(props: {
    */
   function getPOIDetail(id: string) {
     if (
-      connectionStatus.connected &&
+      props.connectionStatus.connected &&
       ((POIDetailsData !== undefined && POIDetailsData.classid !== id) ||
         POIDetailsData === undefined)
     ) {
@@ -61,7 +64,7 @@ function POIMarker(props: {
    * @param id Identificatore del punto di cui si vogliono i dettagli
    */
   function openModal(id: string) {
-    if (connectionStatus.connected) {
+    if (props.connectionStatus.connected) {
       if (POIDetailsData !== undefined && POIDetailsData.classid === id) {
         setShowPOIModal(true);
         isLoading = false;
@@ -132,7 +135,7 @@ function POIMarker(props: {
   /**
    * Crea il marker del POI con il relativo popup
    */
-  const listMarkers = data.map((element: POI, index: number) => (
+  const listMarkers = data.map((element: POI) => (
     <div key={element.properties.id_art}>
       {filter(element.properties.category_it) && (
         <Marker
@@ -196,8 +199,6 @@ function POIMarker(props: {
           i18n={props.i18n}
           setTourDetails={props.setTourDetails}
           closeAllModals={() => {
-            setShowTourModal(false);
-            setShowTourListModal(false);
             setShowPOIModal(false);
           }}
         />

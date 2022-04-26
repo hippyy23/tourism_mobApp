@@ -1,15 +1,11 @@
 import {
   useIonViewDidEnter,
-  IonLoading,
   useIonToast,
   IonFab,
-  IonChip,
-  IonLabel,
   IonIcon,
   IonFabButton,
-  IonAlert,
 } from "@ionic/react";
-import { TileLayer, useMap, Marker, Popup, Polyline } from "react-leaflet";
+import { TileLayer, useMap, Marker, Popup } from "react-leaflet";
 import { useState } from "react";
 import L from "leaflet";
 import locationIcon from "../assets/images/location-sharp.svg";
@@ -21,19 +17,16 @@ import { Geolocation, Position } from "@capacitor/geolocation";
 import {
   findCenter,
   getPOIListFromWebServer,
-  getPOIDetailsFromWebServer,
   sendPosition,
   getTourListFromWebServer,
 } from "../components/Functions";
-import POIModal from "../modals/POIModal";
 import { LOCATION_BOUNDS, LANGUAGES } from "../configVar";
 import PrivacyAlert from "./PrivacyAlert";
-import { POI, POIDetails, Tour, TourDetails } from "../types/app_types";
+import { POI, Tour, TourDetails } from "../types/app_types";
 import { i18n } from "i18next";
 import POIMarker from "./POIMarker";
-import { footsteps, map } from "ionicons/icons";
+import { footsteps } from "ionicons/icons";
 import TourListModal from "../modals/TourListModal";
-import TourModal from "../modals/TourModal";
 import FilterFab from "./FilterFab";
 import TourOnMap from "./TourOnMap";
 
@@ -363,7 +356,7 @@ function MapChild(props: {
       )}
 
       {/* Creazione dinamica dei marker dei POI */}
-      {!tourDetails && dataObtained && (
+      {dataObtained && (
         <POIMarker
           POIListData={POIListData}
           i18n={props.i18n}
@@ -371,6 +364,8 @@ function MapChild(props: {
           monumentsFilter={monumentsFilter}
           museumsFilter={museumsFilter}
           setTourDetails={setTourDetails}
+          connectionStatus={connectionStatus}
+          POIIds={tourDetails?.properties.points_tour_id.split(",")}
         />
       )}
 
@@ -379,9 +374,6 @@ function MapChild(props: {
         <TourOnMap
           POIListData={POIListData}
           i18n={props.i18n}
-          setShowTourModal={function (arg0: boolean): void {
-            throw new Error("Function not implemented.");
-          }}
           tourDetails={tourDetails}
           setTourDetails={setTourDetails}
         />
@@ -395,9 +387,7 @@ function MapChild(props: {
           i18n={props.i18n}
           setTourDetails={setTourDetails}
           closeAllModals={() => {
-            setShowTourModal(false);
             setShowTourListModal(false);
-            setShowPOIModal(false);
           }}
         />
       )}
