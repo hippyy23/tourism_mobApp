@@ -1,26 +1,86 @@
-import { IonLabel, IonButton } from "@ionic/react";
+import { IonLabel, IonButton, IonLoading } from "@ionic/react";
 import { Marker, Popup } from "react-leaflet";
 import L from "leaflet";
 import { i18n } from "i18next";
-import { LanguageCode, POI } from "../types/app_types";
+import { LanguageCode, POI, POIDetails } from "../types/app_types";
 import churchIcon from "../assets/images/art_church.png"; // Icona chiesa
 import monumentIcon from "../assets/images/art_monument.png"; // Icona monumento
 import museumIcon from "../assets/images/art_museum.png"; // Icona museo
+import { useState } from "react";
+import { getPOIDetailsFromWebServer } from "./Functions";
+import POIModal from "../modals/POIModal";
+
+var POIDetailsData: POIDetails;
+var isLoading: boolean = false;
 
 function POIMarker(props: {
   POIIds?: string[];
-  POIList: POI[];
+  POIListData: POI[];
   i18n: i18n;
   churchersFilter: boolean;
   monumentsFilter: boolean;
   museumsFilter: boolean;
-  getDetails: (id: string) => void;
-  openModal: (id: string) => void;
+  setTourDetails: (arg0: POIDetails | undefined) => void;
 }) {
+  const [showLoading, setShowLoading] = useState<boolean>(false); // Permette di mostrare il componente di caricamento
+  const [showPOIModal, setShowPOIModal] = useState<boolean>(false); // Mostra la modale con i dettagli del punto di interesse
+
+  /**
+   * Scarica i dettagli di un POI dal server
+   * @param id Identificatore del punto di interesse
+   */
+  function getPOIDetail(id: string) {
+    if (
+      connectionStatus.connected &&
+      ((POIDetailsData !== undefined && POIDetailsData.classid !== id) ||
+        POIDetailsData === undefined)
+    ) {
+      getPOIDetailsFromWebServer(id)
+        .then(
+          (json: {
+            numberReturned: number;
+            features: { properties: POIDetails }[];
+          }) => {
+            if (json.numberReturned === 1) {
+              POIDetailsData = json.features[0].properties;
+              if (isLoading) {
+                setShowPOIModal(true);
+              }
+            }
+          }
+        )
+        .catch(() => {
+          isLoading = false;
+          setShowLoading(false);
+        });
+    }
+  }
+
+  /**
+   * Funzione che apre la modale di dettaglio del POI selezionato
+   * @param id Identificatore del punto di cui si vogliono i dettagli
+   */
+  function openModal(id: string) {
+    if (connectionStatus.connected) {
+      if (POIDetailsData !== undefined && POIDetailsData.classid === id) {
+        setShowPOIModal(true);
+        isLoading = false;
+      } else {
+        setShowLoading(true);
+        isLoading = true;
+      }
+    } else {
+      presentToast({
+        message: props.i18n.t("user_offline"),
+        duration: 5000,
+      });
+    }
+  }
+
   /**
    * Vengono filtrati i POI e tolti quelli non appartenti alle tre categorie
    */
-  var data = props.POIList.filter((element: POI) =>
+  var data = props.POIListData.filter((element: POI) =>
     [
       props.i18n.t("cat_churches", { lng: "it" }),
       props.i18n.t("cat_monuments", { lng: "it" }),
@@ -88,7 +148,7 @@ function POIMarker(props: {
           <Popup
             autoClose={false}
             onOpen={() => {
-              props.getDetails(element.properties.id_art);
+              getPOIDetail(element.properties.id_art);
             }}
             minWidth={125}
             keepInView
@@ -104,7 +164,7 @@ function POIMarker(props: {
                 shape="round"
                 fill="outline"
                 size="small"
-                onClick={() => props.openModal(element.properties.id_art)}
+                onClick={() => openModal(element.properties.id_art)}
               >
                 {props.i18n.t("details_button")}
               </IonButton>
@@ -114,7 +174,36 @@ function POIMarker(props: {
       )}
     </div>
   ));
-  return <>{listMarkers}</>;
+  return (
+    <>
+      {listMarkers}
+      {showLoading && (
+        <IonLoading
+          isOpen={showLoading}
+          backdropDismiss={true}
+          onDidDismiss={() => (isLoading = false)}
+          spinner="circular"
+        />
+      )}
+
+      {/* Modal delle informazioni riguardanti il punto di interesse cliccato */}
+      {showPOIModal && (
+        <POIModal
+          openCondition={showPOIModal}
+          onPresent={setShowLoading}
+          onDismissConditions={setShowPOIModal}
+          data={POIDetailsData}
+          i18n={props.i18n}
+          setTourDetails={props.setTourDetails}
+          closeAllModals={() => {
+            setShowTourModal(false);
+            setShowTourListModal(false);
+            setShowPOIModal(false);
+          }}
+        />
+      )}
+    </>
+  );
 }
 
 export default POIMarker;

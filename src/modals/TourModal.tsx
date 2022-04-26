@@ -32,9 +32,9 @@ import {
   removeCircle,
 } from "ionicons/icons";
 import logoVerona from "../assets/images/logo_stemma.png";
-import PopoverList from "./PopoverList";
+import PopoverList from "../components/PopoverList";
 import { TextToSpeech } from "@capacitor-community/text-to-speech";
-import { getPOIDetailsFromWebServer } from "./Functions";
+import { getPOIDetailsFromWebServer } from "../components/Functions";
 import ReactHtmlParser from "react-html-parser";
 import POIModal from "./POIModal";
 import { i18n } from "i18next";

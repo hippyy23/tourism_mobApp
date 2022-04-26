@@ -8,7 +8,6 @@ import {
   IonIcon,
   IonFabButton,
   IonAlert,
-  IonFabList,
 } from "@ionic/react";
 import { TileLayer, useMap, Marker, Popup, Polyline } from "react-leaflet";
 import { useState } from "react";
@@ -26,22 +25,19 @@ import {
   sendPosition,
   getTourListFromWebServer,
 } from "../components/Functions";
-import POIModal from "./POIModal";
+import POIModal from "../modals/POIModal";
 import { LOCATION_BOUNDS, LANGUAGES } from "../configVar";
 import PrivacyAlert from "./PrivacyAlert";
 import { POI, POIDetails, Tour, TourDetails } from "../types/app_types";
 import { i18n } from "i18next";
 import POIMarker from "./POIMarker";
-import { footsteps, layers, map } from "ionicons/icons";
-import TourListModal from "./TourListModal";
-import TourModal from "./TourModal";
-import churchIconFilter from "../assets/images/art_church.svg"; // Icona chiesa filtro
-import monumentIconFilter from "../assets/images/art_monument.svg"; // Icona monumento filtro
-import museumIconFilter from "../assets/images/art_museum.svg"; // Icona museo filtro
+import { footsteps, map } from "ionicons/icons";
+import TourListModal from "../modals/TourListModal";
+import TourModal from "../modals/TourModal";
+import FilterFab from "./FilterFab";
+import TourOnMap from "./TourOnMap";
 
 var POIListData: POI[];
-var POIDetailsData: POIDetails;
-var isLoading: boolean = false;
 const onlineBounds = L.latLngBounds(
   [46.82405708134416, 10.194074757395123],
   [44.73066988557427, 13.193342264225922]
@@ -63,13 +59,11 @@ function MapChild(props: {
   const [museumsFilter, setMuseumsFilter] = useState<boolean>(true); // Variabile che indica se mostrare sulla mappa i musei
   const [dataObtained, setDataObtained] = useState<boolean>(false); // Indica se possiedo la lista dei punti di interesse con le loro coordinate (caricati dalla memoria oppure scaricati dal webserver)
   const [downloadedData, setDownloadedData] = useState<boolean>(false); // Indica se la lista dei punti di interesse sono stati scaricati dal webserver
-  const [showLoading, setShowLoading] = useState<boolean>(false); // Permette di mostrare il componente di caricamento
   const [connectionStatus, setConnectionStatus] = useState<ConnectionStatus>({
     // Stato della connessione del dispositivo
     connected: true,
     connectionType: "none",
   });
-  const [showPOIModal, setShowPOIModal] = useState<boolean>(false); // Mostra la modale con i dettagli del punto di interesse
   const [position, setPosition] = useState<Position>(); // Posizione dell'utente
   const [permissionGranted, setPermissionGranted] = useState<boolean>(false); // Indica se si ha il permesso di ottenere la posizione dell'utente
   const [showLocationMarker, setShowLocationMarker] = useState<boolean>(false); // Indica se mostrare il marker della posizione dell'utente
@@ -77,9 +71,7 @@ function MapChild(props: {
   const [tourDetails, setTourDetails] = useState<TourDetails | undefined>(
     undefined
   ); // Indica se la mappa del tour è aperta
-  const [closeTourAlert, setCloseTourAlert] = useState<boolean>(false); // Indica se mostrare l'alert di conferma chiusura del tour
   const [showTourListModal, setShowTourListModal] = useState<boolean>(false); // Mostra la modale con la lista dei tour
-  const [showTourModal, setShowTourModal] = useState<boolean>(false); // Mostra la modale dell'itinerario
   const mapComponent = useMap();
   const [presentToast] = useIonToast();
   var trackingEnable = true;
@@ -281,57 +273,7 @@ function MapChild(props: {
       });
   }
 
-  /**
-   * Scarica i dettagli di un POI dal server
-   * @param id Identificatore del punto di interesse
-   */
-  function getPOIDetail(id: string) {
-    if (
-      connectionStatus.connected &&
-      ((POIDetailsData !== undefined && POIDetailsData.classid !== id) ||
-        POIDetailsData === undefined)
-    ) {
-      getPOIDetailsFromWebServer(id)
-        .then(
-          (json: {
-            numberReturned: number;
-            features: { properties: POIDetails }[];
-          }) => {
-            if (json.numberReturned === 1) {
-              POIDetailsData = json.features[0].properties;
-              if (isLoading) {
-                setShowPOIModal(true);
-              }
-            }
-          }
-        )
-        .catch(() => {
-          isLoading = false;
-          setShowLoading(false);
-        });
-    }
-  }
-
-  /**
-   * Funzione che apre la modale di dettaglio del POI selezionato
-   * @param id Identificatore del punto di cui si vogliono i dettagli
-   */
-  function openModal(id: string) {
-    if (connectionStatus.connected) {
-      if (POIDetailsData !== undefined && POIDetailsData.classid === id) {
-        setShowPOIModal(true);
-        isLoading = false;
-      } else {
-        setShowLoading(true);
-        isLoading = true;
-      }
-    } else {
-      presentToast({
-        message: props.i18n.t("user_offline"),
-        duration: 5000,
-      });
-    }
-  }
+  
 
   /** Richiedi al server la lista dei tour */
   function getTourList() {
@@ -349,89 +291,22 @@ function MapChild(props: {
     }
   }
 
-  /** Coordinate che disegnano l'interesse, vengono invertite di posizione rispetto a quelle ricevute */
-  const polylineTour: [number, number][] = tourDetails
-    ? tourDetails.geometry.coordinates[0].map(
-        (coordinates: [number, number]) => [coordinates[1], coordinates[0]]
-      )
-    : [];
+ 
 
   return (
     <>
       {/* Filtro dei marker */}
-      {!tourDetails && (
-        <IonFab
-          vertical="bottom"
-          horizontal="end"
-          className="ion-margin-bottom"
-          ref={props.filterFabRef}
-        >
-          <IonFabButton>
-            <IonIcon icon={layers} />
-          </IonFabButton>
-          <IonFabList side="top">
-            <IonFabButton
-              class={
-                churchersFilter
-                  ? "my-ion-fab-button ion-color ion-color-success md fab-button-in-list ion-activatable ion-focusable hydrated"
-                  : "my-ion-fab-button-opacity ion-color ion-color-danger md fab-button-in-list ion-activatable ion-focusable hydrated"
-              }
-              onClick={() => {
-                setChurchersFilter(!churchersFilter);
-              }}
-              disabled={!dataObtained}
-              data-desc={props.i18n.t("cat_churches")}
-              data-bool={churchersFilter}
-            >
-              <IonIcon
-                icon={churchIconFilter}
-                class={
-                  churchersFilter
-                    ? "my-icon md hydrated"
-                    : "my-icon-opacity md hydrated"
-                }
-              />
-            </IonFabButton>
-            <IonFabButton
-              class={
-                monumentsFilter
-                  ? "my-ion-fab-button ion-color ion-color-success md fab-button-in-list ion-activatable ion-focusable hydrated"
-                  : "my-ion-fab-button-opacity ion-color ion-color-danger md fab-button-in-list ion-activatable ion-focusable hydrated"
-              }
-              onClick={() => setMonumentsFilter(!monumentsFilter)}
-              disabled={!dataObtained}
-              data-desc={props.i18n.t("cat_monuments")}
-            >
-              <IonIcon
-                icon={monumentIconFilter}
-                class={
-                  monumentsFilter
-                    ? "my-icon md hydrated"
-                    : "my-icon-opacity md hydrated"
-                }
-              />
-            </IonFabButton>
-            <IonFabButton
-              class={
-                museumsFilter
-                  ? "my-ion-fab-button ion-color ion-color-success md fab-button-in-list ion-activatable ion-focusable hydrated"
-                  : "my-ion-fab-button-opacity ion-color ion-color-danger md fab-button-in-list ion-activatable ion-focusable hydrated"
-              }
-              onClick={() => setMuseumsFilter(!museumsFilter)}
-              disabled={!dataObtained}
-              data-desc={props.i18n.t("cat_museums")}
-            >
-              <IonIcon
-                icon={museumIconFilter}
-                class={
-                  museumsFilter
-                    ? "my-icon md hydrated"
-                    : "my-icon-opacity md hydrated"
-                }
-              />
-            </IonFabButton>
-          </IonFabList>
-        </IonFab>
+      {!tourDetails && dataObtained && (
+        <FilterFab
+          i18n={props.i18n}
+          fabRef={props.filterFabRef}
+          churchersFilter={churchersFilter}
+          setChurchersFilter={setChurchersFilter}
+          monumentsFilter={monumentsFilter}
+          setMonumentsFilter={setMonumentsFilter}
+          museumsFilter={museumsFilter}
+          setMuseumsFilter={setMuseumsFilter}
+        />
       )}
 
       {/* Pulsante per aprire la lista di itinerari */}
@@ -448,61 +323,6 @@ function MapChild(props: {
           </IonFabButton>
         </IonFab>
       )}
-
-      {/* Titolo itinerario */}
-      {tourDetails && (
-        <IonFab style={{ width: "-webkit-fill-available" }}>
-          <IonChip
-            class="chip"
-            className="ion-margin-top ion-margin-end"
-            onClick={() => {
-              setShowTourModal(true);
-            }}
-          >
-            <IonIcon icon={footsteps} color="primary" />
-            <IonLabel class="chip-label">
-              {tourDetails.properties.name_it}
-            </IonLabel>
-          </IonChip>
-        </IonFab>
-      )}
-
-      {/* Pulsante per tornare alla mappa originale */}
-      {tourDetails && (
-        <IonFab
-          vertical="bottom"
-          horizontal="end"
-          className="ion-margin-bottom"
-          onClick={() => setCloseTourAlert(true)}
-        >
-          <IonFabButton color="light">
-            <IonIcon icon={map} color="primary" />
-          </IonFabButton>
-        </IonFab>
-      )}
-
-      {/* Alert di conferma chiusura itinerario */}
-      <IonAlert
-        isOpen={closeTourAlert}
-        header={props.i18n.t("tour_alert_title")}
-        message={props.i18n.t("tour_alert_message")}
-        onDidDismiss={() => {
-          setCloseTourAlert(false);
-        }}
-        buttons={[
-          {
-            text: "Cancel",
-            role: "cancel",
-            cssClass: "secondary",
-          },
-          {
-            text: "Okay",
-            handler: () => {
-              setTourDetails(undefined);
-            },
-          },
-        ]}
-      />
 
       {/* Alert che richiede all'utente se vuole essere tracciato anonimamente */}
       {showPrivacyAlert && (
@@ -527,14 +347,7 @@ function MapChild(props: {
           url="/tiles/{z}/{x}/{y}.png"
         />
       )}
-      {showLoading && (
-        <IonLoading
-          isOpen={showLoading}
-          backdropDismiss={true}
-          onDidDismiss={() => (isLoading = false)}
-          spinner="circular"
-        />
-      )}
+      
 
       {/* Marker della posizione corrente dell'utente */}
       {showLocationMarker && (
@@ -552,31 +365,26 @@ function MapChild(props: {
       {/* Creazione dinamica dei marker dei POI */}
       {!tourDetails && dataObtained && (
         <POIMarker
-          POIList={POIListData}
+          POIListData={POIListData}
           i18n={props.i18n}
           churchersFilter={churchersFilter}
           monumentsFilter={monumentsFilter}
           museumsFilter={museumsFilter}
-          getDetails={getPOIDetail}
-          openModal={openModal}
+          setTourDetails={setTourDetails}
         />
       )}
 
-      {/* Creazione dinamica dei marker dei POI */}
+      {/* Creazione dinamica dei marker dei POI appartenenti all'itinerario*/}
       {tourDetails && dataObtained && (
-        <>
-          <POIMarker
-            POIList={POIListData}
-            i18n={props.i18n}
-            churchersFilter={churchersFilter}
-            monumentsFilter={monumentsFilter}
-            museumsFilter={museumsFilter}
-            getDetails={getPOIDetail}
-            openModal={openModal}
-            POIIds={tourDetails.properties.points_tour_id.split(",")}
-          />
-          <Polyline positions={polylineTour} />
-        </>
+        <TourOnMap
+          POIListData={POIListData}
+          i18n={props.i18n}
+          setShowTourModal={function (arg0: boolean): void {
+            throw new Error("Function not implemented.");
+          }}
+          tourDetails={tourDetails}
+          setTourDetails={setTourDetails}
+        />
       )}
 
       {showTourListModal && (
@@ -594,37 +402,6 @@ function MapChild(props: {
         />
       )}
 
-      {/* Modal delle informazioni riguardanti il punto di interesse cliccato */}
-      {showPOIModal && (
-        <POIModal
-          openCondition={showPOIModal}
-          onPresent={setShowLoading}
-          onDismissConditions={setShowPOIModal}
-          data={POIDetailsData}
-          i18n={props.i18n}
-          setTourDetails={setTourDetails}
-          closeAllModals={() => {
-            setShowTourModal(false);
-            setShowTourListModal(false);
-            setShowPOIModal(false);
-          }}
-        />
-      )}
-
-      {showTourModal && tourDetails && (
-        <TourModal
-          openCondition={showTourModal}
-          onDismissConditions={setShowTourModal}
-          data={tourDetails}
-          i18n={props.i18n}
-          setTourDetails={setTourDetails}
-          closeAllModals={() => {
-            setShowTourModal(false);
-            setShowTourListModal(false);
-            setShowPOIModal(false);
-          }}
-        />
-      )}
     </>
   );
 }

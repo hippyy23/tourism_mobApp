@@ -25,11 +25,11 @@ import {
   ellipsisVertical,
 } from "ionicons/icons";
 import toolbarIcon from "../assets/images/logo.png";
-import PopoverList from "./PopoverList";
-import { getTourDetailsFromWebServer } from "./Functions";
 import TourModal from "./TourModal";
 import { i18n } from "i18next";
 import { LanguageCode, Tour, TourDetails } from "../types/app_types";
+import PopoverList from "../components/PopoverList";
+import { getTourDetailsFromWebServer } from "../components/Functions";
 
 var tour_details: TourDetails;
 

@@ -37,14 +37,14 @@ import ReactHtmlParser from "react-html-parser";
 import {
   getPOIMediaFromWebServer,
   getTourDetailsFromWebServer,
-} from "./Functions";
+} from "../components/Functions";
 // import { Swiper, SwiperSlide } from "swiper/react";
 // import SwiperCore, { Navigation, Pagination } from "swiper";
 import { TextToSpeech } from "@capacitor-community/text-to-speech";
 import ReactPlayer from "react-player/file";
 import "swiper/swiper-bundle.min.css";
 import "@ionic/react/css/ionic-swiper.css";
-import PopoverList from "./PopoverList";
+import PopoverList from "../components/PopoverList";
 import logoVerona from "../assets/images/logo_stemma.png";
 import TourModal from "./TourModal";
 import { i18n } from "i18next";
