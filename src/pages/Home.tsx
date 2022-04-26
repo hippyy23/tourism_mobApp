@@ -2,7 +2,6 @@ import {
   IonButtons,
   IonFab,
   IonFabButton,
-  IonFabList,
   IonHeader,
   IonIcon,
   IonImg,
@@ -14,16 +13,12 @@ import {
 import {
   ellipsisHorizontal,
   ellipsisVertical,
-  layers,
   locationOutline,
 } from "ionicons/icons";
 import "./Home.css";
 import { MapContainer } from "react-leaflet";
 import React, { useRef, useState } from "react";
 import "../assets/leaflet/leaflet.css";
-import churchIconFilter from "../assets/images/art_church.svg"; // Icona chiesa filtro
-import monumentIconFilter from "../assets/images/art_monument.svg"; // Icona monumento filtro
-import museumIconFilter from "../assets/images/art_museum.svg"; // Icona museo filtro
 import toolbarIcon from "../assets/images/logo.png";
 import MapChild from "../components/MapChild";
 import PopoverList from "../components/PopoverList";
@@ -32,13 +27,9 @@ import { useTranslation } from "react-i18next";
 var isOpen = false;
 
 const Home: React.FC = () => {
-  const [churchersFilter, setChurchersFilter] = useState<boolean>(true); // Variabile che indica se mostrate sulla mappa le chiese
-  const [monumentsFilter, setMonumentsFilter] = useState<boolean>(true); // Variabile che indica se mostrate sulla mappa i monumenti
-  const [museumsFilter, setMuseumsFilter] = useState<boolean>(true); // Variabile che indica se mostrate sulla mappa i musei
-  const [dataObtained, setDataObtained] = useState<boolean>(false); // True se possiedo la lista dei punti con le loro coordinate, o sono stati caricati dalla memoria oppure scaricati dal webserver
   const [centerPosition, setCenterPosition] = useState<boolean>(false);
   const fabRef = useRef<HTMLIonFabElement>(null);
-  const { t, i18n } = useTranslation();
+  const { i18n } = useTranslation();
 
   const [present, dismiss] = useIonPopover(PopoverList, {
     onHide: () => dismiss(),
@@ -109,80 +100,6 @@ const Home: React.FC = () => {
         </IonFabButton>
       </IonFab>
 
-      {/* Filtro dei marker */}
-      <IonFab
-        vertical="bottom"
-        horizontal="end"
-        className="ion-margin-bottom"
-        ref={fabRef}
-      >
-        <IonFabButton>
-          <IonIcon icon={layers} />
-        </IonFabButton>
-        <IonFabList side="top">
-          <IonFabButton
-            class={
-              churchersFilter
-                ? "my-ion-fab-button ion-color ion-color-success md fab-button-in-list ion-activatable ion-focusable hydrated"
-                : "my-ion-fab-button-opacity ion-color ion-color-danger md fab-button-in-list ion-activatable ion-focusable hydrated"
-            }
-            onClick={() => {
-              setChurchersFilter(!churchersFilter);
-            }}
-            disabled={!dataObtained}
-            data-desc={t("cat_churches")}
-            data-bool={churchersFilter}
-          >
-            <IonIcon
-              icon={churchIconFilter}
-              class={
-                churchersFilter
-                  ? "my-icon md hydrated"
-                  : "my-icon-opacity md hydrated"
-              }
-            />
-          </IonFabButton>
-          <IonFabButton
-            class={
-              monumentsFilter
-                ? "my-ion-fab-button ion-color ion-color-success md fab-button-in-list ion-activatable ion-focusable hydrated"
-                : "my-ion-fab-button-opacity ion-color ion-color-danger md fab-button-in-list ion-activatable ion-focusable hydrated"
-            }
-            onClick={() => setMonumentsFilter(!monumentsFilter)}
-            disabled={!dataObtained}
-            data-desc={t("cat_monuments")}
-          >
-            <IonIcon
-              icon={monumentIconFilter}
-              class={
-                monumentsFilter
-                  ? "my-icon md hydrated"
-                  : "my-icon-opacity md hydrated"
-              }
-            />
-          </IonFabButton>
-          <IonFabButton
-            class={
-              museumsFilter
-                ? "my-ion-fab-button ion-color ion-color-success md fab-button-in-list ion-activatable ion-focusable hydrated"
-                : "my-ion-fab-button-opacity ion-color ion-color-danger md fab-button-in-list ion-activatable ion-focusable hydrated"
-            }
-            onClick={() => setMuseumsFilter(!museumsFilter)}
-            disabled={!dataObtained}
-            data-desc={t("cat_museums")}
-          >
-            <IonIcon
-              icon={museumIconFilter}
-              class={
-                museumsFilter
-                  ? "my-icon md hydrated"
-                  : "my-icon-opacity md hydrated"
-              }
-            />
-          </IonFabButton>
-        </IonFabList>
-      </IonFab>
-
       <MapContainer
         center={[45.43895, 10.99439]}
         zoom={15}
@@ -192,11 +109,7 @@ const Home: React.FC = () => {
         zoomControl={true}
       >
         <MapChild
-          churchersFilter={churchersFilter}
-          monumentsFilter={monumentsFilter}
-          museumsFilter={museumsFilter}
-          dataObtained={dataObtained}
-          setDataObtained={setDataObtained}
+          filterFabRef={fabRef}
           centerPosition={centerPosition}
           setCenterPosition={setCenterPosition}
           i18n={i18n}
