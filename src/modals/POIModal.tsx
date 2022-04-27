@@ -35,7 +35,7 @@ import {
 } from "ionicons/icons";
 import ReactHtmlParser from "react-html-parser";
 import {
-  getPOIMediaFromWebServer,
+  fetchPOIMedia,
   getTourDetailsFromWebServer,
 } from "../components/Functions";
 // import { Swiper, SwiperSlide } from "swiper/react";
@@ -298,21 +298,9 @@ function POIModal(props: {
       }}
       onWillPresent={() => {
         props.onPresent?.(false);
-        getPOIMediaFromWebServer(props.data.classid)
-          .then(
-            (json: {
-              numberReturned: number;
-              features: { properties: { path: string } }[];
-            }) => {
-              if (json.numberReturned === 1) {
-                console.log(json.features[0].properties);
-                setUrlMedia(json.features[0].properties.path);
-              }
-            }
-          )
-          .catch(() => {
-            console.log("Catch");
-          });
+        fetchPOIMedia(props.data.classid, (path: string) => {
+          setUrlMedia(path);
+        });
       }}
     >
       {showTourModal && (

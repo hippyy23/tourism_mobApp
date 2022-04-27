@@ -34,7 +34,7 @@ import {
 import logoVerona from "../assets/images/logo_stemma.png";
 import PopoverList from "../components/PopoverList";
 import { TextToSpeech } from "@capacitor-community/text-to-speech";
-import { getPOIDetailsFromWebServer } from "../components/Functions";
+import { fetchPOIDetails } from "../components/Functions";
 import ReactHtmlParser from "react-html-parser";
 import POIModal from "./POIModal";
 import { i18n } from "i18next";
@@ -96,21 +96,6 @@ function TourModal(props: {
     return "No description for this POI.";
   };
 
-  /**
-   * Scarica i dettagli di un punto di interesse e apre la modale per visualizzarli
-   * @param id_poi Identificativo del poi
-   */
-  function getPOIDetail(id_poi: string) {
-    getPOIDetailsFromWebServer(id_poi)
-      .then((json: { features: { properties: POIDetails }[] }) => {
-        poi_details = json.features[0].properties;
-        setShowPOIModal(true);
-      })
-      .catch(() => {
-        //TODO: Gestire errore
-      });
-  }
-
   /** Creazione della lista di itinerari cliccabili */
   function PoiList() {
     const tours_id = props.data.properties.points_tour_id.split(",");
@@ -122,7 +107,10 @@ function TourModal(props: {
         button={true}
         key={id}
         lines={index < tours_id.length - 1 ? "inset" : "none"}
-        onClick={() => getPOIDetail(id)}
+        onClick={() => fetchPOIDetails(id, (poi: POIDetails) => {
+          poi_details = poi;
+          setShowPOIModal(true);
+        })}
       >
         <IonLabel>{index + 1 + ". " + tours_name[index]}</IonLabel>
       </IonItem>

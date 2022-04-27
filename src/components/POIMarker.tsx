@@ -7,9 +7,9 @@ import churchIcon from "../assets/images/art_church.png"; // Icona chiesa
 import monumentIcon from "../assets/images/art_monument.png"; // Icona monumento
 import museumIcon from "../assets/images/art_museum.png"; // Icona museo
 import { useState } from "react";
-import { getPOIDetailsFromWebServer } from "./Functions";
 import POIModal from "../modals/POIModal";
 import { ConnectionStatus } from "@capacitor/network";
+import { fetchPOIDetails } from "./Functions";
 
 var POIDetailsData: POIDetails;
 var isLoading: boolean = false;
@@ -32,30 +32,18 @@ function POIMarker(props: {
    * Scarica i dettagli di un POI dal server
    * @param id Identificatore del punto di interesse
    */
-  function getPOIDetail(id: string) {
+  function getPOIDetails(id: string) {
     if (
       props.connectionStatus.connected &&
       ((POIDetailsData !== undefined && POIDetailsData.classid !== id) ||
         POIDetailsData === undefined)
     ) {
-      getPOIDetailsFromWebServer(id)
-        .then(
-          (json: {
-            numberReturned: number;
-            features: { properties: POIDetails }[];
-          }) => {
-            if (json.numberReturned === 1) {
-              POIDetailsData = json.features[0].properties;
-              if (isLoading) {
-                setShowPOIModal(true);
-              }
-            }
-          }
-        )
-        .catch(() => {
-          isLoading = false;
-          setShowLoading(false);
-        });
+      fetchPOIDetails(id, (poi: POIDetails) => {
+        POIDetailsData = poi;
+        if (isLoading) {
+          setShowPOIModal(true);
+        }
+      });
     }
   }
 
@@ -151,7 +139,7 @@ function POIMarker(props: {
           <Popup
             autoClose={false}
             onOpen={() => {
-              getPOIDetail(element.properties.id_art);
+              getPOIDetails(element.properties.id_art);
             }}
             minWidth={125}
             keepInView
@@ -193,7 +181,10 @@ function POIMarker(props: {
       {showPOIModal && (
         <POIModal
           openCondition={showPOIModal}
-          onPresent={setShowLoading}
+          onPresent={() => {
+            isLoading = false;
+            setShowLoading(false);
+          }}
           onDismissConditions={setShowPOIModal}
           data={POIDetailsData}
           i18n={props.i18n}

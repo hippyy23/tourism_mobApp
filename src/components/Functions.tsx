@@ -2,7 +2,7 @@ import { Device, DeviceId } from "@capacitor/device";
 import { Position } from "@capacitor/geolocation";
 import L from "leaflet";
 import { LOG_SERVER_DOMAIN, SERVER_DOMAIN } from "../configVar";
-import { POI } from "../types/app_types";
+import { POI, POIDetails } from "../types/app_types";
 import md5 from "crypto-js/md5";
 
 // Trova il centro rispetto a tutti i punti di interesse
@@ -42,7 +42,7 @@ export function findCenter(data: POI[]) {
 
 var lastPos: Position;
 // Invia la posizione del device al server se ci si sposta di più di 100 metri oppure ogni 30 secondi
-export async function sendPosition(id: DeviceId, pos: Position) {
+export function sendPosition(id: DeviceId, pos: Position) {
   if (lastPos) {
     let lastPosll = L.latLng(lastPos.coords.latitude, lastPos.coords.longitude);
     let posll = L.latLng(pos.coords.latitude, pos.coords.longitude);
@@ -59,8 +59,11 @@ export async function sendPosition(id: DeviceId, pos: Position) {
   lastPos = pos;
 }
 
-// Ritorna la lista di tutti i punti di interesse con le coordinate e i nomi
-export async function getPOIListFromWebServer() {
+/**
+ * Scarica la lista di tutti i punti di interesse con le coordinate e i nomi e poi esegui la funzione callback
+ * @param callback Funzione di callback
+ */
+export function fetchPOIList(callback: (arg0: POI[]) => void) {
   const artCategoryRequest =
     SERVER_DOMAIN +
     "geoserver/tourism/ows?service=WFS&version=1.0.0" +
@@ -68,41 +71,92 @@ export async function getPOIListFromWebServer() {
     "&typeName=tourism:v_art_space" +
     "&outputFormat=json";
 
-  return fetch(artCategoryRequest).then((response) => response.json());
+  type POIList = {
+    features: POI[];
+  };
+
+  fetch(artCategoryRequest)
+    .then((response) => response.json())
+    .then((data: POIList) => callback(data.features))
+    .catch(() => {
+      console.log("Errore nella comunicazione con il server");
+    });
 }
 
-// Ritorna i dettagli di un punto specifico
-export async function getPOIDetailsFromWebServer(id: string) {
+/**
+ * Scarica i dettagli di un punto di interesse ed esegue la funzione di callback
+ * @param id_poi Identificativo del poi
+ * @param callback Funzione di callback
+ */
+export function fetchPOIDetails(
+  id_poi: string,
+  callback: (arg0: POIDetails) => void
+) {
   const classIdRequest =
     SERVER_DOMAIN +
     "geoserver/tourism/ows?service=WFS&version=1.0.0" +
     "&request=GetFeature" +
     "&typeName=tourism:v_art" +
     "&cql_filter=(classid=" +
-    id +
+    id_poi +
     ")" +
     "&outputFormat=json";
 
-  return fetch(classIdRequest).then((response) => response.json());
+  type POIDetailsList = {
+    numberReturned: number;
+    features: { properties: POIDetails }[];
+  };
+
+  fetch(classIdRequest)
+    .then((response) => response.json())
+    .then((data: POIDetailsList) =>
+      data.numberReturned === 1
+        ? callback(data.features[0].properties)
+        : Promise.reject()
+    )
+    .catch(() => {
+      console.log("Errore nella comunicazione con il server");
+    });
 }
 
-// Ritorna i media di un punto specifico
-export async function getPOIMediaFromWebServer(id: string) {
+/**
+ * Scarica i media di un punto di interesse ed esegue la funzione di callback
+ * @param id_poi Identificativo del poi
+ * @param callback Funzione di callback
+ */
+export function fetchPOIMedia(
+  id_poi: string,
+  callback: (arg0: string) => void
+) {
   const classIdRequest =
     SERVER_DOMAIN +
     "geoserver/tourism/ows?service=WFS&version=1.0.0" +
     "&request=GetFeature" +
     "&typeName=tourism:v_art_media" +
     "&cql_filter=(art=" +
-    id +
+    id_poi +
     ")" +
     "&outputFormat=json";
 
-  return fetch(classIdRequest).then((response) => response.json());
+  type POIMedia = {
+    numberReturned: number;
+    features: { properties: { path: string } }[];
+  };
+
+  fetch(classIdRequest)
+    .then((response) => response.json())
+    .then((data: POIMedia) =>
+      data.numberReturned === 1
+        ? callback(data.features[0].properties.path)
+        : Promise.reject()
+    )
+    .catch(() => {
+      console.log("Errore nella comunicazione con il server");
+    });
 }
 
 // Ritorna l'occupazione di un punto specifico
-export async function getCrowdingFromWebServer(id: string) {
+export function getCrowdingFromWebServer(id: string) {
   const classIdRequest =
     SERVER_DOMAIN +
     "geoserver/tourism/ows?service=WFS&version=1.0.0" +
@@ -117,7 +171,7 @@ export async function getCrowdingFromWebServer(id: string) {
 }
 
 // Ritorna la lista di tutti gli itinerari
-export async function getTourListFromWebServer() {
+export function getTourListFromWebServer() {
   const artCategoryRequest =
     SERVER_DOMAIN +
     "geoserver/tourism/ows?service=WFS&version=1.0.0" +
@@ -129,7 +183,7 @@ export async function getTourListFromWebServer() {
 }
 
 // Ritorna i dettagli di un itinerario specifico
-export async function getTourDetailsFromWebServer(id: string) {
+export function getTourDetailsFromWebServer(id: string) {
   const classIdRequest =
     SERVER_DOMAIN +
     "geoserver/tourism/ows?service=WFS&version=1.0.0" +
@@ -158,7 +212,7 @@ export async function sendLanguage(chooseLng: string) {
   });
 }
 
-export async function sendToLogServer(path: string, data: Object) {
+function sendToLogServer(path: string, data: Object) {
   return fetch(LOG_SERVER_DOMAIN + path, {
     method: "POST",
     mode: "cors",

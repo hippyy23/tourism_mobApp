@@ -16,9 +16,9 @@ import { Storage } from "@capacitor/storage";
 import { Geolocation, Position } from "@capacitor/geolocation";
 import {
   findCenter,
-  getPOIListFromWebServer,
   sendPosition,
   getTourListFromWebServer,
+  fetchPOIList,
 } from "../components/Functions";
 import { LOCATION_BOUNDS, LANGUAGES } from "../configVar";
 import PrivacyAlert from "./PrivacyAlert";
@@ -245,25 +245,17 @@ function MapChild(props: {
    */
   function getList() {
     if (downloadedData) return;
-    getPOIListFromWebServer()
-      .then((json: { features: POI[] }) => {
-        POIListData = json.features;
-
-        Storage.set({
-          key: "baseData",
-          value: JSON.stringify(POIListData),
-        });
-        setDownloadedData(true);
-        setDataObtained(false);
-        setDataObtained(true);
-        setCenterData();
-      })
-      .catch((error) => {
-        //console.error(error);
-        alert(
-          "Server non disponibile. I dettagli dei POI non possono essere mostrati."
-        );
+    fetchPOIList((poiList: POI[]) => {
+      POIListData = poiList;
+      Storage.set({
+        key: "baseData",
+        value: JSON.stringify(POIListData),
       });
+      setDownloadedData(true);
+      setDataObtained(false);
+      setDataObtained(true);
+      setCenterData();
+    });
   }
 
   /** Richiedi al server la lista dei tour */
