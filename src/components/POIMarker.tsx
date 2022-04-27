@@ -23,6 +23,7 @@ function POIMarker(props: {
   museumsFilter: boolean;
   setTourDetails: (arg0: TourDetails) => void;
   connectionStatus: ConnectionStatus;
+  setMapCenter: (POIList: POI[]) => void
 }) {
   const [showLoading, setShowLoading] = useState<boolean>(false); // Permette di mostrare il componente di caricamento
   const [showPOIModal, setShowPOIModal] = useState<boolean>(false); // Mostra la modale con i dettagli del punto di interesse

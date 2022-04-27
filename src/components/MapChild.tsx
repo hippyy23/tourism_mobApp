@@ -69,8 +69,9 @@ function MapChild(props: {
   const [presentToast] = useIonToast();
   var trackingEnable = true;
 
-  function setCenterData() {
-    mapComponent.panTo(findCenter(POIListData));
+  function setCenterData(POIList?: POI[]) {
+    if (POIList) mapComponent.panTo(findCenter(POIList));
+    else mapComponent.panTo(findCenter(POIListData));
   }
   function setOfflineBounds() {
     mapComponent.setMaxBounds(offlineBounds);
@@ -356,6 +357,7 @@ function MapChild(props: {
           setTourDetails={setTourDetails}
           connectionStatus={connectionStatus}
           POIIds={tourDetails?.properties.points_tour_id.split(",")}
+          setMapCenter={setCenterData}
         />
       )}
 
