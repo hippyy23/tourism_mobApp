@@ -7,9 +7,6 @@ function PrivacyAlert(props: {
   onDismiss: () => void;
   backdropDismiss: boolean;
 }) {
-  //const [showPrivacyAlert, setShowPrivacyAlert] = useState<boolean>(false); // Indica se mostrare o meno l'alert della privacy
-  //const [showPrivacyInfo, setShowPrivacyInfo] = useState<boolean>(false); // Indica se è da mostrare l'alert che visualizza le informazioni che tracciamo dell'utente
-
   return (
     <>
       {/* Alert che richiede all'utente se acconsente a farsi tracciare anonimamente */}
@@ -38,24 +35,8 @@ function PrivacyAlert(props: {
               });
             },
           },
-          /*
-                    {
-                    text: "Info",
-                    handler: () => { setShowPrivacyInfo(true); },
-                    }
-                    */
         ]}
       />
-      {/*
-            /* Alert che mostra i dati che vengono tracciati, raggiungibile attraverso il pulsante info 
-            <IonAlert
-                isOpen={showPrivacyInfo}
-                header={"Informazioni tracciate"}
-                message={"Informazioni tracciate in forma anonima a fini statistici: "}
-                onDidDismiss={() => { setShowPrivacyInfo(false); }}
-                buttons={[{ text: "Close", role: "cancel", cssClass: "secondary" }]}
-            />
-            */}
     </>
   );
 }

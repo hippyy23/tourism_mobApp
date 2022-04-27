@@ -22,6 +22,11 @@ function TourOnMap(props: {
   const [closeTourAlert, setCloseTourAlert] = useState<boolean>(false); // Indica se mostrare l'alert di conferma chiusura del tour
   const [showTourModal, setShowTourModal] = useState<boolean>(false); // Mostra la modale dell'itinerario
   const code = props.i18n.language as LanguageCode;
+
+  /** Mostra l'alert di chiusura itinerario se viene premuto il tasto indietro sul telefono */
+  document.addEventListener('ionBackButton', (ev) => {
+    setCloseTourAlert(true);
+  });
   
   /** Coordinate che disegnano l'interesse, vengono invertite di posizione rispetto a quelle ricevute */
   const polylineTour: [number, number][] =

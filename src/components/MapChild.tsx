@@ -163,6 +163,20 @@ function MapChild(props: {
     // Ridisegna la mappa, senza questa funzione non viene mostrata correttamente la mappa
     mapComponent.invalidateSize();
 
+    // Recupera la lingua scelta precedentemente e salvata, oppure quella del dispositivo, oppure quella di default
+    Storage.get({ key: "languageCode" }).then((result) => {
+      if (result.value !== null) {
+        props.i18n.changeLanguage(result.value);
+      } else {
+        Device.getLanguageCode().then((lang) => {
+          deviceLanguage = lang.value;
+          if (LANGUAGES.includes(deviceLanguage)) {
+            props.i18n.changeLanguage(deviceLanguage);
+          }
+        });
+      }
+    });
+
     checkLocationPermission();
 
     /**
@@ -189,20 +203,6 @@ function MapChild(props: {
           /*buttons: [{ text: "hide", handler: () => dismissToast() }],*/
           message: props.i18n.t("user_offline"),
           duration: 5000,
-        });
-      }
-    });
-
-    // Recupera la lingua scelta precedentemente e salvata, oppure quella del dispositivo, oppure quella di default
-    Storage.get({ key: "languageCode" }).then((result) => {
-      if (result.value !== null) {
-        props.i18n.changeLanguage(result.value);
-      } else {
-        Device.getLanguageCode().then((lang) => {
-          deviceLanguage = lang.value;
-          if (LANGUAGES.includes(deviceLanguage)) {
-            props.i18n.changeLanguage(deviceLanguage);
-          }
         });
       }
     });
@@ -266,25 +266,28 @@ function MapChild(props: {
       });
   }
 
-  
-
   /** Richiedi al server la lista dei tour */
   function getTourList() {
-    if (tourListData === undefined) {
-      getTourListFromWebServer()
-        .then((json: { features: Tour[] }) => {
-          tourListData = json.features;
-          setShowTourListModal(true);
-        })
-        .catch(() => {
-          //TODO: Gestire errore
-        });
+    if (connectionStatus.connected) {
+      if (tourListData === undefined) {
+        getTourListFromWebServer()
+          .then((json: { features: Tour[] }) => {
+            tourListData = json.features;
+            setShowTourListModal(true);
+          })
+          .catch(() => {
+            //TODO: Gestire errore
+          });
+      } else {
+        setShowTourListModal(true);
+      }
     } else {
-      setShowTourListModal(true);
+      presentToast({
+        message: props.i18n.t("user_offline"),
+        duration: 5000,
+      });
     }
   }
-
- 
 
   return (
     <>
@@ -340,7 +343,6 @@ function MapChild(props: {
           url="/tiles/{z}/{x}/{y}.png"
         />
       )}
-      
 
       {/* Marker della posizione corrente dell'utente */}
       {showLocationMarker && (
@@ -391,7 +393,6 @@ function MapChild(props: {
           }}
         />
       )}
-
     </>
   );
 }

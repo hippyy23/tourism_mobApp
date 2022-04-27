@@ -14,7 +14,7 @@ i18n.use(initReactI18next).init({
         info: "Informazioni",
         tracking: "Tracciamento",
         agree: "Accetta",
-        decline: "Non accettare",
+        decline: "Rifiuta",
         cat_churches: "Chiese",
         cat_monuments: "Monumenti",
         cat_museums: "Musei e Centri Espositivi",
@@ -54,7 +54,8 @@ i18n.use(initReactI18next).init({
         storico: "Storico",
         show_tour: "Mostra itinerario",
         tour_alert_title: "Attenzione",
-        tour_alert_message: "Sei sicuro di voler chiudere la mappa dell'itinerario?"
+        tour_alert_message:
+          "Sei sicuro di voler chiudere la mappa dell'itinerario?",
       },
     },
     en: {
@@ -104,7 +105,8 @@ i18n.use(initReactI18next).init({
         storico: "Storico", // it
         show_tour: "Mostra itinerario", // it
         tour_alert_title: "Attenzione", // it
-        tour_alert_message: "Sei sicuro di voler chiudere la mappa dell'itinerario?" // it
+        tour_alert_message:
+          "Sei sicuro di voler chiudere la mappa dell'itinerario?", // it
       },
     },
     de: {
@@ -154,7 +156,8 @@ i18n.use(initReactI18next).init({
         storico: "Storico", // it
         show_tour: "Mostra itinerario", // it
         tour_alert_title: "Attenzione", // it
-        tour_alert_message: "Sei sicuro di voler chiudere la mappa dell'itinerario?" // it
+        tour_alert_message:
+          "Sei sicuro di voler chiudere la mappa dell'itinerario?", // it
       },
     },
     fr: {
@@ -204,7 +207,8 @@ i18n.use(initReactI18next).init({
         storico: "Storico", // it
         show_tour: "Mostra itinerario", // it
         tour_alert_title: "Attenzione", // it
-        tour_alert_message: "Sei sicuro di voler chiudere la mappa dell'itinerario?" // it
+        tour_alert_message:
+          "Sei sicuro di voler chiudere la mappa dell'itinerario?", // it
       },
     },
     es: {
@@ -254,7 +258,8 @@ i18n.use(initReactI18next).init({
         storico: "Storico", // it
         show_tour: "Mostra itinerario", // it
         tour_alert_title: "Attenzione", // it
-        tour_alert_message: "Sei sicuro di voler chiudere la mappa dell'itinerario?" // it
+        tour_alert_message:
+          "Sei sicuro di voler chiudere la mappa dell'itinerario?", // it
       },
     },
   },
