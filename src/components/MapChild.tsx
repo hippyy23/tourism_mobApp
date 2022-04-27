@@ -17,7 +17,7 @@ import { Geolocation, Position } from "@capacitor/geolocation";
 import {
   findCenter,
   sendPosition,
-  getTourListFromWebServer,
+  fetchTourList,
   fetchPOIList,
 } from "../components/Functions";
 import { LOCATION_BOUNDS, LANGUAGES } from "../configVar";
@@ -262,14 +262,10 @@ function MapChild(props: {
   function getTourList() {
     if (connectionStatus.connected) {
       if (tourListData === undefined) {
-        getTourListFromWebServer()
-          .then((json: { features: Tour[] }) => {
-            tourListData = json.features;
-            setShowTourListModal(true);
-          })
-          .catch(() => {
-            //TODO: Gestire errore
-          });
+        fetchTourList((tourList: Tour[]) => {
+          tourListData = tourList;
+          setShowTourListModal(true);
+        });
       } else {
         setShowTourListModal(true);
       }

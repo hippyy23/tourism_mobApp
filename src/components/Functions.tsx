@@ -2,7 +2,7 @@ import { Device, DeviceId } from "@capacitor/device";
 import { Position } from "@capacitor/geolocation";
 import L from "leaflet";
 import { LOG_SERVER_DOMAIN, SERVER_DOMAIN } from "../configVar";
-import { POI, POIDetails } from "../types/app_types";
+import { POI, POIDetails, Tour, TourDetails } from "../types/app_types";
 import md5 from "crypto-js/md5";
 
 // Trova il centro rispetto a tutti i punti di interesse
@@ -60,7 +60,7 @@ export function sendPosition(id: DeviceId, pos: Position) {
 }
 
 /**
- * Scarica la lista di tutti i punti di interesse con le coordinate e i nomi e poi esegui la funzione callback
+ * Scarica la lista di tutti i punti di interesse con le coordinate e i nomi e poi esegue la funzione callback
  * @param callback Funzione di callback
  */
 export function fetchPOIList(callback: (arg0: POI[]) => void) {
@@ -79,7 +79,7 @@ export function fetchPOIList(callback: (arg0: POI[]) => void) {
     .then((response) => response.json())
     .then((data: POIList) => callback(data.features))
     .catch(() => {
-      console.log("Errore nella comunicazione con il server");
+      console.log("Errore nella comunicazione con il server: fetchPOIList");
     });
 }
 
@@ -115,7 +115,7 @@ export function fetchPOIDetails(
         : Promise.reject()
     )
     .catch(() => {
-      console.log("Errore nella comunicazione con il server");
+      console.log("Errore nella comunicazione con il server: fetchPOIDetails");
     });
 }
 
@@ -151,27 +151,39 @@ export function fetchPOIMedia(
         : Promise.reject()
     )
     .catch(() => {
-      console.log("Errore nella comunicazione con il server");
+      console.log("Errore nella comunicazione con il server: fetchPOIMedia");
     });
 }
 
-// Ritorna l'occupazione di un punto specifico
-export function getCrowdingFromWebServer(id: string) {
+/**
+ * Scarica l'occupazione di un punto di interesse ed esegue la funzione di callback
+ * @param id_poi Identificativo del poi
+ * @param callback Funzione di callback
+ */
+export function fetchCrowding(id_poi: string, callback: (arg0: any) => void) {
   const classIdRequest =
     SERVER_DOMAIN +
     "geoserver/tourism/ows?service=WFS&version=1.0.0" +
     "&request=GetFeature" +
     "&typeName=tourism:crowding" +
     "&cql_filter=(punto_di_interesse=" +
-    id +
+    id_poi +
     ")" +
     "&outputFormat=json";
 
-  return fetch(classIdRequest).then((response) => response.json());
+  fetch(classIdRequest)
+    .then((response) => response.json())
+    .then((data: any) => callback(data))
+    .catch(() => {
+      console.log("Errore nella comunicazione con il server: fetchCrowding");
+    });
 }
 
-// Ritorna la lista di tutti gli itinerari
-export function getTourListFromWebServer() {
+/**
+ * Scarica la lista di tutti gli itinerari e poi esegue la funzione callback
+ * @param callback Funzione di callback
+ */
+export function fetchTourList(callback: (arg0: Tour[]) => void) {
   const artCategoryRequest =
     SERVER_DOMAIN +
     "geoserver/tourism/ows?service=WFS&version=1.0.0" +
@@ -179,22 +191,50 @@ export function getTourListFromWebServer() {
     "&typeName=tourism:v_tour_space" +
     "&outputFormat=json";
 
-  return fetch(artCategoryRequest).then((response) => response.json());
+  type TourList = {
+    features: Tour[];
+  };
+
+  fetch(artCategoryRequest)
+    .then((response) => response.json())
+    .then((data: TourList) => callback(data.features))
+    .catch(() => {
+      console.log("Errore nella comunicazione con il server: fetchTourList");
+    });
 }
 
-// Ritorna i dettagli di un itinerario specifico
-export function getTourDetailsFromWebServer(id: string) {
+/**
+ * Scarica i dettagli di un itinerario ed esegue la funzione di callback
+ * @param id_tour Identificativo dell'itinerario
+ * @param callback Funzione di callback
+ */
+export function fetchTourDetails(
+  id_tour: string,
+  callback: (arg0: TourDetails) => void
+) {
   const classIdRequest =
     SERVER_DOMAIN +
     "geoserver/tourism/ows?service=WFS&version=1.0.0" +
     "&request=GetFeature" +
     "&typeName=tourism:v_tour" +
     "&cql_filter=(classid=" +
-    id +
+    id_tour +
     ")" +
     "&outputFormat=json";
 
-  return fetch(classIdRequest).then((response) => response.json());
+  type POIDetailsList = {
+    numberReturned: number;
+    features: TourDetails[];
+  };
+
+  fetch(classIdRequest)
+    .then((response) => response.json())
+    .then((data: POIDetailsList) =>
+      data.numberReturned === 1 ? callback(data.features[0]) : Promise.reject()
+    )
+    .catch(() => {
+      console.log("Errore nella comunicazione con il server: fetchTourDetails");
+    });
 }
 
 export async function sendLanguage(chooseLng: string) {

@@ -29,7 +29,7 @@ import TourModal from "./TourModal";
 import { i18n } from "i18next";
 import { LanguageCode, Tour, TourDetails } from "../types/app_types";
 import PopoverList from "../components/PopoverList";
-import { getTourDetailsFromWebServer } from "../components/Functions";
+import { fetchTourDetails } from "../components/Functions";
 
 var tour_details: TourDetails;
 
@@ -54,14 +54,10 @@ function TourListModal(props: {
 
   /** Richiedi al server i dettagli di un itinerario */
   function getTourDetail(id_tour: string) {
-    getTourDetailsFromWebServer(id_tour)
-      .then((json: { features: TourDetails[] }) => {
-        tour_details = json.features[0];
-        setShowTourModal(true);
-      })
-      .catch(() => {
-        //TODO: Gestire errore
-      });
+    fetchTourDetails(id_tour, (tour: TourDetails) => {
+      tour_details = tour;
+      setShowTourModal(true);
+    });
   }
 
   /** Creazione delle sezioni delle categorie dei poi*/

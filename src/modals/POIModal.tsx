@@ -34,10 +34,7 @@ import {
   volumeMute,
 } from "ionicons/icons";
 import ReactHtmlParser from "react-html-parser";
-import {
-  fetchPOIMedia,
-  getTourDetailsFromWebServer,
-} from "../components/Functions";
+import { fetchPOIMedia, fetchTourDetails } from "../components/Functions";
 // import { Swiper, SwiperSlide } from "swiper/react";
 // import SwiperCore, { Navigation, Pagination } from "swiper";
 import { TextToSpeech } from "@capacitor-community/text-to-speech";
@@ -256,14 +253,10 @@ function POIModal(props: {
    * @param id_tour Identificativo del tour
    */
   function getTourDetail(id_tour: string) {
-    getTourDetailsFromWebServer(id_tour)
-      .then((json: { features: TourDetails[] }) => {
-        tour_details = json.features[0];
-        setShowTourModal(true);
-      })
-      .catch(() => {
-        //TODO: Gestire errore
-      });
+    fetchTourDetails(id_tour, (tour: TourDetails) => {
+      tour_details = tour;
+      setShowTourModal(true);
+    });
   }
 
   /** Creazione della lista di itinerari cliccabili */
