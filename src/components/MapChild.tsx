@@ -302,8 +302,8 @@ function MapChild(props: {
             getTourList();
           }}
         >
-          <IonFabButton color="light">
-            <IonIcon icon={footsteps} color="primary" />
+          <IonFabButton>
+            <IonIcon icon={footsteps} />
           </IonFabButton>
         </IonFab>
       )}

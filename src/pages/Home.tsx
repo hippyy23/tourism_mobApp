@@ -13,7 +13,7 @@ import {
 import {
   ellipsisHorizontal,
   ellipsisVertical,
-  locationOutline,
+  location,
 } from "ionicons/icons";
 import "./Home.css";
 import { MapContainer } from "react-leaflet";
@@ -95,8 +95,8 @@ const Home: React.FC = () => {
           setCenterPosition(true);
         }}
       >
-        <IonFabButton color="light">
-          <IonIcon icon={locationOutline} color="primary" />
+        <IonFabButton>
+          <IonIcon icon={location} />
         </IonFabButton>
       </IonFab>
 
