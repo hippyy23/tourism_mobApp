@@ -96,6 +96,7 @@ function SearchModal(props: {
           setShowPOIModal(true);
         })
       }
+      button
     >
       <IonIcon
         icon={icon(POI.properties.category_it)}
