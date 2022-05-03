@@ -391,8 +391,12 @@ function MapChild(props: {
         <SearchModal
           openCondition={props.showSearchModal}
           onDismissConditions={props.setShowSearchModal}
+          setTourDetails={setTourDetails}
           i18n={props.i18n}
           POIListData={POIListData}
+          closeAllModals={() => {
+            props.setShowSearchModal(false);
+          }}
         />
       )}
     </>

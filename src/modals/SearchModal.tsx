@@ -12,7 +12,7 @@ import {
   IonToolbar,
   useIonPopover,
 } from "@ionic/react";
-import { ReactElement, useState } from "react";
+import { useState } from "react";
 import {
   chevronBack,
   arrowBack,
@@ -25,14 +25,21 @@ import museumIcon from "../assets/images/art_museum.svg"; // Icona museo filtro
 import toolbarIcon from "../assets/images/logo.png";
 import { i18n } from "i18next";
 import PopoverList from "../components/PopoverList";
-import { LanguageCode, POI } from "../types/app_types";
+import { LanguageCode, POI, POIDetails, TourDetails } from "../types/app_types";
+import POIModal from "./POIModal";
+import { fetchPOIDetails } from "../components/Functions";
+
+var poi_details: POIDetails;
 
 function SearchModal(props: {
   openCondition: boolean;
   onDismissConditions: (arg0: boolean) => void;
   POIListData: POI[];
   i18n: i18n;
+  setTourDetails: (arg0: TourDetails) => void;
+  closeAllModals: () => void;
 }) {
+  const [showPOIModal, setShowPOIModal] = useState<boolean>(false); // Mostra la modale con i dettagli del punto di interesse
   const [present, dismiss] = useIonPopover(PopoverList, {
     onHide: () => dismiss(),
   });
@@ -77,13 +84,24 @@ function SearchModal(props: {
   /**
    * Crea la lista di POI
    */
-  const listPOI = data.map((element: POI) => (
-    <IonItem key={element.properties.id_art} hidden={POIname(element).toLowerCase().indexOf(searchText)==-1}>
+  const listPOI = data.map((POI: POI) => (
+    <IonItem
+      key={POI.properties.id_art}
+      hidden={
+        POIname(POI).toLowerCase().indexOf(searchText.toLowerCase()) < 0
+      }
+      onClick={() =>
+        fetchPOIDetails(POI.properties.id_art, (poi_data: POIDetails) => {
+          poi_details = poi_data;
+          setShowPOIModal(true);
+        })
+      }
+    >
       <IonIcon
-        icon={icon(element.properties.category_it)}
+        icon={icon(POI.properties.category_it)}
         className="ion-margin-end"
       />
-      <IonLabel>{POIname(element)}</IonLabel>
+      <IonLabel>{POIname(POI)}</IonLabel>
     </IonItem>
   ));
 
@@ -127,7 +145,7 @@ function SearchModal(props: {
       </IonHeader>
 
       <IonContent>
-        {/* SEARCH BAR */}
+        {/* Search Bar */}
         <IonSearchbar
           value={searchText}
           onIonChange={(e) => {
@@ -135,8 +153,23 @@ function SearchModal(props: {
           }}
         />
 
-        {/* LISTA  TODO*/}
+        {/* Lista  Poi*/}
         <IonList>{listPOI}</IonList>
+
+        {/* Modal delle informazioni riguardanti il punto di interesse cliccato */}
+        {showPOIModal && (
+          <POIModal
+            openCondition={showPOIModal}
+            onDismissConditions={setShowPOIModal}
+            data={poi_details}
+            i18n={props.i18n}
+            setTourDetails={props.setTourDetails}
+            closeAllModals={() => {
+              props.closeAllModals();
+              setShowPOIModal(false);
+            }}
+          />
+        )}
       </IonContent>
     </IonModal>
   );
