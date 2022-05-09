@@ -107,10 +107,12 @@ function TourModal(props: {
         button={true}
         key={id}
         lines={index < tours_id.length - 1 ? "inset" : "none"}
-        onClick={() => fetchPOIDetails(id, (poi: POIDetails) => {
-          poi_details = poi;
-          setShowPOIModal(true);
-        })}
+        onClick={() =>
+          fetchPOIDetails(id, (poi: POIDetails) => {
+            poi_details = poi;
+            setShowPOIModal(true);
+          })
+        }
       >
         <IonLabel>{index + 1 + ". " + tours_name[index]}</IonLabel>
       </IonItem>
@@ -121,7 +123,10 @@ function TourModal(props: {
   return (
     <IonModal
       isOpen={props.openCondition}
-      onDidDismiss={() => props.onDismissConditions(false)}
+      onDidDismiss={() => {
+        props.onDismissConditions(false);
+        TextToSpeech.stop();
+      }}
     >
       {/* Modal delle informazioni riguardanti il punto di interesse cliccato */}
       {showPOIModal && (

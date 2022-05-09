@@ -288,6 +288,7 @@ function POIModal(props: {
       isOpen={props.openCondition}
       onDidDismiss={() => {
         props.onDismissConditions(false);
+        TextToSpeech.stop();
       }}
       onWillPresent={() => {
         props.onPresent?.(false);
