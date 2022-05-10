@@ -63,13 +63,14 @@ function TourModal(props: {
    * Funzione che manda in riproduzione vocale la descrizione dell'itinerario
    */
   function speak() {
+    let textPlay = document
+      .getElementById("description-text")!
+      .innerText.replaceAll("\n", " ");
     setTextPlaying(true);
     let lngPlay = getDescription() ? lng + "-" + lng.toUpperCase() : "en-US";
     if (lngPlay === "en-EN") lngPlay = "en-US";
     TextToSpeech.speak({
-      text: document
-        .getElementById("description-text")!
-        .innerText.replaceAll("\n", " "),
+      text: textPlay,
       lang: lngPlay,
     }).then(() => setTextPlaying(false));
   }
