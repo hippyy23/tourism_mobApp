@@ -252,7 +252,8 @@ export async function sendLanguage(chooseLng: string) {
   });
 }
 
-function sendToLogServer(path: string, data: Object) {
+function sendToLogServer(path: string, data: any) {
+  data.key = md5(JSON.stringify(data)+"univrApp").toString();
   return fetch(LOG_SERVER_DOMAIN + path, {
     method: "POST",
     mode: "cors",
