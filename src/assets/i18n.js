@@ -15,6 +15,9 @@ i18n.use(initReactI18next).init({
         tracking: "Tracciamento",
         agree: "Accetta",
         decline: "Rifiuta",
+        cat_natural_valence: "Elemento a valenza naturale",
+        cat_his_cult_valence: "Elemento a valenza storico/culturale",
+        cat_activity: "Attività",
         cat_churches: "Chiese",
         cat_monuments: "Monumenti",
         cat_museums: "Musei e Centri Espositivi",
@@ -44,7 +47,7 @@ i18n.use(initReactI18next).init({
         details_button: "Dettagli",
         tracking_title: "Privacy alert",
         tracking_message:
-          "TurismoVerona vorrebbe tracciare in maniera anonima i dati della vostra esprerienza.<br/>" +
+          "BaldOutdoor vorrebbe tracciare in maniera anonima i dati della vostra esprerienza.<br/>" +
           "I dati raccolti sono: identificatore anonimo, posizione, lingua e sistema operativo.<br/>Vuoi partecipare?",
         info_title: "Informazioni e contatti",
         info_message:
@@ -95,7 +98,7 @@ i18n.use(initReactI18next).init({
         details_button: "Details",
         tracking_title: "Privacy alert", // it
         tracking_message:
-          "TurismoVerona vorrebbe tracciare in maniera anonima i dati della vostra esprerienza.<br/>" +
+          "BaldOutdoor vorrebbe tracciare in maniera anonima i dati della vostra esprerienza.<br/>" +
           "I dati raccolti sono: identificatore anonimo, posizione, lingua e sistema operativo.<br/>Vuoi partecipare?", // it
         info_title: "Informazioni e contatti", // it
         info_message:
@@ -146,7 +149,7 @@ i18n.use(initReactI18next).init({
         details_button: "details", // en
         tracking_title: "Privacy alert", // it
         tracking_message:
-          "TurismoVerona vorrebbe tracciare in maniera anonima i dati della vostra esprerienza.<br/>" +
+          "BaldOutdoor vorrebbe tracciare in maniera anonima i dati della vostra esprerienza.<br/>" +
           "I dati raccolti sono: identificatore anonimo, posizione, lingua e sistema operativo.<br/>Vuoi partecipare?", // it
         info_title: "Informazioni e contatti", // it
         info_message:
@@ -197,7 +200,7 @@ i18n.use(initReactI18next).init({
         details_button: "details", // en
         tracking_title: "Privacy alert", // it
         tracking_message:
-          "TurismoVerona vorrebbe tracciare in maniera anonima i dati della vostra esprerienza.<br/>" +
+          "BaldOutdoor vorrebbe tracciare in maniera anonima i dati della vostra esprerienza.<br/>" +
           "I dati raccolti sono: identificatore anonimo, posizione, lingua e sistema operativo.<br/>Vuoi partecipare?", // it
         info_title: "Informazioni e contatti", // it
         info_message:
@@ -248,7 +251,7 @@ i18n.use(initReactI18next).init({
         details_button: "details", // en
         tracking_title: "Privacy alert", // it
         tracking_message:
-          "TurismoVerona vorrebbe tracciare in maniera anonima i dati della vostra esprerienza.<br/>" +
+          "BaldOutdoor vorrebbe tracciare in maniera anonima i dati della vostra esprerienza.<br/>" +
           "I dati raccolti sono: identificatore anonimo, posizione, lingua e sistema operativo.<br/>Vuoi partecipare?", // it
         info_title: "Informazioni e contatti", // it
         info_message:
