@@ -39,6 +39,7 @@ import ReactHtmlParser from "react-html-parser";
 import POIModal from "./POIModal";
 import { i18n } from "i18next";
 import { LanguageCode, POIDetails, TourDetails } from "../types/app_types";
+import { SERVER_MEDIA } from "../configVar";
 
 var poi_details: POIDetails;
 
@@ -190,7 +191,7 @@ function TourModal(props: {
           {/* IMMAGINE */}
           <IonRow className="ion-align-items-center">
             <IonCol>
-              <IonImg src={props.data.properties.image_url} />
+              <IonImg src={SERVER_MEDIA + props.data.properties.image_url} />
             </IonCol>
           </IonRow>
 
