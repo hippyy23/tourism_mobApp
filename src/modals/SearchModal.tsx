@@ -19,9 +19,9 @@ import {
   ellipsisHorizontal,
   ellipsisVertical,
 } from "ionicons/icons";
-import churchIcon from "../assets/images/art_church.svg"; // Icona chiesa filtro
-import monumentIcon from "../assets/images/art_monument.svg"; // Icona monumento filtro
-import museumIcon from "../assets/images/art_museum.svg"; // Icona museo filtro
+import naturalValenceIcon from "../assets/images/natural_valence.svg"; // Icona chiesa filtro
+import hisCultValenceIcon from "../assets/images/his_cult_valence.svg"; // Icona monumento filtro
+import activityIcon from "../assets/images/activity.svg"; // Icona museo filtro
 import toolbarIcon from "../assets/images/logo.png";
 import { i18n } from "i18next";
 import PopoverList from "../components/PopoverList";
@@ -52,9 +52,9 @@ function SearchModal(props: {
    */
   var data = props.POIListData.filter((element: POI) =>
     [
-      props.i18n.t("cat_churches", { lng: "it" }),
-      props.i18n.t("cat_monuments", { lng: "it" }),
-      props.i18n.t("cat_museums", { lng: "it" }),
+      props.i18n.t("cat_natural_valence", { lng: "it" }),
+      props.i18n.t("cat_his_cult_valence", { lng: "it" }),
+      props.i18n.t("cat_activity", { lng: "it" }),
     ].includes(element.properties.category_it)
   ).sort((a: POI, b: POI) =>
     a.properties.name_it.localeCompare(b.properties.name_it)
@@ -66,12 +66,12 @@ function SearchModal(props: {
    * @returns Icona
    */
   const icon = (category: string) => {
-    if (category === props.i18n.t("cat_churches", { lng: "it" })) {
-      return churchIcon;
-    } else if (category === props.i18n.t("cat_monuments", { lng: "it" })) {
-      return monumentIcon;
+    if (category === props.i18n.t("cat_natural_valence", { lng: "it" })) {
+      return naturalValenceIcon;
+    } else if (category === props.i18n.t("cat_his_cult_valence", { lng: "it" })) {
+      return hisCultValenceIcon;
     } /*if (category === t("cat_museums", {"lng": "it"}))*/ else {
-      return museumIcon;
+      return activityIcon;
     }
   };
 
