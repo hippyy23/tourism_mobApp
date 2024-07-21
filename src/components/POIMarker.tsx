@@ -3,9 +3,9 @@ import { Marker, Popup } from "react-leaflet";
 import L from "leaflet";
 import { i18n } from "i18next";
 import { LanguageCode, POI, POIDetails, TourDetails } from "../types/app_types";
-import naturalValenceIcon from "../assets/images/natural_valence.png"; // Icona chiesa
-import hisCultValenceIcon from "../assets/images/his_cult_valence.png"; // Icona monumento
-import activityIcon from "../assets/images/activity.png"; // Icona museo
+import naturalValenceIcon from "../assets/images/natural_valence.png"; // Icona art di valenza naturale
+import hisCultValenceIcon from "../assets/images/his_cult_valence.png"; // Icona art di valenza storico/culturale
+import activityIcon from "../assets/images/activity.png"; // Icona attivita'
 import { useState } from "react";
 import POIModal from "../modals/POIModal";
 import { ConnectionStatus } from "@capacitor/network";
@@ -139,31 +139,31 @@ function POIMarker(props: {
 					iconSize: [30, 30], // size of the icon
 				})}
 			>
-			<Popup
-				autoClose={false}
-				onOpen={() => {
-				getPOIDetails(element.properties.id_art);
-				}}
-				minWidth={125}
-				keepInView
-			>
-				<div style={{ textAlign: "center" }}>
-				<IonLabel style={{ fontSize: "14px" }}>
-					{element.properties[`name_${lang_code}`] !== null
-					? element.properties[`name_${lang_code}`]
-					: element.properties.name_en}
-				</IonLabel>
-				<br />
-				<IonButton
-					shape="round"
-					fill="outline"
-					size="small"
-					onClick={() => openModal(element.properties.id_art)}
+				<Popup
+					autoClose={false}
+					onOpen={() => {
+					getPOIDetails(element.properties.id_art);
+					}}
+					minWidth={125}
+					keepInView
 				>
-					{props.i18n.t("details_button")}
-				</IonButton>
-				</div>
-			</Popup>
+					<div style={{ textAlign: "center" }}>
+					<IonLabel style={{ fontSize: "14px" }}>
+						{element.properties[`name_${lang_code}`] !== null
+						? element.properties[`name_${lang_code}`]
+						: element.properties.name_en}
+					</IonLabel>
+					<br />
+					<IonButton
+						shape="round"
+						fill="outline"
+						size="small"
+						onClick={() => openModal(element.properties.id_art)}
+					>
+						{props.i18n.t("details_button")}
+					</IonButton>
+					</div>
+				</Popup>
 			</Marker>
 		)}
 		</div>
