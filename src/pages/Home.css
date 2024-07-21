@@ -20,6 +20,12 @@ ion-button.home {
 	width: 40%;
 }
 
+@media only screen and (max-width: 460px) {
+	ion-button.home {
+		width: 50%;
+	}
+  }
+
 ion-grid.home {
 	height: 100%;
 }
