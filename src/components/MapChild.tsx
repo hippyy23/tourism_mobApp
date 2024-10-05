@@ -428,7 +428,7 @@ function MapChild(props: {
 		)}
 
 		{/* Creazione dinamica dei marker degli Event */}
-		{dataEventObtained && (
+		{dataEventObtained && !tourDetails && (
 			<EventMarker
 				EventListData={EventListData}
 				i18n={props.i18n}
@@ -437,7 +437,7 @@ function MapChild(props: {
 			/>
 		)}
 
-		{/* Creazione dinamica dei marker dei POI appartenenti all'itinerario*/}
+		{/* Creazione dinamica dei marker dei POI appartenenti all'itinerario */}
 		{tourDetails && dataObtained && (
 			<TourOnMap
 				POIListData={POIListData}
