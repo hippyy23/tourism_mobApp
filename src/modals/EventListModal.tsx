@@ -16,6 +16,8 @@ import {
 	IonTitle,
 	IonToolbar,
 	useIonPopover,
+	IonDatetime,
+	IonButton,
 } from "@ionic/react";
 import { useState } from "react";
 import {
@@ -41,10 +43,21 @@ function EventListModal(props: {
 	closeAllModals: () => void;
 }) {
 	const [showEventModal, setShowEventModal] = useState<boolean>(false); // Mostra o nascondi il modale dell'evento
+	const [showFilteredEvents, setShowFilteredEvents] = useState<boolean>(false); // Mostra o nascondi eventi filtrati
+	const [startDate, setStartDate] = useState<string>(Date());
+	const [endDate, setEndDate] = useState<string>(Date());
 	const [present, dismiss] = useIonPopover(PopoverList, {
 		onHide: () => dismiss(),
 	});
 	const lng = props.i18n.language as LanguageCode;
+
+	var today = new Date();
+	var dd = String(today.getDate()).padStart(2, '0');
+	var mm = String(today.getMonth() + 1).padStart(2, '0');
+	var yyyy = today.getFullYear();
+
+	var minDate = yyyy + '-' + mm + '-' + dd;
+	var maxDate = yyyy + 2 + '-' + mm + '-' + dd;
 
 	function getEventNameFallback(event: Event): string {
 		const name = event.properties[`name_${lng}`];
@@ -63,20 +76,61 @@ function EventListModal(props: {
 	function EventList(pr: { category: string }) {
 		const filteredEvent = props.data.filter(
 			(event: Event) => event.properties.category_it === pr.category
+			&&
+			event.properties.day.split(',')
 		);
 		const n_events = filteredEvent.length;
 		const listItems = filteredEvent.map((event: Event, index: number) => (
-		<IonItem
-			button={ true }
-			key={ event.properties.id_event }
-			lines={ index < n_events - 1 ? "inset" : "none" }
-			onClick={() => {
-				getEventDetail(event.properties.id_event);
-			}}
-		>
-			<IonLabel>{ getEventNameFallback(event) }</IonLabel>
-		</IonItem>
+			<IonItem
+				button={ true }
+				key={ event.properties.id_event }
+				lines={ index < n_events - 1 ? "inset" : "none" }
+				onClick={() => {
+					getEventDetail(event.properties.id_event);
+				}}
+			>
+				<IonLabel>{ getEventNameFallback(event) }</IonLabel>
+			</IonItem>
 		));
+
+		return <IonList className="ion-no-padding">{ listItems }</IonList>;
+	}
+
+	function FilterEventByDate(pr: { category: string }) {
+		const filteredEvent = props.data.filter(
+			function(event: Event) {
+				if (event.properties.category_it === pr.category) {
+					var days = event.properties.day.split(',').map(date => new Date(date));
+					var partsStartDate = new Date(startDate).toLocaleDateString().split('/');
+					var start = new Date(+partsStartDate[2], +partsStartDate[1] - 1, +partsStartDate[0]);
+					var partsEndDate = new Date(endDate).toLocaleDateString().split('/');
+					var end = new Date(+partsEndDate[2], +partsEndDate[1] - 1, +partsEndDate[0]);
+
+					for (var day of days) {
+						if (day >= start && day <= end) {
+							return true;
+						}
+					}
+					return false;
+				} else {
+					return false
+				}
+			}
+		);
+		const n_events = filteredEvent.length;
+		const listItems = filteredEvent.map((event: Event, index: number) => (
+			<IonItem
+				button={ true }
+				key={ event.properties.id_event }
+				lines={ index < n_events - 1 ? "inset" : "none" }
+				onClick={() => {
+					getEventDetail(event.properties.id_event);
+				}}
+			>
+				<IonLabel>{ getEventNameFallback(event) }</IonLabel>
+			</IonItem>
+		));
+
 		return <IonList className="ion-no-padding">{ listItems }</IonList>;
 	}
 
@@ -111,7 +165,7 @@ function EventListModal(props: {
 				/>
 			</IonButtons>
 
-			{/* LOGO COMUNE */}
+			{/* LOGO */}
 			<IonItem slot="start" lines="none" color="primary">
 				<IonImg src={ toolbarIcon } style={{ height: "80%" }} />
 			</IonItem>
@@ -139,12 +193,57 @@ function EventListModal(props: {
 
 		<IonContent>
 			<IonGrid fixed={true}>
-				{/* TITOLO ITINERARI */}
+				{/* TITOLO */}
 				<IonRow>
 					<IonCol>
-					<IonTitle>
-						<h1>{props.i18n.t("events")}</h1>
-					</IonTitle>
+						<IonTitle>
+							<h1>{props.i18n.t("events")}</h1>
+						</IonTitle>
+					</IonCol>
+				</IonRow>
+
+				<IonRow>
+					<IonCol class="event-date">
+						<IonLabel>Start:</IonLabel>
+						<IonDatetime 
+							class="datetime"
+							displayFormat="DD/MM/YYYY"
+							placeholder="Select start date"
+							min={ minDate }
+							max={ maxDate }
+							onIonChange={ (e) => setStartDate(e.detail.value!) }
+						/>
+					</IonCol>
+					<IonCol class="event-date">
+						<IonLabel>End:</IonLabel>
+						<IonDatetime
+							class="datetime"
+							displayFormat="DD/MM/YYYY"
+							placeholder="Select end date"
+							min={ minDate }
+							max={ maxDate }
+							onIonChange={ (e) => setEndDate(e.detail.value!) }
+						/>
+					</IonCol>
+				</IonRow>
+				<IonRow>
+					<IonCol class="event-date-find">
+						<IonButton
+							style={{ width: "25%", margin: "10px" }}
+							onClick={() => {
+								setShowFilteredEvents(true);
+							}}
+						>
+							{ props.i18n.t("Find") }
+						</IonButton>
+						<IonButton
+							style={{ width: "25%", margin: "10px" }}
+							onClick={() => {
+								setShowFilteredEvents(false);
+							}}
+						>
+							{ props.i18n.t("Clear") }
+						</IonButton>
 					</IonCol>
 				</IonRow>
 
@@ -153,13 +252,16 @@ function EventListModal(props: {
 					<IonCol>
 					<IonCard>
 						<IonItem
-						color="primary" //TITOLO MENU COLORATO
+							color="primary" //TITOLO MENU COLORATO
 						>
-						<IonLabel>{props.i18n.t("cat_event_show")}</IonLabel>
+							<IonLabel>{ props.i18n.t("cat_event_show") }</IonLabel>
 						</IonItem>
 
 						<IonCardContent className="ion-no-padding">
-							<EventList category="Spettacolo" />
+							{!showFilteredEvents &&
+								(<EventList category="Spettacolo" />)}
+							{showFilteredEvents &&
+								(<FilterEventByDate category="Spettacolo" />)}
 						</IonCardContent>
 					</IonCard>
 					</IonCol>
@@ -170,13 +272,16 @@ function EventListModal(props: {
 					<IonCol>
 					<IonCard>
 						<IonItem
-						color="primary" //TITOLO MENU COLORATO
+							color="primary" //TITOLO MENU COLORATO
 						>
-						<IonLabel>{props.i18n.t("cat_event_meeting")}</IonLabel>
+							<IonLabel>{ props.i18n.t("cat_event_meeting") }</IonLabel>
 						</IonItem>
 
 						<IonCardContent className="ion-no-padding">
-							<EventList category="Incontro" />
+						{!showFilteredEvents &&
+								(<EventList category="Incontro" />)}
+						{showFilteredEvents &&
+							(<FilterEventByDate category="Incontro" />)}
 						</IonCardContent>
 					</IonCard>
 					</IonCol>
@@ -189,11 +294,14 @@ function EventListModal(props: {
 						<IonItem
 						color="primary" //TITOLO MENU COLORATO
 						>
-						<IonLabel>{props.i18n.t("cat_event_trip")}</IonLabel>
+							<IonLabel>{ props.i18n.t("cat_event_trip") }</IonLabel>
 						</IonItem>
 
 						<IonCardContent className="ion-no-padding">
-							<EventList category="Gita" />
+						{!showFilteredEvents &&
+								(<EventList category="Gita" />)}
+						{showFilteredEvents &&
+							(<FilterEventByDate category="Gita" />)}
 						</IonCardContent>
 					</IonCard>
 					</IonCol>
