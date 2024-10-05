@@ -63,20 +63,20 @@ function TourListModal(props: {
 	/** Creazione delle sezioni delle categorie dei poi*/
 	function TourList(pr: { type: string }) {
 		const filteredTour = props.data.filter(
-		(tour: Tour) => tour.properties.type === pr.type
+			(tour: Tour) => tour.properties.type === pr.type
 		);
 		const n_tours = filteredTour.length;
 		const listItems = filteredTour.map((tour: Tour, index: number) => (
-		<IonItem
+			<IonItem
 				button={true}
 				key={tour.properties.id_tour}
 				lines={index < n_tours - 1 ? "inset" : "none"}
 				onClick={() => {
 					getTourDetail(tour.properties.id_tour);
 				}}
-		>
-			<IonLabel>{getTourNameFallback(tour)}</IonLabel>
-		</IonItem>
+			>
+				<IonLabel>{getTourNameFallback(tour)}</IonLabel>
+			</IonItem>
 		));
 		return <IonList className="ion-no-padding">{listItems}</IonList>;
 	}
