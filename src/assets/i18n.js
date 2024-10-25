@@ -52,7 +52,7 @@ i18n.use(initReactI18next).init({
 			"I dati raccolti sono: identificatore anonimo, posizione, lingua e sistema operativo.<br/>Vuoi partecipare?",
 			info_title: "Informazioni e contatti",
 			info_message:
-			"Prototipo realizzato dal comune di Verona con la collaborazione dell'Università degli studi di Verona - Dipartimento di Informatica",
+			"Prototipo realizzato con la collaborazione dell'Università degli studi di Verona - Dipartimento di Informatica",
 			pois: "Punti di interesse",
 			tours: "Itinerari",
 			events: "Eventi",
@@ -62,6 +62,7 @@ i18n.use(initReactI18next).init({
 			tour_alert_title: "Attenzione",
 			tour_alert_message:
 			"Sei sicuro di voler chiudere la mappa dell'itinerario?",
+			event_find_btn: "Cerca",
 		},
 		},
 		en: {
@@ -109,7 +110,7 @@ i18n.use(initReactI18next).init({
 			"I dati raccolti sono: identificatore anonimo, posizione, lingua e sistema operativo.<br/>Vuoi partecipare?", // it
 			info_title: "Informazioni e contatti", // it
 			info_message:
-			"Prototipo realizzato dal comune di Verona con la collaborazione dell'Università degli studi di Verona - Dipartimento di Informatica", // it
+			"Prototipo realizzato con la collaborazione dell'Università degli studi di Verona - Dipartimento di Informatica", // it
 			pois: "Points of interest",
 			tours: "Tours",
 			events: "Events",
@@ -119,6 +120,7 @@ i18n.use(initReactI18next).init({
 			tour_alert_title: "Attenzione", // it
 			tour_alert_message:
 			"Sei sicuro di voler chiudere la mappa dell'itinerario?", // it
+			event_find_btn: "Find",
 		},
 		},
 		de: {
@@ -166,7 +168,7 @@ i18n.use(initReactI18next).init({
 			"I dati raccolti sono: identificatore anonimo, posizione, lingua e sistema operativo.<br/>Vuoi partecipare?", // it
 			info_title: "Informazioni e contatti", // it
 			info_message:
-			"Prototipo realizzato dal comune di Verona con la collaborazione dell'Università degli studi di Verona - Dipartimento di Informatica", // it
+			"Prototipo realizzato con la collaborazione dell'Università degli studi di Verona - Dipartimento di Informatica", // it
 			pois: "Points of interest",
 			tours: "Tours", // en
 			events: "Events",
@@ -176,6 +178,7 @@ i18n.use(initReactI18next).init({
 			tour_alert_title: "Attenzione", // it
 			tour_alert_message:
 			"Sei sicuro di voler chiudere la mappa dell'itinerario?", // it
+			event_find_btn: "Find", // eng
 		},
 		},
 		fr: {
@@ -223,7 +226,7 @@ i18n.use(initReactI18next).init({
 			"I dati raccolti sono: identificatore anonimo, posizione, lingua e sistema operativo.<br/>Vuoi partecipare?", // it
 			info_title: "Informazioni e contatti", // it
 			info_message:
-			"Prototipo realizzato dal comune di Verona con la collaborazione dell'Università degli studi di Verona - Dipartimento di Informatica", // it
+			"Prototipo realizzato con la collaborazione dell'Università degli studi di Verona - Dipartimento di Informatica", // it
 			pois: "Points of interest",
 			tours: "Tours", // en
 			events: "Events",
@@ -233,6 +236,7 @@ i18n.use(initReactI18next).init({
 			tour_alert_title: "Attenzione", // it
 			tour_alert_message:
 			"Sei sicuro di voler chiudere la mappa dell'itinerario?", // it
+			event_find_btn: "Find", //end
 		},
 		},
 		es: {
@@ -280,7 +284,7 @@ i18n.use(initReactI18next).init({
 			"I dati raccolti sono: identificatore anonimo, posizione, lingua e sistema operativo.<br/>Vuoi partecipare?", // it
 			info_title: "Informazioni e contatti", // it
 			info_message:
-			"Prototipo realizzato dal comune di Verona con la collaborazione dell'Università degli studi di Verona - Dipartimento di Informatica", // it
+			"Prototipo realizzato con la collaborazione dell'Università degli studi di Verona - Dipartimento di Informatica", // it
 			pois: "Points of interest",
 			tours: "Tours", // en
 			events: "Events",
@@ -290,6 +294,7 @@ i18n.use(initReactI18next).init({
 			tour_alert_title: "Attenzione", // it
 			tour_alert_message:
 			"Sei sicuro di voler chiudere la mappa dell'itinerario?", // it
+			event_find_btn: "Find", //end
 		},
 		},
 	},
