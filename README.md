@@ -1,4 +1,4 @@
-# mappaVerona
+# BaldOutdoor
 
 ## Ambiente necessario
 Per eseguire il codice di questo progetto è necessario installare Node e Ionic CLI. Se si vuole eseguire l'applicazione su un emulatore bisogna installare e configurare Android Studio.
