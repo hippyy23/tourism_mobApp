@@ -26,12 +26,13 @@ import eventIcon from "../assets/images/bx-calendar-event.svg" // Icona evento f
 import toolbarIcon from "../assets/images/logo.png";
 import { i18n } from "i18next";
 import PopoverList from "../components/PopoverList";
-import { LanguageCode, POI, POIDetails, Event, EventDetails, TourDetails } from "../types/app_types";
+import { LanguageCode, POI, POIDetails, POIMedia, Event, EventDetails, TourDetails } from "../types/app_types";
 import POIModal from "./POIModal";
 import EventModal from "./EventModal";
-import { fetchPOIDetails, fetchEventDetails } from "../components/Functions";
+import { fetchPOIDetails, fetchEventDetails, fetchPOIMedia } from "../components/Functions";
 
 var poi_details: POIDetails;
+var poi_media: POIMedia[];
 var event_details: EventDetails;
 
 function SearchModal(props: {
@@ -121,10 +122,13 @@ function SearchModal(props: {
 				POIname(POI).toLowerCase().indexOf(searchText.toLowerCase()) < 0
 			}
 			onClick={() =>
+				{fetchPOIMedia(POI.properties.id_art, (media: POIMedia[]) => {
+					poi_media = media;
+				});
 				fetchPOIDetails(POI.properties.id_art, (poi_data: POIDetails) => {
 					poi_details = poi_data;
 					setShowPOIModal(true);
-				})
+				})}
 			}
 			button
 		>
@@ -221,6 +225,7 @@ function SearchModal(props: {
 				openCondition={ showPOIModal }
 				onDismissConditions={ setShowPOIModal }
 				data={ poi_details }
+				media={ poi_media }
 				i18n={ props.i18n }
 				setTourDetails={ props.setTourDetails }
 				closeAllModals={() => {
