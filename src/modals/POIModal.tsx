@@ -22,6 +22,8 @@ import {
 	IonThumbnail,
 	IonNote,
 	IonList,
+	IonSlide,
+	IonSlides,
 } from "@ionic/react";
 import {
 	addCircle,
@@ -34,7 +36,7 @@ import {
   	volumeMute,
 } from "ionicons/icons";
 import ReactHtmlParser from "react-html-parser";
-import { fetchPOIMedia, fetchTourDetails } from "../components/Functions";
+import { fetchTourDetails } from "../components/Functions";
 // import { Swiper, SwiperSlide } from "swiper/react";
 // import SwiperCore, { Navigation, Pagination } from "swiper";
 import { TextToSpeech } from "@capacitor-community/text-to-speech";
@@ -45,8 +47,9 @@ import PopoverList from "../components/PopoverList";
 import logoVerona from "../assets/images/logo_stemma.png";
 import TourModal from "./TourModal";
 import { i18n } from "i18next";
-import { LanguageCode, POIDetails, TourDetails } from "../types/app_types";
+import { LanguageCode, POIDetails, TourDetails, POIMedia } from "../types/app_types";
 import { SERVER_MEDIA } from "../configVar";
+import { useRef } from "react"
 
 var tour_details: TourDetails;
 
@@ -55,6 +58,7 @@ function POIModal(props: {
 	onPresent?: (arg0: boolean) => void;
 	onDismissConditions: (arg0: boolean) => void;
 	data: POIDetails;
+	media: POIMedia[];
 	i18n: i18n;
 	setTourDetails: (arg0: TourDetails) => void;
 	closeAllModals: () => void;
@@ -65,6 +69,7 @@ function POIModal(props: {
 	const [urlMedia, setUrlMedia] = useState<string>(); // Imposta la URL da dove caricare il video del POI se è presente
 	const [textPlaying, setTextPlaying] = useState<boolean>(false); // Controlla se il TTS è in riproduzione o no
 	const [showTourModal, setShowTourModal] = useState<boolean>(false); // Mostra o nascondi il modale dell'itinerario
+	const mySlides = useRef<HTMLIonSlidesElement>(null);
 
 	/**
 	 * Conta il numero di itinerari in cui il punto di interesse è presente
@@ -255,60 +260,120 @@ function POIModal(props: {
 	 */
 	function getTourDetail(id_tour: string) {
 		fetchTourDetails(id_tour, (tour: TourDetails) => {
-		tour_details = tour;
-		setShowTourModal(true);
+			tour_details = tour;
+			setShowTourModal(true);
 		});
 	}
+
+	const onBtnClicked = async (direction: string) => {
+		if (mySlides.current) {
+			const swiper = await mySlides.current.getSwiper();
+			if (direction === "next") {
+				swiper.slideNext();
+			} else if (direction === "prev") {
+				swiper.slidePrev();
+			}
+		}
+	};
 
 	/** Creazione della lista di itinerari cliccabili */
 	function TourList() {
 		var tours_id = props.data.tours_id.split(",");
 		tours_id = tours_id.filter(function (item, pos) {
-		return tours_id.indexOf(item) === pos;
+			return tours_id.indexOf(item) === pos;
 		});
 		const tours_name = props.data[`tours_name_${code}`]
-		? props.data[`tours_name_${code}`].split(",")
-		: props.data.tours_name_en.split(",");
+			? props.data[`tours_name_${code}`].split(",")
+			: props.data.tours_name_en.split(",");
+		console.log(tours_id);
 		const listItems = tours_id.map((id: string, index: number) => (
-		<IonItem
-			button={true}
-			key={id}
-			lines={index < n_tours - 1 ? "inset" : "none"}
-			onClick={() => {
-			getTourDetail(id);
-			}}
-		>
-			<IonLabel>{tours_name[index]}</IonLabel>
-		</IonItem>
+			<IonItem
+				button={ true }
+				key={ id }
+				lines={ index < n_tours - 1 ? "inset" : "none" }
+				onClick={() => {
+					getTourDetail(id);
+				}}
+			>
+				<IonLabel>{ tours_name[index] }</IonLabel>
+			</IonItem>
 		));
-		return <IonList className="ion-no-padding">{listItems}</IonList>;
+		return <IonList className="ion-no-padding">{ listItems }</IonList>;
+	}
+
+	function Carousel() {
+		var mediaPath: string[] = [];
+
+		props.media.forEach((obj) => (
+			mediaPath.push(SERVER_MEDIA + obj.properties.path)
+		));
+		
+		const slides = mediaPath.map((path: string, index: number) => (
+			<IonSlide key={ index }>
+				<IonImg src={ path } />
+			</IonSlide>
+		));
+
+		const slideOptions = {
+			initialSlide: 1,
+			speed: 100,
+		}
+
+		if (mediaPath.length) {
+			return (<IonCol>
+						
+						<IonSlides pager={ true } options={ slideOptions } ref={ mySlides }>{ slides }</IonSlides>
+						<div style={{ textAlign: "center", paddingTop: 12 }}>
+							<IonButton
+								onClick={() => onBtnClicked("prev")}
+							>
+							PREV
+							</IonButton>
+							<IonButton
+								onClick={() => onBtnClicked("next")}
+							>
+							NEXT
+							</IonButton>
+						</div>
+					</IonCol>
+				)
+		} else {
+			return (
+				<IonCol>
+					<IonSlides pager={ true } options={ slideOptions } ref={ mySlides }>{ slides }</IonSlides>
+				</IonCol>
+			)
+		}
 	}
 
 	return (
 		<IonModal
-		isOpen={props.openCondition}
-		onDidDismiss={() => {
-			props.onDismissConditions(false);
-			TextToSpeech.stop();
-		}}
-		onWillPresent={() => {
-			props.onPresent?.(false);
-			fetchPOIMedia(props.data.classid, (path: string) => {
-			setUrlMedia(path);
-			});
-		}}
+			isOpen={props.openCondition}
+			onDidDismiss={() => {
+				props.onDismissConditions(false);
+				TextToSpeech.stop();
+			}}
+			onWillPresent={() => {
+				props.onPresent?.(false);
+				// fetchPOIMedia(props.data.classid, (poiMediaList: POIMedia[]) => {
+				// 	console.log(poiMediaList);
+				// 	// for (var path of poiMediaList) {
+				// 	// 	console.log(path.properties.path);
+				// 	// }
+				// });
+			}}
 		>
 		{showTourModal && (
 			<TourModal
-			openCondition={showTourModal}
-			onDismissConditions={setShowTourModal}
-			data={tour_details}
-			i18n={props.i18n}
-			setTourDetails={props.setTourDetails}
-			closeAllModals={() => {
-				props.closeAllModals();
-				setShowTourModal(false);
-			}}
+				openCondition={showTourModal}
+				onDismissConditions={setShowTourModal}
+				data={tour_details}
+				i18n={props.i18n}
+				setTourDetails={props.setTourDetails}
+				closeAllModals={() => {
+					props.closeAllModals();
+					setShowTourModal(false);
+				}}
 			/>
 		)}
 
@@ -318,10 +383,10 @@ function POIModal(props: {
 			{/* FRECCIA INDIETRO */}
 			<IonButtons slot="start" class="toolbar_back_button">
 				<IonIcon
-				slot="icon-only"
-				ios={chevronBack}
-				md={arrowBack}
-				onClick={() => props.onDismissConditions(false)}
+					slot="icon-only"
+					ios={chevronBack}
+					md={arrowBack}
+					onClick={() => props.onDismissConditions(false)}
 				/>
 			</IonButtons>
 
@@ -340,14 +405,14 @@ function POIModal(props: {
 			{/* MENU OPZIONI POPOVER */}
 			<IonButtons slot="end" className="ion-margin-end">
 				<IonIcon
-				slot="icon-only"
-				ios={ellipsisHorizontal}
-				md={ellipsisVertical}
-				onClick={(e: any) =>
-					present({
-						event: e.nativeEvent,
-					})
-				}
+					slot="icon-only"
+					ios={ellipsisHorizontal}
+					md={ellipsisVertical}
+					onClick={(e: any) =>
+						present({
+							event: e.nativeEvent,
+						})
+					}
 				/>
 			</IonButtons>
 			</IonToolbar>
@@ -356,9 +421,11 @@ function POIModal(props: {
 			<IonGrid fixed={true}>
 			{/* IMMAGINE */}
 			<IonRow className="ion-align-items-center">
-				<IonCol>
+				{/* <IonCol>
 					<IonImg src={SERVER_MEDIA + props.data.image_url} />
-				</IonCol>
+				</IonCol> */}
+
+				<Carousel />
 			</IonRow>
 
 			{/* SCHEDA ORARI */}
@@ -366,9 +433,9 @@ function POIModal(props: {
 				<IonCol>
 				<IonCard>
 					<IonItem
-					color="primary" //TITOLO MENU COLORATO
-					lines={openTimeView ? "inset" : "none"}
-					onClick={() => setOpenTimeView(!openTimeView)}
+						color="primary" //TITOLO MENU COLORATO
+						lines={openTimeView ? "inset" : "none"}
+						onClick={() => setOpenTimeView(!openTimeView)}
 					>
 					<IonLabel>{props.i18n.t("open_time")}:</IonLabel>
 					<IonIcon
@@ -401,9 +468,9 @@ function POIModal(props: {
 				<IonCol>
 				<IonCard>
 					<IonItem
-					color="primary" //TITOLO MENU COLORATO
-					lines={ticketsView ? "inset" : "none"}
-					onClick={() => setTicketsView(!ticketsView)}
+						color="primary" //TITOLO MENU COLORATO
+						lines={ticketsView ? "inset" : "none"}
+						onClick={() => setTicketsView(!ticketsView)}
 					>
 					<IonLabel>{props.i18n.t("tickets")}:</IonLabel>
 					<IonIcon
@@ -434,28 +501,28 @@ function POIModal(props: {
 			{/* SCHEDA ITINERARI */}
 			{n_tours > 0 && (
 				<IonRow>
-				<IonCol>
-					<IonCard>
-					<IonItem
-						color="primary" //TITOLO MENU COLORATO
-						lines={toursView ? "inset" : "none"}
-						onClick={() => setToursView(!toursView)}
-					>
-						<IonLabel>{props.i18n.t("tours")}:</IonLabel>
-						<IonIcon
-						slot="end"
-						icon={toursView ? removeCircle : addCircle}
-						// color="primary" BOTTONE BIANCO CON TITOLO COLORATO
-						/>
-					</IonItem>
+					<IonCol>
+						<IonCard>
+							<IonItem
+								color="primary" //TITOLO MENU COLORATO
+								lines={toursView ? "inset" : "none"}
+								onClick={() => setToursView(!toursView)}
+							>
+								<IonLabel>{props.i18n.t("tours")}:</IonLabel>
+								<IonIcon
+									slot="end"
+									icon={toursView ? removeCircle : addCircle}
+									// color="primary" BOTTONE BIANCO CON TITOLO COLORATO
+								/>
+							</IonItem>
 
-					{toursView && (
-						<IonCardContent className="ion-no-padding">
-						<TourList />
-						</IonCardContent>
-					)}
-					</IonCard>
-				</IonCol>
+							{toursView && (
+								<IonCardContent className="ion-no-padding">
+									<TourList />
+								</IonCardContent>
+							)}
+						</IonCard>
+					</IonCol>
 				</IonRow>
 			)}
 
