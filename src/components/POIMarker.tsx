@@ -2,16 +2,17 @@ import { IonLabel, IonButton, IonLoading, useIonToast } from "@ionic/react";
 import { Marker, Popup } from "react-leaflet";
 import L from "leaflet";
 import { i18n } from "i18next";
-import { LanguageCode, POI, POIDetails, TourDetails } from "../types/app_types";
+import { LanguageCode, POI, POIDetails, POIMedia, TourDetails } from "../types/app_types";
 import naturalValenceIcon from "../assets/images/natural_valence.png"; // Icona art di valenza naturale
 import hisCultValenceIcon from "../assets/images/his_cult_valence.png"; // Icona art di valenza storico/culturale
 import activityIcon from "../assets/images/activity.png"; // Icona attivita'
 import { useState } from "react";
 import POIModal from "../modals/POIModal";
 import { ConnectionStatus } from "@capacitor/network";
-import { fetchPOIDetails } from "./Functions";
+import { fetchPOIDetails, fetchPOIMedia } from "./Functions";
 
 var POIDetailsData: POIDetails;
+var POIMediaData: POIMedia[];
 var isLoading: boolean = false;
 
 function POIMarker(props: {
@@ -56,17 +57,19 @@ function POIMarker(props: {
 	 * @param id Identificatore del punto di interesse
 	 */
 	function getPOIDetails(id: string) {
-		if (
-			props.connectionStatus.connected &&
+		if (props.connectionStatus.connected &&
 			((POIDetailsData !== undefined && POIDetailsData.classid !== id) ||
 			POIDetailsData === undefined)
 		) {
-		fetchPOIDetails(id, (poi: POIDetails) => {
-			POIDetailsData = poi;
-			if (isLoading) {
-				setShowPOIModal(true);
-			}
-		});
+			fetchPOIDetails(id, (poi: POIDetails) => {
+				POIDetailsData = poi;
+				if (isLoading) {
+					setShowPOIModal(true);
+				}
+			});
+			fetchPOIMedia(id, (media: POIMedia[]) => {
+				POIMediaData = media;
+			});
 		}
 	}
 
@@ -173,28 +176,29 @@ function POIMarker(props: {
 		{listMarkers}
 		{showLoading && (
 			<IonLoading
-			isOpen={showLoading}
-			backdropDismiss={true}
-			onDidDismiss={() => (isLoading = false)}
-			spinner="circular"
+				isOpen={showLoading}
+				backdropDismiss={true}
+				onDidDismiss={() => (isLoading = false)}
+				spinner="circular"
 			/>
 		)}
 
 		{/* Modal delle informazioni riguardanti il punto di interesse cliccato */}
 		{showPOIModal && (
 			<POIModal
-			openCondition={showPOIModal}
-			onPresent={() => {
-				isLoading = false;
-				setShowLoading(false);
-			}}
-			onDismissConditions={setShowPOIModal}
-			data={POIDetailsData}
-			i18n={props.i18n}
-			setTourDetails={props.setTourDetails}
-			closeAllModals={() => {
-				setShowPOIModal(false);
-			}}
+				openCondition={showPOIModal}
+				onPresent={() => {
+					isLoading = false;
+					setShowLoading(false);
+				}}
+				onDismissConditions={setShowPOIModal}
+				data={POIDetailsData}
+				media={POIMediaData}
+				i18n={props.i18n}
+				setTourDetails={props.setTourDetails}
+				closeAllModals={() => {
+					setShowPOIModal(false);
+				}}
 			/>
 		)}
 		</>
