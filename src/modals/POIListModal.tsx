@@ -27,11 +27,12 @@ import {
 import toolbarIcon from "../assets/images/logo.png";
 import POIModal from "./POIModal";
 import { i18n } from "i18next";
-import { LanguageCode, POI, POIDetails, TourDetails } from "../types/app_types";
+import { LanguageCode, POI, POIDetails, POIMedia, TourDetails } from "../types/app_types";
 import PopoverList from "../components/PopoverList";
-import { fetchPOIDetails } from "../components/Functions";
+import { fetchPOIDetails, fetchPOIMedia } from "../components/Functions";
 
 var poi_details: POIDetails;
+var poi_media: POIMedia[];
 
 function POIListModal(props: {
 	openCondition: boolean;
@@ -58,6 +59,10 @@ function POIListModal(props: {
 			poi_details = poi;
 			setShowPOIModal(true);
 		});
+
+		fetchPOIMedia(id_poi, (media: POIMedia[]) => {
+			poi_media = media;
+		})
 	}
 
 	/** Creazione delle sezioni delle categorie dei poi*/
@@ -67,16 +72,16 @@ function POIListModal(props: {
 		);
 		const n_pois = filteredEvent.length;
 		const listItems = filteredEvent.map((poi: POI, index: number) => (
-		<IonItem
-			button={ true }
-			key={ poi.properties.id_art }
-			lines={ index < n_pois - 1 ? "inset" : "none" }
-			onClick={() => {
-				getPOIDetail(poi.properties.id_art);
-			}}
-		>
-			<IonLabel>{ getPOINameFallback(poi) }</IonLabel>
-		</IonItem>
+			<IonItem
+				button={ true }
+				key={ poi.properties.id_art }
+				lines={ index < n_pois - 1 ? "inset" : "none" }
+				onClick={() => {
+					getPOIDetail(poi.properties.id_art);
+				}}
+			>
+				<IonLabel>{ getPOINameFallback(poi) }</IonLabel>
+			</IonItem>
 		));
 		return <IonList className="ion-no-padding">{ listItems }</IonList>;
 	}
@@ -91,6 +96,7 @@ function POIListModal(props: {
 				openCondition={ showPOIModal }
 				onDismissConditions={ setShowPOIModal }
 				data={ poi_details }
+				media={ poi_media }
 				i18n={ props.i18n }
 				setTourDetails={ props.setTourDetails }
 				closeAllModals={() => {
