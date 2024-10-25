@@ -343,7 +343,10 @@ function MapChild(props: {
 					getTourList();
 				}}
 			>
-				<IonFabButton>
+				<IonFabButton
+					class="te-ion-fab-button"
+					data-desc={ props.i18n.t("tours") }
+				>
 					<IonIcon icon={ footsteps } />
 				</IonFabButton>
 			</IonFab>
@@ -359,7 +362,10 @@ function MapChild(props: {
 					setShowEventListModal(true);
 				}}
 			>
-				<IonFabButton>
+				<IonFabButton
+					class="te-ion-fab-button"
+					data-desc={ props.i18n.t("events") }
+				>
 					<IonIcon icon={ eventIcon } />
 				</IonFabButton>
 			</IonFab>
