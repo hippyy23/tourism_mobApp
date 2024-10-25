@@ -56,30 +56,30 @@ const Map: React.FC = () => {
 		*/}
 		<IonHeader>
 			<IonToolbar color="primary">
-			<IonItem slot="start" lines="none" color="primary">
-				<IonImg src={toolbarIcon} style={{ height: "80%" }} />
-			</IonItem>
+				<IonItem slot="start" lines="none" color="primary">
+					<IonImg src={ toolbarIcon } style={{ height: "80%" }} />
+				</IonItem>
 
-			<IonButtons slot="end" className="ion-margin-end">
-				<IonIcon
-				slot="icon-only"
-				icon={search}
-				onClick={() => setShowSearchModal(true)}
-				/>
-			</IonButtons>
+				<IonButtons slot="end" className="ion-margin-end">
+					<IonIcon
+						slot="icon-only"
+						icon={ search }
+						onClick={ () => setShowSearchModal(true) }
+					/>
+				</IonButtons>
 
-			<IonButtons slot="end" className="ion-margin-end">
-				<IonIcon
-				slot="icon-only"
-				ios={ellipsisHorizontal}
-				md={ellipsisVertical}
-				onClick={(e) =>
-					present({
-					event: e.nativeEvent,
-					})
-				}
-				/>
-			</IonButtons>
+				<IonButtons slot="end" className="ion-margin-end">
+					<IonIcon
+						slot="icon-only"
+						ios={ ellipsisHorizontal }
+						md={ ellipsisVertical }
+						onClick={(e) =>
+							present({
+								event: e.nativeEvent,
+							})
+						}
+					/>
+				</IonButtons>
 			</IonToolbar>
 		</IonHeader>
 		<IonContent>
@@ -92,27 +92,27 @@ const Map: React.FC = () => {
 					setCenterPosition(true);
 				}}
 			>
-			<IonFabButton>
-				<IonIcon icon={location} />
-			</IonFabButton>
+				<IonFabButton>
+					<IonIcon icon={location} />
+				</IonFabButton>
 			</IonFab>
 
 			<MapContainer
-				center={[45.67734047741374, 10.854292623774246]}
-				zoom={15}
+				center={[45.64893875856411, 10.81850173405084]}
+				zoom={13}
 				minZoom={13}
 				scrollWheelZoom={true}
 				style={{ height: "100%", width: "100%" }}
 				zoomControl={true}
 			>
-			<MapChild
-				filterFabRef={fabRef}
-				centerPosition={centerPosition}
-				setCenterPosition={setCenterPosition}
-				i18n={i18n}
-				showSearchModal={showSearchModal}
-				setShowSearchModal={setShowSearchModal}
-			/>
+				<MapChild
+					filterFabRef={fabRef}
+					centerPosition={centerPosition}
+					setCenterPosition={setCenterPosition}
+					i18n={i18n}
+					showSearchModal={showSearchModal}
+					setShowSearchModal={setShowSearchModal}
+				/>
 			</MapContainer>
 		</IonContent>
 		</IonPage>
