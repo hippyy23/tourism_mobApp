@@ -46,6 +46,7 @@ function SearchModal(props: {
 }) {
 	const [showPOIModal, setShowPOIModal] = useState<boolean>(false); // Mostra la modale con i dettagli del punto di interesse
 	const [showEventModal, setShowEventModal] = useState<boolean>(false); // Mostra la modale con i dettagli del punto di interesse
+	const [search, setSearch] = useState<boolean>(false); // Mostra o nascondi ricerca
 	const [present, dismiss] = useIonPopover(PopoverList, {
 		onHide: () => dismiss(),
 	});
@@ -112,15 +113,67 @@ function SearchModal(props: {
 			: Event.properties.name_en;
 	}
 
+	function FilterPOI() {
+		const filteredPOI = data.filter((element: POI) => POIname(element).toLocaleLowerCase().indexOf(searchText.toLocaleLowerCase()) >= 0);
+
+		const listPOI = filteredPOI.map((POI: POI) => (
+			<IonItem
+				key={POI.properties.id_art}
+				onClick={() =>
+					{fetchPOIMedia(POI.properties.id_art, (media: POIMedia[]) => {
+						poi_media = media;
+					});
+					fetchPOIDetails(POI.properties.id_art, (poi_data: POIDetails) => {
+						poi_details = poi_data;
+						setShowPOIModal(true);
+					})}
+				}
+				button
+				detail
+			>
+				<IonIcon
+					icon={icon(POI.properties.category_it)}
+					className="ion-margin-end"
+				/>
+				<IonLabel>{POIname(POI)}</IonLabel>
+			</IonItem>
+		));
+
+		return <IonList>{ listPOI }</IonList>;
+	}
+
+	function FilterEvent() {
+		const filteredEvent = dataEvent.filter((element: Event) => Eventname(element).toLocaleLowerCase().indexOf(searchText.toLocaleLowerCase()) >= 0);
+
+		const listEvent = filteredEvent.map((Event: Event) => (
+			<IonItem
+				key={ Event.properties.id_event }
+				onClick={() =>
+					fetchEventDetails(Event.properties.id_event, (event_data: EventDetails) => {
+						event_details = event_data;
+						setShowEventModal(true);
+					})
+				}
+				button
+				detail
+			>
+			<IonIcon
+				icon={ icon(Event.properties.category_it) }
+				className="ion-margin-end"
+			/>
+			<IonLabel>{ Eventname(Event) }</IonLabel>
+			</IonItem>
+		));
+
+		return <IonList>{ listEvent }</IonList>;
+	}
+
 	/**
 	 * Crea la lista di POI
 	 */
 	const listPOI = data.map((POI: POI) => (
 		<IonItem
 			key={POI.properties.id_art}
-			hidden={
-				POIname(POI).toLowerCase().indexOf(searchText.toLowerCase()) < 0
-			}
 			onClick={() =>
 				{fetchPOIMedia(POI.properties.id_art, (media: POIMedia[]) => {
 					poi_media = media;
@@ -131,6 +184,7 @@ function SearchModal(props: {
 				})}
 			}
 			button
+			detail
 		>
 		<IonIcon
 			icon={icon(POI.properties.category_it)}
@@ -146,9 +200,6 @@ function SearchModal(props: {
 	const listEvent = dataEvent.map((Event: Event) => (
 		<IonItem
 			key={ Event.properties.id_event }
-			hidden={
-				Eventname(Event).toLowerCase().indexOf(searchText.toLowerCase()) < 0
-			}
 			onClick={() =>
 				fetchEventDetails(Event.properties.id_event, (event_data: EventDetails) => {
 					event_details = event_data;
@@ -156,6 +207,7 @@ function SearchModal(props: {
 				})
 			}
 			button
+			detail
 		>
 		<IonIcon
 			icon={ icon(Event.properties.category_it) }
@@ -176,10 +228,10 @@ function SearchModal(props: {
 				{/* FRECCIA INDIETRO */}
 				<IonButtons slot="start" class="toolbar_back_button">
 					<IonIcon
-					slot="icon-only"
-					ios={ chevronBack }
-					md={ arrowBack }
-					onClick={() => props.onDismissConditions(false)}
+						slot="icon-only"
+						ios={ chevronBack }
+						md={ arrowBack }
+						onClick={() => props.onDismissConditions(false)}
 					/>
 				</IonButtons>
 
@@ -191,14 +243,14 @@ function SearchModal(props: {
 				{/* MENU OPZIONI POPOVER */}
 				<IonButtons slot="end" className="ion-margin-end">
 					<IonIcon
-					slot="icon-only"
-					ios={ ellipsisHorizontal }
-					md={ ellipsisVertical }
-					onClick={(e: any) =>
-						present({
-							event: e.nativeEvent,
-						})
-					}
+						slot="icon-only"
+						ios={ ellipsisHorizontal }
+						md={ ellipsisVertical }
+						onClick={(e: any) =>
+							present({
+								event: e.nativeEvent,
+							})
+						}
 					/>
 				</IonButtons>
 			</IonToolbar>
@@ -208,45 +260,52 @@ function SearchModal(props: {
 			{/* Search Bar */}
 			<IonSearchbar
 				value={ searchText }
-				onIonChange={(e) => {
+				onIonInput={(e) => {
 					setSearchText(e.detail.value!);
+					setSearch(true);
+				}}
+				onIonCancel={() => {
+					setSearchText("");
+					setSearch(false);
 				}}
 			/>
 
 			{/* Lista  Poi*/}
-			<IonList>{ listPOI }</IonList>
+			{search && (<FilterPOI/>)}
+			{!search && (<IonList>{ listPOI }</IonList>)}
 
 			{/* Lista  Event */}
-			<IonList>{ listEvent }</IonList>
+			{search && (<FilterEvent/>)}
+			{!search && (<IonList>{ listEvent }</IonList>)}
 
 			{/* Modal delle informazioni riguardanti il punto di interesse cliccato */}
 			{showPOIModal && (
-			<POIModal
-				openCondition={ showPOIModal }
-				onDismissConditions={ setShowPOIModal }
-				data={ poi_details }
-				media={ poi_media }
-				i18n={ props.i18n }
-				setTourDetails={ props.setTourDetails }
-				closeAllModals={() => {
-					props.closeAllModals();
-					setShowPOIModal(false);
-				}}
-			/>
+				<POIModal
+					openCondition={ showPOIModal }
+					onDismissConditions={ setShowPOIModal }
+					data={ poi_details }
+					media={ poi_media }
+					i18n={ props.i18n }
+					setTourDetails={ props.setTourDetails }
+					closeAllModals={() => {
+						props.closeAllModals();
+						setShowPOIModal(false);
+					}}
+				/>
 			)}
 
 			{/* Modal delle informazioni riguardanti l'evento cliccato */}
 			{showEventModal && (
-			<EventModal
-				openCondition={ showEventModal }
-				onDismissConditions={ setShowEventModal }
-				data={ event_details }
-				i18n={ props.i18n }
-				closeAllModals={() => {
-					props.closeAllModals();
-					setShowEventModal(false);
-				}}
-			/>
+				<EventModal
+					openCondition={ showEventModal }
+					onDismissConditions={ setShowEventModal }
+					data={ event_details }
+					i18n={ props.i18n }
+					closeAllModals={() => {
+						props.closeAllModals();
+						setShowEventModal(false);
+					}}
+				/>
 			)}
 		</IonContent>
 		</IonModal>
