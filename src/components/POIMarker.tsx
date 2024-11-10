@@ -10,6 +10,7 @@ import { useState } from "react";
 import POIModal from "../modals/POIModal";
 import { ConnectionStatus } from "@capacitor/network";
 import { fetchPOIDetails, fetchPOIMedia } from "./Functions";
+import CustomPopup from "./CustomPopup";
 
 var POIDetailsData: POIDetails;
 var POIMediaData: POIMedia[];
@@ -142,10 +143,10 @@ function POIMarker(props: {
 					iconSize: [30, 30], // size of the icon
 				})}
 			>
-				<Popup
+				<CustomPopup
 					autoClose={false}
 					onOpen={() => {
-					getPOIDetails(element.properties.id_art);
+						getPOIDetails(element.properties.id_art);
 					}}
 					minWidth={125}
 					keepInView
@@ -166,7 +167,7 @@ function POIMarker(props: {
 						{props.i18n.t("details_button")}
 					</IonButton>
 					</div>
-				</Popup>
+				</CustomPopup>
 			</Marker>
 		)}
 		</div>

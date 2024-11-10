@@ -8,6 +8,7 @@ import { useState } from "react";
 import EventModal from "../modals/EventModal";
 import { ConnectionStatus } from "@capacitor/network";
 import { fetchEventDetails } from "./Functions";
+import CustomPopup from "./CustomPopup";
 
 var EventDetailsData: EventDetails;
 var isLoading: boolean = false;
@@ -121,10 +122,10 @@ function EventMarker(props: {
 					iconSize: [30, 30], // size of the icon
 				})}
 			>
-				<Popup
+				<CustomPopup
 					autoClose={false}
 					onOpen={() => {
-					getEventDetails(element.properties.id_event);
+						getEventDetails(element.properties.id_event);
 					}}
 					minWidth={125}
 					keepInView
@@ -145,7 +146,7 @@ function EventMarker(props: {
 						{props.i18n.t("details_button")}
 					</IonButton>
 					</div>
-				</Popup>
+				</CustomPopup>
 			</Marker>
 		)}
 		</div>
