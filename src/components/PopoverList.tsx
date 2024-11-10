@@ -2,13 +2,14 @@ import { IonAlert, IonIcon, IonItem, IonLabel, IonList } from "@ionic/react";
 import { informationCircle, language, lockClosed } from "ionicons/icons";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
+import '../assets/i18n'
 import LanguageAlert from "./LanguageAlert";
 import PrivacyAlert from "./PrivacyAlert";
 
 const PopoverList: React.FC<{
 	onHide: () => void;
 }> = ({ onHide }) => {
-	const [chooseLanguage, setChooseLanguage] = useState<boolean>(true); // Indica se mostrare l'alert per la selezione della lingua
+	const [chooseLanguage, setChooseLanguage] = useState<boolean>(false); // Indica se mostrare l'alert per la selezione della lingua
 	const [showInfo, setShowInfo] = useState<boolean>(false); // Indica se mostrare l'alert delle informazioni
 	const [showPrivacyAlert, setShowPrivacyAlert] = useState<boolean>(false); // Indica se mostrare o meno l'alert della privacy
 	const { t, i18n } = useTranslation();
@@ -21,23 +22,24 @@ const PopoverList: React.FC<{
 				button
 				onClick={() => {
 					setChooseLanguage(true);
-					onHide();
+					// onHide();
 				}}
 			>
-			<IonIcon icon={language} />
+			<IonIcon icon={ language } />
 			<IonLabel className="ion-margin-start">
-				{t("change_language")}
+				{ t("change_language") }
 			</IonLabel>
 			</IonItem>
 
 			<IonItem
 				detail={false}
+				button
 				onClick={() => {
 					setShowPrivacyAlert(true);
-					onHide();
+					// onHide();
 				}}
 			>
-			<IonIcon icon={lockClosed} />
+			<IonIcon icon={ lockClosed } />
 			<IonLabel className="ion-padding-start">{t("tracking")}</IonLabel>
 			</IonItem>
 
@@ -46,11 +48,11 @@ const PopoverList: React.FC<{
 				detail={false}
 				onClick={() => {
 					setShowInfo(true);
-					onHide();
+					// onHide();
 				}}
 				button
 			>
-			<IonIcon icon={informationCircle} />
+			<IonIcon icon={ informationCircle } />
 			<IonLabel className="ion-padding-start">{t("info")}</IonLabel>
 			</IonItem>
 		</IonList>
