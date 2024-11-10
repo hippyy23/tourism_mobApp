@@ -31,7 +31,7 @@ function FilterFab(props: {
 			</IonFabButton>
 			<IonFabList side="top">
 				<IonFabButton
-					class={
+					className={
 						props.eventFilter
 						? "my-ion-fab-button ion-color ion-color-success md fab-button-in-list fab-button-show ion-activatable ion-focusable hydrated"
 						: "my-ion-fab-button-opacity ion-color ion-color-danger md fab-button-in-list ion-activatable fab-button-show ion-focusable hydrated"
@@ -41,7 +41,7 @@ function FilterFab(props: {
 				>
 				<IonIcon
 					icon={eventIconFilter}
-					class={
+					className={
 						props.eventFilter
 							? "my-icon md hydrated"
 							: "my-icon-opacity md hydrated"
@@ -49,7 +49,7 @@ function FilterFab(props: {
 				/>
 				</IonFabButton>
 				<IonFabButton
-					class={
+					className={
 						props.naturalValenceFilter
 						? "my-ion-fab-button ion-color ion-color-success md fab-button-in-list ion-activatable fab-button-show ion-focusable hydrated"
 						: "my-ion-fab-button-opacity ion-color ion-color-danger md fab-button-in-list ion-activatable fab-button-show ion-focusable hydrated"
@@ -62,7 +62,7 @@ function FilterFab(props: {
 				>
 				<IonIcon
 					icon={naturalValenceIconFilter}
-					class={
+					className={
 					props.naturalValenceFilter
 						? "my-icon md hydrated"
 						: "my-icon-opacity md hydrated"
@@ -70,7 +70,7 @@ function FilterFab(props: {
 				/>
 				</IonFabButton>
 				<IonFabButton
-					class={
+					className={
 						props.hisCultValenceFilter
 						? "my-ion-fab-button ion-color ion-color-success md fab-button-in-list ion-activatable ion-focusable hydrated"
 						: "my-ion-fab-button-opacity ion-color ion-color-danger md fab-button-in-list ion-activatable ion-focusable hydrated"
@@ -80,7 +80,7 @@ function FilterFab(props: {
 				>
 				<IonIcon
 					icon={hisCultValenceIconFilter}
-					class={
+					className={
 						props.hisCultValenceFilter
 							? "my-icon md hydrated"
 							: "my-icon-opacity md hydrated"
@@ -88,7 +88,7 @@ function FilterFab(props: {
 				/>
 				</IonFabButton>
 				<IonFabButton
-					class={
+					className={
 						props.activityFilter
 						? "my-ion-fab-button ion-color ion-color-success md fab-button-in-list ion-activatable ion-focusable hydrated"
 						: "my-ion-fab-button-opacity ion-color ion-color-danger md fab-button-in-list ion-activatable ion-focusable hydrated"
@@ -98,7 +98,7 @@ function FilterFab(props: {
 				>
 				<IonIcon
 					icon={activityIconFilter}
-					class={
+					className={
 						props.activityFilter
 							? "my-icon md hydrated"
 							: "my-icon-opacity md hydrated"

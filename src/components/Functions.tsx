@@ -49,7 +49,7 @@ export function sendPosition(id: DeviceId, pos: Position) {
 		if (posll.distanceTo(lastPosll) < 100 && timeDiff < 30000) return;
 	}
 	sendToLogServer("location", {
-		id: md5(id.uuid).toString,
+		id: md5(id.identifier).toString,
 		timestamp: new Date(pos.timestamp).toISOString(),
 		coords: pos.coords,
 	}).catch(() => {

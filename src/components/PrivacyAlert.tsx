@@ -1,5 +1,5 @@
 import { IonAlert } from "@ionic/react";
-import { Storage } from "@capacitor/storage";
+import { Preferences } from "@capacitor/preferences";
 import { i18n } from "i18next";
 
 function PrivacyAlert(props: {
@@ -20,7 +20,7 @@ function PrivacyAlert(props: {
           {
             text: props.i18n.t("agree"),
             handler: () => {
-              Storage.set({
+              Preferences.set({
                 key: "tracking",
                 value: "y",
               });
@@ -29,7 +29,7 @@ function PrivacyAlert(props: {
           {
             text: props.i18n.t("decline"),
             handler: () => {
-              Storage.set({
+              Preferences.set({
                 key: "tracking",
                 value: "n",
               });

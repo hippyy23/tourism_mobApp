@@ -12,7 +12,7 @@ import locationIcon from "../assets/images/location-sharp.svg";
 import "../assets/leaflet/leaflet.css";
 import { ConnectionStatus, Network } from "@capacitor/network";
 import { Device } from "@capacitor/device";
-import { Storage } from "@capacitor/storage";
+import { Preferences } from "@capacitor/preferences";
 import { Geolocation, Position } from "@capacitor/geolocation";
 import {
 	findCenter,
@@ -25,6 +25,7 @@ import { LOCATION_BOUNDS, LANGUAGES } from "../configVar";
 import PrivacyAlert from "./PrivacyAlert";
 import { POI, Event, Tour, TourDetails } from "../types/app_types";
 import { i18n } from "i18next";
+import '../assets/i18n'
 import POIMarker from "./POIMarker";
 import EventMarker from "./EventMarker"
 import { footsteps } from "ionicons/icons";
@@ -107,16 +108,16 @@ function MapChild(props: {
 					if (locationBounds.contains(posll)) {
 						mapComponent.panTo(posll);
 						Geolocation.watchPosition(
-						{ enableHighAccuracy: true },
-						updateUserPosition
+							{ enableHighAccuracy: true },
+							updateUserPosition
 						).then((id) => (watchId = id));
 					} else {
 						Geolocation.clearWatch({ id: watchId });
 						setShowLocationMarker(false);
 						presentToast({
-						/*buttons: [{ text: "hide", handler: () => dismissToast() }],*/
-						message: props.i18n.t("user_not_in_verona"),
-						duration: 5000,
+							/*buttons: [{ text: "hide", handler: () => dismissToast() }],*/
+							message: props.i18n.t("user_not_in_verona"),
+							duration: 5000,
 						});
 					}
 				}
@@ -176,7 +177,7 @@ function MapChild(props: {
 		mapComponent.invalidateSize();
 
 		// Recupera la lingua scelta precedentemente e salvata, oppure quella del dispositivo, oppure quella di default
-		Storage.get({ key: "languageCode" }).then((result) => {
+		Preferences.get({ key: "languageCode" }).then((result) => {
 		if (result.value !== null) {
 			props.i18n.changeLanguage(result.value);
 		} else {
@@ -198,7 +199,7 @@ function MapChild(props: {
 		 */
 		Network.getStatus().then((netStatus) => {
 			setConnectionStatus(netStatus);
-			Storage.get({ key: "baseData" }).then((result) => {
+			Preferences.get({ key: "baseData" }).then((result) => {
 				if (result.value !== null) {
 					POIListData = JSON.parse(result.value);
 					setDataObtained(true);
@@ -207,7 +208,7 @@ function MapChild(props: {
 				}
 			});
 
-			Storage.get({ key: "baseEventData" }).then((result) => {
+			Preferences.get({ key: "baseEventData" }).then((result) => {
 				if (result.value !== null) {
 					EventListData = JSON.parse(result.value);
 					setEventDataObtained(true);
@@ -228,7 +229,7 @@ function MapChild(props: {
 		});
 
 		// Tracciamento dell'utente
-		Storage.get({ key: "tracking" }).then((result) => {
+		Preferences.get({ key: "tracking" }).then((result) => {
 		if (result.value !== null) {
 			// Impostare di non tracciare l'utente
 			trackingEnable = result.value === "y";
@@ -268,7 +269,7 @@ function MapChild(props: {
 		if (downloadedData) return;
 		fetchPOIList((poiList: POI[]) => {
 			POIListData = poiList;
-			Storage.set({
+			Preferences.set({
 				key: "baseData",
 				value: JSON.stringify(POIListData),
 			});
@@ -286,7 +287,7 @@ function MapChild(props: {
 		if (downloadedEventData) return;
 		fetchEventList((eventList: Event[]) => {
 			EventListData = eventList;
-			Storage.set({
+			Preferences.set({
 				key: "baseEventData",
 				value: JSON.stringify(EventListData),
 			});
@@ -344,7 +345,7 @@ function MapChild(props: {
 				}}
 			>
 				<IonFabButton
-					class="te-ion-fab-button"
+					className="te-ion-fab-button"
 					data-desc={ props.i18n.t("tours") }
 				>
 					<IonIcon icon={ footsteps } />
@@ -363,7 +364,7 @@ function MapChild(props: {
 				}}
 			>
 				<IonFabButton
-					class="te-ion-fab-button"
+					className="te-ion-fab-button"
 					data-desc={ props.i18n.t("events") }
 				>
 					<IonIcon icon={ eventIcon } />

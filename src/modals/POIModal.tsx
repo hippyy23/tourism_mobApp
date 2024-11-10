@@ -22,9 +22,9 @@ import {
 	IonThumbnail,
 	IonNote,
 	IonList,
-	IonSlide,
-	IonSlides,
 } from "@ionic/react";
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { Autoplay, Keyboard, Pagination, Scrollbar, Zoom } from 'swiper/modules';
 import {
 	addCircle,
 	arrowBack,
@@ -35,13 +35,17 @@ import {
 	volumeHigh,
   	volumeMute,
 } from "ionicons/icons";
-import ReactHtmlParser from "react-html-parser";
+import ReactHtmlParser from "html-react-parser";
 import { fetchTourDetails } from "../components/Functions";
-// import { Swiper, SwiperSlide } from "swiper/react";
 // import SwiperCore, { Navigation, Pagination } from "swiper";
 import { TextToSpeech } from "@capacitor-community/text-to-speech";
 import ReactPlayer from "react-player/file";
-import "swiper/swiper-bundle.min.css";
+import "swiper/css";
+import 'swiper/css/autoplay';
+import 'swiper/css/keyboard';
+import 'swiper/css/pagination';
+import 'swiper/css/scrollbar';
+import 'swiper/css/zoom';
 import "@ionic/react/css/ionic-swiper.css";
 import PopoverList from "../components/PopoverList";
 import logoVerona from "../assets/images/logo_stemma.png";
@@ -69,7 +73,6 @@ function POIModal(props: {
 	const [urlMedia, setUrlMedia] = useState<string>(); // Imposta la URL da dove caricare il video del POI se è presente
 	const [textPlaying, setTextPlaying] = useState<boolean>(false); // Controlla se il TTS è in riproduzione o no
 	const [showTourModal, setShowTourModal] = useState<boolean>(false); // Mostra o nascondi il modale dell'itinerario
-	const mySlides = useRef<HTMLIonSlidesElement>(null);
 
 	/**
 	 * Conta il numero di itinerari in cui il punto di interesse è presente
@@ -77,115 +80,6 @@ function POIModal(props: {
 	const n_tours = props.data.tours_id
 		? props.data.tours_id.split(",").length
 		: 0;
-
-  // const [graphView, setGraphView] = useState<boolean>(false); // Mostra o nascondi il grafico della popolazione nel POI
-  // const [swiperInstance, setSwiperInstance] = useState<SwiperCore>(); //
-  // SwiperCore.use([IonicSwiper, Navigation, Pagination]);
-
-  // // DATI DI PROVA
-
-  // const data1 = {
-  //   labels: [
-  //     "6-8",
-  //     "8-10",
-  //     "10-12",
-  //     /*t("day_week_mon"),
-  //     t("day_week_tue"),
-  //     t("day_week_tue"),
-  //     t("day_week_thu"),
-  //     t("day_week_fri"),
-  //     t("day_week_sat"),
-  //     t("day_week_sun"),
-  //     */
-  //   ],
-  //   datasets: [
-  //     {
-  //       label: "historical",
-  //       data: [12, 19, 25],
-  //       backgroundColor: "rgb(255, 99, 132)",
-  //     },
-  //     {
-  //       label: "expected",
-  //       data: [3, 10, 2],
-  //       backgroundColor: "rgb(75, 192, 192)",
-  //     },
-  //     {
-  //       label: "real",
-  //       data: [0, 3, 0],
-  //       backgroundColor: "rgb(54, 162, 235)",
-  //     },
-  //   ],
-  // };
-
-  // const data2 = {
-  //   labels: ["12-14", "14-16", "16-18"],
-  //   datasets: [
-  //     {
-  //       label: t("historical"),
-  //       data: [3, 5, 13],
-  //       backgroundColor: "rgb(255, 99, 132)",
-  //     },
-  //     {
-  //       label: t("expected"),
-  //       data: [13, 15, 15],
-  //       backgroundColor: "rgb(75, 192, 192)",
-  //     },
-  //   ],
-  // };
-
-  // const data3 = {
-  //   labels: ["18-20", "20-22", "22-24"],
-  //   datasets: [
-  //     {
-  //       label: t("historical"),
-  //       data: [2, 3, 18],
-  //       backgroundColor: "rgb(255, 99, 132)",
-  //     },
-  //     {
-  //       label: t("expected"),
-  //       data: [12, 13, 25],
-  //       backgroundColor: "rgb(75, 192, 192)",
-  //     },
-  //   ],
-  // };
-
-  // function BarChart(props: { data: any }) {
-  //   return (
-  //     <Bar
-  //       data={props.data}
-  //       class="bar-chart"
-  //       options={{
-  //         animation: false,
-  //         responsive: true,
-  //         scales: {
-  //           x: {
-  //             offset: true,
-  //             display: true,
-  //             title: {
-  //               display: true,
-  //               text: t("xlabel"),
-  //               font: {
-  //                 weight: "bold",
-  //                 size: 14,
-  //               },
-  //             },
-  //           },
-  //           y: {
-  //             display: true,
-  //             title: {
-  //               display: true,
-  //               text: t("ylabel"),
-  //               font: {
-  //                 weight: "bold",
-  //                 size: 14,
-  //               },
-  //             },
-  //           },
-  //         },
-  //       }}
-  //     />
-  //   );
-  // }
 
   /**
    * Funzione che manda in riproduzione vocale la descrizione del punto di interesse
@@ -265,17 +159,6 @@ function POIModal(props: {
 		});
 	}
 
-	const onBtnClicked = async (direction: string) => {
-		if (mySlides.current) {
-			const swiper = await mySlides.current.getSwiper();
-			if (direction === "next") {
-				swiper.slideNext();
-			} else if (direction === "prev") {
-				swiper.slidePrev();
-			}
-		}
-	};
-
 	/** Creazione della lista di itinerari cliccabili */
 	function TourList() {
 		var tours_id = props.data.tours_id.split(",");
@@ -309,38 +192,26 @@ function POIModal(props: {
 		));
 		
 		const slides = mediaPath.map((path: string, index: number) => (
-			<IonSlide key={ index }>
+			<SwiperSlide key={ index }>
 				<IonImg src={ path } />
-			</IonSlide>
+			</SwiperSlide>
 		));
 
-		const slideOptions = {
-			initialSlide: 1,
-			speed: 100,
-		}
-
 		if (mediaPath.length) {
-			return (<IonCol>
-						
-						<IonSlides pager={ true } options={ slideOptions } ref={ mySlides }>{ slides }</IonSlides>
-						<div style={{ textAlign: "center", paddingTop: 12 }}>
-							<IonButton
-								onClick={() => onBtnClicked("prev")}
-							>
-							PREV
-							</IonButton>
-							<IonButton
-								onClick={() => onBtnClicked("next")}
-							>
-							NEXT
-							</IonButton>
-						</div>
-					</IonCol>
-				)
+			return (
+				<IonCol>
+					<Swiper 
+						modules={ [Autoplay, Keyboard, Pagination, Scrollbar, Zoom] }
+						keyboard={ true }
+						scrollbar={ true }
+						zoom={ true }
+					>{ slides }</Swiper>
+				</IonCol>
+			)
 		} else {
 			return (
 				<IonCol>
-					<IonSlides pager={ true } options={ slideOptions } ref={ mySlides }>{ slides }</IonSlides>
+					<Swiper>{ slides }</Swiper>
 				</IonCol>
 			)
 		}

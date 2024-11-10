@@ -24,6 +24,7 @@ import "../assets/leaflet/leaflet.css";
 import toolbarIcon from "../assets/images/logo.png";
 import MapChild from "../components/MapChild";
 import PopoverList from "../components/PopoverList";
+import '../assets/i18n';
 import { useTranslation } from "react-i18next";
 
 // var isOpen = true;

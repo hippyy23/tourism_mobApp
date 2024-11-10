@@ -31,12 +31,12 @@ import {
 	volumeHigh,
   	volumeMute,
 } from "ionicons/icons";
-import ReactHtmlParser from "react-html-parser";
+import ReactHtmlParser from "html-react-parser";
 import { fetchEventMedia } from "../components/Functions";
 // import { Swiper, SwiperSlide } from "swiper/react";
 // import SwiperCore, { Navigation, Pagination } from "swiper";
 import { TextToSpeech } from "@capacitor-community/text-to-speech";
-import "swiper/swiper-bundle.min.css";
+import "swiper/css";
 import "@ionic/react/css/ionic-swiper.css";
 import PopoverList from "../components/PopoverList";
 import { i18n } from "i18next";
@@ -54,111 +54,6 @@ function EventModal(props: {
 	// const [openTimeView, setOpenTimeView] = useState<boolean>(false); // Mostra o nascondi il testo relativo agli orari del punto di interesse
 	const [ticketsView, setTicketsView] = useState<boolean>(false); // Mostra o nascondi il testo relativo al prezzo dei biglietti del punto di interesse
 	const [textPlaying, setTextPlaying] = useState<boolean>(false); // Controlla se il TTS è in riproduzione o no
-
-  // // DATI DI PROVA
-
-  // const data1 = {
-  //   labels: [
-  //     "6-8",
-  //     "8-10",
-  //     "10-12",
-  //     /*t("day_week_mon"),
-  //     t("day_week_tue"),
-  //     t("day_week_tue"),
-  //     t("day_week_thu"),
-  //     t("day_week_fri"),
-  //     t("day_week_sat"),
-  //     t("day_week_sun"),
-  //     */
-  //   ],
-  //   datasets: [
-  //     {
-  //       label: "historical",
-  //       data: [12, 19, 25],
-  //       backgroundColor: "rgb(255, 99, 132)",
-  //     },
-  //     {
-  //       label: "expected",
-  //       data: [3, 10, 2],
-  //       backgroundColor: "rgb(75, 192, 192)",
-  //     },
-  //     {
-  //       label: "real",
-  //       data: [0, 3, 0],
-  //       backgroundColor: "rgb(54, 162, 235)",
-  //     },
-  //   ],
-  // };
-
-  // const data2 = {
-  //   labels: ["12-14", "14-16", "16-18"],
-  //   datasets: [
-  //     {
-  //       label: t("historical"),
-  //       data: [3, 5, 13],
-  //       backgroundColor: "rgb(255, 99, 132)",
-  //     },
-  //     {
-  //       label: t("expected"),
-  //       data: [13, 15, 15],
-  //       backgroundColor: "rgb(75, 192, 192)",
-  //     },
-  //   ],
-  // };
-
-  // const data3 = {
-  //   labels: ["18-20", "20-22", "22-24"],
-  //   datasets: [
-  //     {
-  //       label: t("historical"),
-  //       data: [2, 3, 18],
-  //       backgroundColor: "rgb(255, 99, 132)",
-  //     },
-  //     {
-  //       label: t("expected"),
-  //       data: [12, 13, 25],
-  //       backgroundColor: "rgb(75, 192, 192)",
-  //     },
-  //   ],
-  // };
-
-  // function BarChart(props: { data: any }) {
-  //   return (
-  //     <Bar
-  //       data={props.data}
-  //       class="bar-chart"
-  //       options={{
-  //         animation: false,
-  //         responsive: true,
-  //         scales: {
-  //           x: {
-  //             offset: true,
-  //             display: true,
-  //             title: {
-  //               display: true,
-  //               text: t("xlabel"),
-  //               font: {
-  //                 weight: "bold",
-  //                 size: 14,
-  //               },
-  //             },
-  //           },
-  //           y: {
-  //             display: true,
-  //             title: {
-  //               display: true,
-  //               text: t("ylabel"),
-  //               font: {
-  //                 weight: "bold",
-  //                 size: 14,
-  //               },
-  //             },
-  //           },
-  //         },
-  //       }}
-  //     />
-  //   );
-  // }
 
   /**
    * Funzione che manda in riproduzione vocale la descrizione del punto di interesse

@@ -1,5 +1,5 @@
 import { AlertInput, IonAlert } from "@ionic/react";
-import { Storage } from "@capacitor/storage";
+import { Preferences } from "@capacitor/preferences";
 import { i18n } from "i18next";
 import { LANGUAGES } from "../configVar";
 // import { sendLanguage } from "./Functions";
@@ -41,7 +41,7 @@ function LanguageAlert(props: { i18n: i18n; onDismiss: () => void; backdropDismi
 				handler: () => {
 					if (props.i18n.language !== languageChoice) {
 					props.i18n.changeLanguage(languageChoice);
-					Storage.set({
+					Preferences.set({
 						key: "languageCode",
 						value: props.i18n.language,
 					});

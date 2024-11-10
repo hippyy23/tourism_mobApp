@@ -19,8 +19,6 @@ import {
   IonThumbnail,
   IonToolbar,
   useIonPopover,
-  IonSlides,
-  IonSlide,
 } from "@ionic/react";
 import { useState } from "react";
 import {
@@ -39,7 +37,7 @@ import PopoverList from "../components/PopoverList";
 import { TextToSpeech } from "@capacitor-community/text-to-speech";
 import { Redirect, useHistory, useLocation } from 'react-router-dom';
 import { fetchPOIDetails, fetchPOIMedia } from "../components/Functions";
-import ReactHtmlParser from "react-html-parser";
+import ReactHtmlParser from "html-react-parser";
 import POIModal from "./POIModal";
 import { i18n } from "i18next";
 import { LanguageCode, POIDetails, POIMedia, TourDetails } from "../types/app_types";

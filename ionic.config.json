@@ -1,7 +1,7 @@
 {
-  "name": "BaldOutdoor",
+  "name": "tourism_App",
   "integrations": {
     "capacitor": {}
   },
-  "type": "react"
+  "type": "react-vite"
 }

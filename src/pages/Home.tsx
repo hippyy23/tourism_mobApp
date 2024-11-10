@@ -13,7 +13,7 @@ import {
 } from "@ionic/react";
 import { useState } from "react";
 import { ConnectionStatus, Network } from "@capacitor/network";
-import { Storage } from "@capacitor/storage";
+import { Preferences } from "@capacitor/preferences";
 import { Device } from "@capacitor/device";
 import {
 	fetchTourList,
@@ -26,6 +26,7 @@ import POIListModal from "../modals/POIListModal";
 import TourListModal from "../modals/TourListModal";
 import EventListModal from "../modals/EventListModal";
 import "./Home.css";
+import '../assets/i18n'
 import { useTranslation } from "react-i18next";
 
 var POIListData: POI[];
@@ -57,7 +58,7 @@ const Home: React.FC = () => {
 	 */
 	useIonViewDidEnter(() => {
 		// Recupera la lingua scelta precedentemente e salvata, oppure quella del dispositivo, oppure quella di default
-		Storage.get({ key: "languageCode" }).then((result) => {
+		Preferences.get({ key: "languageCode" }).then((result) => {
 		if (result.value !== null) {
 			i18n.changeLanguage(result.value);
 		} else {
@@ -77,14 +78,14 @@ const Home: React.FC = () => {
 		 */
 		Network.getStatus().then((netStatus) => {
 			setConnectionStatus(netStatus);
-			Storage.get({ key: "baseData" }).then((result) => {
+			Preferences.get({ key: "baseData" }).then((result) => {
 				if (result.value !== null) {
 					POIListData = JSON.parse(result.value);
 					setDataObtained(true);
 				}
 			});
 
-			Storage.get({ key: "baseEventData" }).then((result) => {
+			Preferences.get({ key: "baseEventData" }).then((result) => {
 				if (result.value !== null) {
 					EventListData = JSON.parse(result.value);
 					setEventDataObtained(true);
@@ -111,7 +112,7 @@ const Home: React.FC = () => {
 		if (downloadedData) return;
 		fetchPOIList((poiList: POI[]) => {
 			POIListData = poiList;
-			Storage.set({
+			Preferences.set({
 				key: "baseData",
 				value: JSON.stringify(POIListData),
 			});
@@ -128,7 +129,7 @@ const Home: React.FC = () => {
 		if (downloadedEventData) return;
 		fetchEventList((eventList: Event[]) => {
 			EventListData = eventList;
-			Storage.set({
+			Preferences.set({
 				key: "baseEventData",
 				value: JSON.stringify(EventListData),
 			});
@@ -168,22 +169,22 @@ const Home: React.FC = () => {
             <IonGrid class="home">
                 <IonRow class="home">
                     <IonCol class="home">
-                        <IonButton class="home" expand="block" href="/map">MAPPA</IonButton>
+                        <IonButton className="home" expand="block" href="/map">MAPPA</IonButton>
                     <br />
                         <IonButton 
-                            class="home"
+                            className="home"
                             expand="block"
                             onClick={() => { setShowPOIListModal(true); }}
                             >PUNTI DI INTERESSE</IonButton>
                     <br />
                         <IonButton 
-                            class="home" 
+                            className="home" 
                             expand="block"
                             onClick={() => { getTourList(); }}
                             >ITINERARI</IonButton>
                     <br />
                         <IonButton 
-                            class="home" 
+                            className="home" 
                             expand="block"
                             onClick={() => { setShowEventListModal(true); }}
                             >EVENTI</IonButton>
