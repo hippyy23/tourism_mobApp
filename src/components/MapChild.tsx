@@ -6,7 +6,7 @@ import {
 	IonFabButton,
 } from "@ionic/react";
 import { TileLayer, useMap, Marker, Popup, LayersControl } from "react-leaflet";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import L from "leaflet";
 import locationIcon from "../assets/images/location-sharp.svg";
 import "../assets/leaflet/leaflet.css";
@@ -116,7 +116,7 @@ function MapChild(props: {
 						setShowLocationMarker(false);
 						presentToast({
 							/*buttons: [{ text: "hide", handler: () => dismissToast() }],*/
-							message: props.i18n.t("user_not_in_verona"),
+							message: props.i18n.t("user_not_in_baldo"),
 							duration: 5000,
 						});
 					}
@@ -129,7 +129,7 @@ function MapChild(props: {
 	}
 
 	/**
-	 * Funzione che permette di aggiornare la posizione dell'utente, se l'utente è fuori dal bound della città di Verona
+	 * Funzione che permette di aggiornare la posizione dell'utente, se l'utente è fuori dal bound della zona di Monte Baldo
 	 * non viene più aggiornata la posizione dell'utente
 	 * @param pos Posizione dell'utente
 	 */
@@ -153,20 +153,20 @@ function MapChild(props: {
 	 */
 	function checkLocationPermission() {
 		Geolocation.requestPermissions()
-		.then((permission) => {
-			switch (permission.location) {
-			case "denied":
-				return;
-			case "granted":
-				setPermissionGranted(true);
-				Geolocation.watchPosition(
-				{ enableHighAccuracy: true },
-				updateUserPosition
-				).then((id) => (watchId = id));
-				break;
-			}
-		})
-		.catch(() => console.log("Browser not implemented"));
+			.then((permission) => {
+				switch (permission.location) {
+					case "denied":
+						return;
+					case "granted":
+						setPermissionGranted(true);
+						Geolocation.watchPosition(
+							{ enableHighAccuracy: true },
+								updateUserPosition
+							).then((id) => (watchId = id));
+						break;
+				}
+			})
+			.catch(() => console.log("Browser not implemented"));
 	}
 
 	/**
@@ -178,16 +178,16 @@ function MapChild(props: {
 
 		// Recupera la lingua scelta precedentemente e salvata, oppure quella del dispositivo, oppure quella di default
 		Preferences.get({ key: "languageCode" }).then((result) => {
-		if (result.value !== null) {
-			props.i18n.changeLanguage(result.value);
-		} else {
-			Device.getLanguageCode().then((lang) => {
-				deviceLanguage = lang.value;
-				if (LANGUAGES.includes(deviceLanguage)) {
-					props.i18n.changeLanguage(deviceLanguage);
-				}
-			});
-		}
+			if (result.value !== null) {
+				props.i18n.changeLanguage(result.value);
+			} else {
+				Device.getLanguageCode().then((lang) => {
+					deviceLanguage = lang.value;
+					if (LANGUAGES.includes(deviceLanguage)) {
+						props.i18n.changeLanguage(deviceLanguage);
+					}
+				});
+			}
 		});
 
 		checkLocationPermission();
