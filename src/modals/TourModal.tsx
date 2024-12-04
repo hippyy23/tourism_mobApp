@@ -32,7 +32,6 @@ import {
   removeCircle,
   navigate,
 } from "ionicons/icons";
-import logoVerona from "../assets/images/logo_stemma.png";
 import PopoverList from "../components/PopoverList";
 import { TextToSpeech } from "@capacitor-community/text-to-speech";
 import { Redirect, useHistory, useLocation } from 'react-router-dom';
@@ -167,11 +166,6 @@ function TourModal(props: {
 				/>
 			</IonButtons>
 
-			{/* LOGO COMUNE */}
-			<IonThumbnail slot="start">
-				<img src={logoVerona} alt="Logo Comune di Verona" />
-			</IonThumbnail>
-
 			{/* NOME TOUR */}
 			<IonLabel slot="start" class="toolbar_label">
 				{props.data.properties[`name_${lng}`] !== null
@@ -265,9 +259,7 @@ function TourModal(props: {
 								class="format-text"
 								id="description-text"
 							>
-								{ReactHtmlParser(
-									removeDoubleSlashN(getDescriptionFallback())
-								)}
+								{ ReactHtmlParser(removeDoubleSlashN(getDescriptionFallback())) }
 							</IonText>
 						</IonCardContent>
 					</IonCard>
