@@ -1,5 +1,6 @@
 import {
 	IonButton,
+	IonButtons,
 	IonContent,
 	IonHeader,
 	IonPage,
@@ -10,7 +11,13 @@ import {
     IonCol,
     useIonToast,
     useIonViewDidEnter,
+	IonIcon,
+	useIonPopover,
 } from "@ionic/react";
+import {
+	ellipsisHorizontal,
+	ellipsisVertical,
+} from "ionicons/icons";
 import { useState } from "react";
 import { ConnectionStatus, Network } from "@capacitor/network";
 import { Preferences } from "@capacitor/preferences";
@@ -25,6 +32,7 @@ import { POI, Event, Tour, TourDetails } from "../types/app_types";
 import POIListModal from "../modals/POIListModal";
 import TourListModal from "../modals/TourListModal";
 import EventListModal from "../modals/EventListModal";
+import PopoverList from "../components/PopoverList";
 import "./Home.css";
 import '../assets/i18n'
 import { useTranslation } from "react-i18next";
@@ -51,6 +59,9 @@ const Home: React.FC = () => {
 	});
     const [presentToast] = useIonToast();
 	const { i18n } = useTranslation();
+	const [present, dismiss] = useIonPopover(PopoverList, {
+		onHide: () => dismiss(),
+	});
 
 
     /**
@@ -162,7 +173,19 @@ const Home: React.FC = () => {
 		<IonPage className="background">
 		<IonHeader>
             <IonToolbar color="primary">
-                <IonTitle>BALDOUTDOOR</IonTitle>   
+                <IonTitle>BALDOUTDOOR</IonTitle>
+				<IonButtons slot="end" className="ion-margin-end">
+					<IonIcon
+						slot="icon-only"
+						ios={ ellipsisHorizontal }
+						md={ ellipsisVertical }
+						onClick={(e) =>
+							present({
+								event: e.nativeEvent,
+							})
+						}
+					/>
+				</IonButtons>
 			</IonToolbar>
 		</IonHeader>
 		<IonContent class="home">
