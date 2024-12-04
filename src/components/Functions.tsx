@@ -1,7 +1,7 @@
 import { Device, DeviceId } from "@capacitor/device";
 import { Position } from "@capacitor/geolocation";
 import L from "leaflet";
-import { LOG_SERVER_DOMAIN, SERVER_DOMAIN } from "../configVar";
+import { LOG_SERVER_DOMAIN, SERVER_DOMAIN, WEBAPP, WORKSPACE } from "../configVar";
 import { POI, POIDetails, POIMedia, Event, EventDetails, Tour, TourDetails } from "../types/app_types";
 import md5 from "crypto-js/md5";
 
@@ -64,10 +64,10 @@ export function sendPosition(id: DeviceId, pos: Position) {
  */
 export function fetchPOIList(callback: (arg0: POI[]) => void) {
 	const artCategoryRequest =
-		SERVER_DOMAIN +
-		"geoserver/veronapp/ows?service=WFS&version=1.0.0" +
+		SERVER_DOMAIN + WEBAPP + WORKSPACE +
+		"/ows?service=WFS&version=1.0.0" +
 		"&request=GetFeature" +
-		"&typeName=veronapp:v_art_space" +
+		"&typeName=" + WORKSPACE + ":v_art_space" +
 		"&outputFormat=json";
 
 	type POIList = {
@@ -78,8 +78,8 @@ export function fetchPOIList(callback: (arg0: POI[]) => void) {
 		.then((response) => response.json())
 		.then((data: POIList) => callback(data.features))
 		.catch((e) => {
-		console.log(e);
-	});
+			console.log(e);
+		});
 }
 
 /**
@@ -92,10 +92,10 @@ export function fetchPOIDetails(
 	callback: (arg0: POIDetails) => void
 	) {
 	const classIdRequest =
-		SERVER_DOMAIN +
-		"geoserver/veronapp/ows?service=WFS&version=1.0.0" +
+		SERVER_DOMAIN + WEBAPP + WORKSPACE +
+		"/ows?service=WFS&version=1.0.0" +
 		"&request=GetFeature" +
-		"&typeName=veronapp:v_art" +
+		"&typeName=" + WORKSPACE + ":v_art" +
 		"&cql_filter=(classid='" +
 		id_poi +
 		"')" +
@@ -111,8 +111,7 @@ export function fetchPOIDetails(
 		.then((data: POIDetailsList) =>
 			data.numberReturned === 1
 				? callback(data.features[0].properties)
-				: Promise.reject()
-		)
+				: Promise.reject())
 		.catch((e) => {
 			console.log(e);
 		});
@@ -125,8 +124,8 @@ export function fetchPOIDetails(
  */
 export function fetchPOIMedia(id_poi: string, callback: (arg0: POIMedia[]) => void) {
 	const classIdRequest =
-		SERVER_DOMAIN +
-		"geoserver/veronapp/ows?service=WFS&version=1.0.0" +
+		SERVER_DOMAIN + WEBAPP + WORKSPACE +
+		"/ows?service=WFS&version=1.0.0" +
 		"&request=GetFeature" +
 		"&typeName=tourism:v_art_media" +
 		"&cql_filter=(art='" +
@@ -152,10 +151,10 @@ export function fetchPOIMedia(id_poi: string, callback: (arg0: POIMedia[]) => vo
  */
 export function fetchEventList(callback: (arg0: Event[]) => void) {
 	const eventCategoryRequest =
-		SERVER_DOMAIN +
-		"geoserver/veronapp/ows?service=WFS&version=1.0.0" +
+		SERVER_DOMAIN + WEBAPP + WORKSPACE +
+		"/ows?service=WFS&version=1.0.0" +
 		"&request=GetFeature" +
-		"&typeName=veronapp:v_event_spacetime" +
+		"&typeName=" + WORKSPACE + ":v_event_spacetime" +
 		"&outputFormat=json";
 
 	type EventList = {
@@ -180,10 +179,10 @@ export function fetchEventDetails(
 	callback: (arg0: EventDetails) => void
 	) {
 	const classIdRequest =
-		SERVER_DOMAIN +
-		"geoserver/veronapp/ows?service=WFS&version=1.0.0" +
+		SERVER_DOMAIN + WEBAPP + WORKSPACE +
+		"/ows?service=WFS&version=1.0.0" +
 		"&request=GetFeature" +
-		"&typeName=veronapp:v_event" +
+		"&typeName=" + WORKSPACE + ":v_event" +
 		"&cql_filter=(classid='" +
 		id_event +
 		"')" +
@@ -199,8 +198,7 @@ export function fetchEventDetails(
 		.then((data: EventDetailsList) =>
 			data.numberReturned === 1
 				? callback(data.features[0].properties)
-				: Promise.reject()
-		)
+				: Promise.reject())
 		.catch((e) => {
 			console.log(e + id_event);
 		});
@@ -216,10 +214,10 @@ export function fetchEventMedia(
 	callback: (arg0: string) => void
 	) {
 	const classIdRequest =
-		SERVER_DOMAIN +
-		"geoserver/veronapp/ows?service=WFS&version=1.0.0" +
+		SERVER_DOMAIN + WEBAPP + WORKSPACE +
+		"/ows?service=WFS&version=1.0.0" +
 		"&request=GetFeature" +
-		"&typeName=tourism:v_event_media" +
+		"&typeName=" + WORKSPACE + ":v_event_media" +
 		"&cql_filter=(event='" +
 		id_event +
 		"')" +
@@ -235,12 +233,11 @@ export function fetchEventMedia(
 		.then((data: EventMedia) =>
 			data.numberReturned === 1
 				? callback(data.features[0].properties.path)
-				: Promise.reject()
-		)
+				: Promise.reject())
 		.catch((e) => {
-		console.log(e);
-		console.log("Errore nella comunicazione con il server: fetchEventMedia");
-	});
+			console.log(e);
+			console.log("Errore nella comunicazione con il server: fetchEventMedia");
+		});
 }
 
 /**
@@ -249,10 +246,10 @@ export function fetchEventMedia(
  */
 export function fetchTourList(callback: (arg0: Tour[]) => void) {
 	const artCategoryRequest =
-		SERVER_DOMAIN +
-		"geoserver/veronapp/ows?service=WFS&version=1.0.0" +
+		SERVER_DOMAIN + WEBAPP + WORKSPACE +
+		"/ows?service=WFS&version=1.0.0" +
 		"&request=GetFeature" +
-		"&typeName=tourism:v_tour_space" +
+		"&typeName=" + WORKSPACE + ":v_tour_space" +
 		"&outputFormat=json";
 
 	type TourList = {
@@ -263,8 +260,8 @@ export function fetchTourList(callback: (arg0: Tour[]) => void) {
 		.then((response) => response.json())
 		.then((data: TourList) => callback(data.features))
 		.catch(() => {
-		console.log("Errore nella comunicazione con il server: fetchTourList");
-	});
+			console.log("Errore nella comunicazione con il server: fetchTourList");
+		});
 }
 
 /**
@@ -277,10 +274,10 @@ export function fetchTourDetails(
 	callback: (arg0: TourDetails) => void
 	) {
 	const classIdRequest =
-		SERVER_DOMAIN +
-		"geoserver/veronapp/ows?service=WFS&version=1.0.0" +
+		SERVER_DOMAIN + WEBAPP + WORKSPACE +
+		"/ows?service=WFS&version=1.0.0" +
 		"&request=GetFeature" +
-		"&typeName=tourism:v_tour" +
+		"&typeName=" + WORKSPACE + ":v_tour" +
 		"&cql_filter=(classid='" +
 		id_tour +
 		"')" +
@@ -294,11 +291,10 @@ export function fetchTourDetails(
 	fetch(classIdRequest)
 		.then((response) => response.json())
 		.then((data: POIDetailsList) =>
-		data.numberReturned === 1 ? callback(data.features[0]) : Promise.reject()
-		)
+		data.numberReturned === 1 ? callback(data.features[0]) : Promise.reject())
 		.catch(() => {
-		console.log("Errore nella comunicazione con il server: fetchTourDetails");
-	});
+			console.log("Errore nella comunicazione con il server: fetchTourDetails");
+		});
 }
 
 /**
@@ -311,10 +307,10 @@ export function fetchTourMedia(
 	callback: (arg0: string) => void
 	) {
 	const classIdRequest =
-		SERVER_DOMAIN +
-		"geoserver/veronapp/ows?service=WFS&version=1.0.0" +
+		SERVER_DOMAIN + WEBAPP + WORKSPACE +
+		"/ows?service=WFS&version=1.0.0" +
 		"&request=GetFeature" +
-		"&typeName=tourism:v_tour_media" +
+		"&typeName=" + WORKSPACE + ":v_tour_media" +
 		"&cql_filter=(tour='" +
 		id_tour +
 		"')" +
@@ -328,9 +324,9 @@ export function fetchTourMedia(
 	fetch(classIdRequest)
 		.then((response) => response.json())
 		.then((data: TourMedia) =>
-		data.numberReturned === 1
-			? callback(data.features[0].properties.path)
-			: Promise.reject()
+			data.numberReturned === 1
+				? callback(data.features[0].properties.path)
+				: Promise.reject()
 		)
 		.catch((e) => {
 			console.log(e);
@@ -360,7 +356,7 @@ function sendToLogServer(path: string, data: any) {
 		mode: "cors",
 		cache: "no-cache",
 		headers: {
-		"Content-Type": "application/json",
+			"Content-Type": "application/json",
 		},
 		body: JSON.stringify(data),
 	});
