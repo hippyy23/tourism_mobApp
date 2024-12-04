@@ -113,10 +113,6 @@ export interface EventDetails {
 	descr_es: string;
 
 	open_time: string;
-	open_time_en: string;
-	open_time_de: string;
-	open_time_fr: string;
-	open_time_es: string;
 
 	tickets: string;
 	tickets_en: string;
