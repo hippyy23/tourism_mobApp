@@ -51,13 +51,26 @@ function EventListModal(props: {
 	});
 	const lng = props.i18n.language as LanguageCode;
 
-	var today = new Date();
-	var dd = String(today.getDate()).padStart(2, '0');
-	var mm = String(today.getMonth() + 1).padStart(2, '0');
-	var yyyy = today.getFullYear();
+	var locale = "it-IT";
+	if (lng == "en") {
+		locale = "en-EN";
+	} else if (lng == "de") {
+		locale = "de-De";
+	} else if (lng == "fr") {
+		locale = "fr-FR";
+	} else if (lng == "es") {
+		locale = "es-ES";
+	} else if (lng == "it") {
+		locale = "it-IT";
+	}
 
-	var minDate = yyyy + '-' + mm + '-' + dd;
-	var maxDate = yyyy + 2 + '-' + mm + '-' + dd;
+	const today = new Date();
+	const dd = String(today.getDate()).padStart(2, '0');
+	const mm = String(today.getMonth() + 1).padStart(2, '0');
+	const yyyy = today.getFullYear();
+
+	const minDate = yyyy + '-' + mm + '-' + dd;
+	const maxDate = yyyy + 2 + '-' + mm + '-' + dd;
 
 	function getEventNameFallback(event: Event): string {
 		const name = event.properties[`name_${lng}`];
@@ -204,18 +217,22 @@ function EventListModal(props: {
 
 				<IonRow>
 					<IonCol class="event-date">
-						<IonLabel>Start:</IonLabel>
-						<IonDatetime 
+						<IonLabel>{ props.i18n.t("start_date") }:</IonLabel>
+						<IonDatetime
 							class="datetime"
+							presentation="date"
+							locale={ locale }
 							min={ minDate }
 							max={ maxDate }
 							onIonChange={ (e) => setStartDate(e.detail.value!) }
 						/>
 					</IonCol>
 					<IonCol class="event-date">
-						<IonLabel>End:</IonLabel>
+						<IonLabel>{ props.i18n.t("end_date") }:</IonLabel>
 						<IonDatetime
 							class="datetime"
+							presentation="date"
+							locale={ locale }
 							min={ minDate }
 							max={ maxDate }
 							onIonChange={ (e) => setEndDate(e.detail.value!) }
@@ -230,7 +247,7 @@ function EventListModal(props: {
 								setShowFilteredEvents(true);
 							}}
 						>
-							{ props.i18n.t("Find") }
+							{ props.i18n.t("event_find_btn") }
 						</IonButton>
 						<IonButton
 							style={{ width: "25%", margin: "10px" }}
@@ -238,7 +255,7 @@ function EventListModal(props: {
 								setShowFilteredEvents(false);
 							}}
 						>
-							{ props.i18n.t("Clear") }
+							{ props.i18n.t("event_clear_btn") }
 						</IonButton>
 					</IonCol>
 				</IonRow>
