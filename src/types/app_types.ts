@@ -6,6 +6,28 @@ export enum LanguageCode {
 	es = "es",
 }
 
+export interface POI {
+	properties: {
+		id_art: string;
+
+		name_it: string;
+		name_en: string;
+		name_de: string;
+		name_fr: string;
+		name_es: string;
+
+		category_it: string;
+		category_en: string;
+		category_de: string;
+		category_fr: string;
+		category_es: string;
+	};
+
+	geometry: {
+		coordinates: [number, number];
+	};
+}
+
 export interface POIDetails {
 	classid: string;
 	image_url: string;
@@ -34,34 +56,16 @@ export interface POIDetails {
 	tickets_fr: string;
 	tickets_es: string;
 
+	link: string;
+
+	category_name_it: string;
+
 	tours_id: string;
 	tours_name_it: string;
 	tours_name_en: string;
 	tours_name_de: string;
 	tours_name_fr: string;
 	tours_name_es: string;
-}
-
-export interface POI {
-	properties: {
-		id_art: string;
-
-		name_it: string;
-		name_en: string;
-		name_de: string;
-		name_fr: string;
-		name_es: string;
-
-		category_it: string;
-		category_en: string;
-		category_de: string;
-		category_fr: string;
-		category_es: string;
-	};
-
-	geometry: {
-		coordinates: [number, number];
-	};
 }
 
 export interface POIMedia {
@@ -121,6 +125,28 @@ export interface EventDetails {
 	tickets_es: string;
 }
 
+export interface EventMedia {
+	properties: {
+		id_event: string;
+
+		path: string;
+	};
+}
+
+export interface Tour {
+	properties: {
+		id_tour: string;
+
+		type: string;
+
+		name_it: string;
+		name_en: string;
+		name_de: string;
+		name_fr: string;
+		name_es: string;
+	};
+}
+
 export interface TourDetails {
 	geometry: {
 		coordinates: [number, number, number][][];
@@ -153,15 +179,10 @@ export interface TourDetails {
 	};
 }
 
-export interface Tour {
+export interface TourMedia {
 	properties: {
 		id_tour: string;
-		type: string;
 
-		name_it: string;
-		name_en: string;
-		name_de: string;
-		name_fr: string;
-		name_es: string;
+		path: string;
 	};
 }
