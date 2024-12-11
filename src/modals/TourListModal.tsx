@@ -27,11 +27,12 @@ import {
 import toolbarIcon from "../assets/images/logo.png";
 import TourModal from "./TourModal";
 import { i18n } from "i18next";
-import { LanguageCode, Tour, TourDetails } from "../types/app_types";
+import { LanguageCode, Tour, TourDetails, TourMedia } from "../types/app_types";
 import PopoverList from "../components/PopoverList";
-import { fetchTourDetails } from "../components/Functions";
+import { fetchTourDetails, fetchTourMedia } from "../components/Functions";
 
 var tour_details: TourDetails;
+var tour_media: TourMedia[];
 
 function TourListModal(props: {
 	openCondition: boolean;
@@ -55,9 +56,13 @@ function TourListModal(props: {
 	/** Richiedi al server i dettagli di un itinerario */
 	function getTourDetail(id_tour: string) {
 		fetchTourDetails(id_tour, (tour: TourDetails) => {
-		tour_details = tour;
-		setShowTourModal(true);
+			tour_details = tour;
+			setShowTourModal(true);
 		});
+
+		fetchTourMedia(id_tour, (media: TourMedia[]) => {
+			tour_media = media;
+		})
 	}
 
 	/** Creazione delle sezioni delle categorie dei poi*/
@@ -91,6 +96,7 @@ function TourListModal(props: {
 				openCondition={showTourModal}
 				onDismissConditions={setShowTourModal}
 				data={tour_details}
+				media={tour_media}
 				i18n={props.i18n}
 				setTourDetails={props.setTourDetails}
 				closeAllModals={() => {
