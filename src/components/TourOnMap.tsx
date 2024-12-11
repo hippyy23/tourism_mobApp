@@ -64,7 +64,6 @@ function TourOnMap(props: {
 			currElevation = props.tourDetails.geometry.coordinates[0][i][2];
 			positions = [];
 		}
-		console.log(polylines.length);
 	}
 	if (polylines.length === 0) {
 		color = getColor(positions[0][2]);
