@@ -6,7 +6,7 @@ import {
 	IonFabButton,
 } from "@ionic/react";
 import { TileLayer, useMap, Marker, Popup, LayersControl } from "react-leaflet";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import L from "leaflet";
 import locationIcon from "../assets/images/location-sharp.svg";
 import "../assets/leaflet/leaflet.css";
@@ -16,13 +16,11 @@ import { Preferences } from "@capacitor/preferences";
 import { Geolocation, Position } from "@capacitor/geolocation";
 import {
 	findCenter,
-	sendPosition,
 	fetchTourList,
 	fetchPOIList,
 	fetchEventList,
 } from "../components/Functions";
 import { LOCATION_BOUNDS, LANGUAGES } from "../configVar";
-import PrivacyAlert from "./PrivacyAlert";
 import { POI, Event, Tour, TourDetails } from "../types/app_types";
 import { i18n } from "i18next";
 import '../assets/i18n'
@@ -42,7 +40,7 @@ const onlineBounds = L.latLngBounds(
 	[46.82405708134416, 10.194074757395123],
 	[44.73066988557427, 13.193342264225922]
 );
-const offlineBounds = L.latLngBounds([45.704603, 10.805495], [45.649725, 10.921943]);
+const offlineBounds = L.latLngBounds([45.87370985181731, 10.886737372388415], [45.57812109436166, 10.828075144070649]);
 const locationBounds = L.latLngBounds(LOCATION_BOUNDS);
 const { BaseLayer } = LayersControl;
 var watchId: string;
@@ -73,13 +71,11 @@ function MapChild(props: {
 	const [position, setPosition] = useState<Position>(); // Posizione dell'utente
 	const [permissionGranted, setPermissionGranted] = useState<boolean>(false); // Indica se si ha il permesso di ottenere la posizione dell'utente
 	const [showLocationMarker, setShowLocationMarker] = useState<boolean>(false); // Indica se mostrare il marker della posizione dell'utente
-	const [showPrivacyAlert, setShowPrivacyAlert] = useState<boolean>(false); // Indica se mostrare l'alert della privacy
 	const [tourDetails, setTourDetails] = useState<TourDetails | undefined>(undefined); // Indica se la mappa del tour è aperta
 	const [showTourListModal, setShowTourListModal] = useState<boolean>(false); // Mostra la modale con la lista dei tour
 	const [showEventListModal, setShowEventListModal] = useState<boolean>(false); // Mostra la modale con la lista degli eventi
 	const mapComponent = useMap();
 	const [presentToast] = useIonToast();
-	var trackingEnable = true;
 
 	function setCenterData(POIList?: POI[]) {
 		if (POIList) mapComponent.panTo(findCenter(POIList));
@@ -135,9 +131,6 @@ function MapChild(props: {
 	 */
 	function updateUserPosition(pos: Position | null) {
 		if (pos) {
-			if (trackingEnable) {
-				Device.getId().then((id) => sendPosition(id, pos));
-			}
 			setPosition(pos);
 			let posll = L.latLng(pos.coords.latitude, pos.coords.longitude);
 			if (!locationBounds.contains(posll)) {
@@ -226,17 +219,6 @@ function MapChild(props: {
 					duration: 5000,
 				});
 			}
-		});
-
-		// Tracciamento dell'utente
-		Preferences.get({ key: "tracking" }).then((result) => {
-		if (result.value !== null) {
-			// Impostare di non tracciare l'utente
-			trackingEnable = result.value === "y";
-		} else {
-			// L'utente deve ancora esprimere la sua preferenza
-			setShowPrivacyAlert(true);
-		}
 		});
 	});
 
@@ -370,15 +352,6 @@ function MapChild(props: {
 					<IonIcon icon={ eventIcon } />
 				</IonFabButton>
 			</IonFab>
-		)}
-
-		{/* Alert che richiede all'utente se vuole essere tracciato anonimamente */}
-		{showPrivacyAlert && (
-			<PrivacyAlert
-				i18n={props.i18n}
-				onDismiss={() => setShowPrivacyAlert(false)}
-				backdropDismiss={true}
-			/>
 		)}
 
 		{props.centerPosition && setCenterPosition()}
