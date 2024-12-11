@@ -16,11 +16,17 @@ import {
   IonNote,
   IonRow,
   IonText,
-  IonThumbnail,
   IonToolbar,
   useIonPopover,
 } from "@ionic/react";
 import { useState } from "react";
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { Keyboard, Pagination, Navigation } from 'swiper/modules';
+import "swiper/css";
+import 'swiper/css/keyboard';
+import 'swiper/css/pagination';
+import 'swiper/css/navigation';
+import "@ionic/react/css/ionic-swiper.css";
 import {
   chevronBack,
   arrowBack,
@@ -30,18 +36,18 @@ import {
   volumeMute,
   addCircle,
   removeCircle,
-  navigate,
 } from "ionicons/icons";
 import PopoverList from "../components/PopoverList";
 import { TextToSpeech } from "@capacitor-community/text-to-speech";
-import { Redirect, useHistory, useLocation } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import { fetchPOIDetails, fetchPOIMedia } from "../components/Functions";
 import ReactHtmlParser from "html-react-parser";
 import POIModal from "./POIModal";
 import { i18n } from "i18next";
-import { LanguageCode, POIDetails, POIMedia, TourDetails } from "../types/app_types";
+import { LanguageCode, POIDetails, POIMedia, TourDetails, TourMedia } from "../types/app_types";
 import { SERVER_MEDIA } from "../configVar";
 import { Browser } from "@capacitor/browser"
+
 
 var poi_details: POIDetails;
 var poi_media: POIMedia[];
@@ -50,6 +56,7 @@ function TourModal(props: {
 	openCondition: boolean;
 	onDismissConditions: (arg0: boolean) => void;
 	data: TourDetails;
+	media: TourMedia[];
 	i18n: i18n;
 	setTourDetails: (arg0: TourDetails) => void;
 	closeAllModals: () => void;
@@ -129,6 +136,18 @@ function TourModal(props: {
 		return <IonList className="ion-no-padding">{ listItems }</IonList>;
 	}
 
+	var mediaPath: string[] = [];
+
+	props.media.forEach((obj) => (
+		mediaPath.push(SERVER_MEDIA + obj.properties.path)
+	));
+	
+	const slides = mediaPath.map((path: string, index: number) => (
+		<SwiperSlide key={ index }>
+			<IonImg src={ path } />
+		</SwiperSlide>
+	));
+
 	return (
 		<IonModal
 			isOpen={props.openCondition}
@@ -169,8 +188,8 @@ function TourModal(props: {
 			{/* NOME TOUR */}
 			<IonLabel slot="start" class="toolbar_label">
 				{props.data.properties[`name_${lng}`] !== null
-				? props.data.properties[`name_${lng}`]
-				: props.data.properties["name_en"]}
+					? props.data.properties[`name_${lng}`]
+					: props.data.properties["name_en"]}
 			</IonLabel>
 
 			{/* MENU OPZIONI POPOVER */}
@@ -194,7 +213,16 @@ function TourModal(props: {
 				{/* IMMAGINE */}
 				<IonRow className="ion-align-items-center">
 					<IonCol>
-						<IonImg src={ SERVER_MEDIA + props.data.properties.image_url } />
+						<Swiper
+							pagination={{
+								type: 'fraction',
+							}}
+							navigation={ true }
+							modules={ [ Keyboard, Pagination, Navigation ] }
+							keyboard={ true }
+						>
+							{ slides }
+						</Swiper>
 					</IonCol>
 				</IonRow>
 
