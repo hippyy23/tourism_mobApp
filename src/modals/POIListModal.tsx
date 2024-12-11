@@ -53,7 +53,7 @@ function POIListModal(props: {
 		return name ? name : poi.properties.name_en;
 	}
 
-	/** Richiedi al server i dettagli di un evento */
+	/** Richiedi al server i dettagli di un POI */
 	function getPOIDetail(id_poi: string) {
 		fetchPOIDetails(id_poi, (poi: POIDetails) => {
 			poi_details = poi;
