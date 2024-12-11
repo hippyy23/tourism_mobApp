@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-// import { Bar } from "react-chartjs-2";
 import {
 	IonButton,
 	IonCard,
@@ -15,12 +14,18 @@ import {
 	IonRow,
 	IonText,
 	IonToolbar,
-	// IonicSwiper,
 	IonHeader,
 	useIonPopover,
 	IonButtons,
 	IonNote,
 } from "@ionic/react";
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { Keyboard, Pagination, Navigation } from 'swiper/modules';
+import "swiper/css";
+import 'swiper/css/keyboard';
+import 'swiper/css/pagination';
+import 'swiper/css/navigation';
+import "@ionic/react/css/ionic-swiper.css";
 import {
 	addCircle,
 	arrowBack,
@@ -32,15 +37,12 @@ import {
   	volumeMute,
 } from "ionicons/icons";
 import ReactHtmlParser from "html-react-parser";
-import { fetchEventMedia } from "../components/Functions";
-// import { Swiper, SwiperSlide } from "swiper/react";
-// import SwiperCore, { Navigation, Pagination } from "swiper";
 import { TextToSpeech } from "@capacitor-community/text-to-speech";
 import "swiper/css";
 import "@ionic/react/css/ionic-swiper.css";
 import PopoverList from "../components/PopoverList";
 import { i18n } from "i18next";
-import { LanguageCode, EventDetails } from "../types/app_types";
+import { LanguageCode, EventDetails, EventMedia } from "../types/app_types";
 import { SERVER_MEDIA } from "../configVar";
 
 function EventModal(props: {
@@ -48,10 +50,11 @@ function EventModal(props: {
 	onPresent?: (arg0: boolean) => void;
 	onDismissConditions: (arg0: boolean) => void;
 	data: EventDetails;
+	media: EventMedia[];
 	i18n: i18n;
 	closeAllModals: () => void;
 }) {
-	// const [openTimeView, setOpenTimeView] = useState<boolean>(false); // Mostra o nascondi il testo relativo agli orari del punto di interesse
+	const [openTimeView, setOpenTimeView] = useState<boolean>(false); // Mostra o nascondi il testo relativo agli orari del punto di interesse
 	const [ticketsView, setTicketsView] = useState<boolean>(false); // Mostra o nascondi il testo relativo al prezzo dei biglietti del punto di interesse
 	const [textPlaying, setTextPlaying] = useState<boolean>(false); // Controlla se il TTS è in riproduzione o no
 
@@ -79,14 +82,20 @@ function EventModal(props: {
 	}
 	const code = props.i18n.language as LanguageCode;
 
+	const open_time = props.data.open_time.split(';').map((part: string) => (
+		<IonItem
+			key={ part }
+		>
+			<IonLabel>{ props.i18n.t("date") }: { part.split(',')[0] }</IonLabel>
+			<IonLabel>{ props.i18n.t("start_time") }: { part.split(',')[1] }</IonLabel>
+			<IonLabel>{ props.i18n.t("end_time") }: { part.split(',')[2] }</IonLabel>
+		</IonItem>
+	));
+
 	/**
 	 * Funzioni che restituiscono orari, biglietti e descrizione nel linguaggio scelto,
 	 * servono anche a controllare se il contenuto è disponibile in quella lingua
 	 */
-	const getOpenTime = () => {
-		if (code === "it") return props.data.open_time;
-		return props.data[`open_time_${code}`];
-	};
 	const getTickets = () => {
 		if (code === "it") return props.data.tickets;
 		return props.data[`tickets_${code}`];
@@ -99,10 +108,6 @@ function EventModal(props: {
 	 * Funzioni che restituiscono il contenuto da visualizzare nelle schede nella propria lingua,
 	 * se presente oppure in inglese
 	 */
-	const getOpenTimeFallback = () => {
-		let openTime = getOpenTime();
-		return openTime ? openTime : props.data["open_time_en"];
-	};
 	const getTicketsFallback = () => {
 		let tickets = getTickets();
 		return tickets ? tickets : props.data["tickets_en"];
@@ -122,6 +127,18 @@ function EventModal(props: {
 		onHide: () => dismiss(),
 	});
 
+	var mediaPath: string[] = [];
+
+	props.media.forEach((obj) => (
+		mediaPath.push(SERVER_MEDIA + obj.properties.path)
+	));
+	
+	const slides = mediaPath.map((path: string, index: number) => (
+		<SwiperSlide key={ index }>
+			<IonImg src={ path } />
+		</SwiperSlide>
+	));
+
 	return (
 		<IonModal
 			isOpen={props.openCondition}
@@ -131,7 +148,6 @@ function EventModal(props: {
 			}}
 			onWillPresent={() => {
 				props.onPresent?.(false);
-				fetchEventMedia(props.data.classid, (path: string) => {});
 			}}
 		>
 
@@ -147,11 +163,6 @@ function EventModal(props: {
 						onClick={() => props.onDismissConditions(false)}
 					/>
 				</IonButtons>
-
-				{/* LOGO COMUNE
-				<IonThumbnail slot="start">
-					<img src={ logoVerona } alt="Logo Comune di Verona" />
-				</IonThumbnail> */}
 
 				{/* NOME EVENTO */}
 				<IonLabel slot="start" class="toolbar_label">
@@ -180,44 +191,46 @@ function EventModal(props: {
 				{/* IMMAGINE */}
 				<IonRow className="ion-align-items-center">
 					<IonCol>
-						<IonImg src={SERVER_MEDIA + props.data.image_url} />
+						<Swiper
+							pagination={{
+								type: 'fraction',
+							}}
+							navigation={ true }
+							modules={ [ Keyboard, Pagination, Navigation ] }
+							keyboard={ true }
+						>
+						{ slides }
+					</Swiper>
 					</IonCol>
 				</IonRow>
 
 				{/* SCHEDA ORARI */}
-				{/* <IonRow>
+				<IonRow>
 					<IonCol>
-					<IonCard>
-						<IonItem
-						color="primary" //TITOLO MENU COLORATO
-						lines={openTimeView ? "inset" : "none"}
-						onClick={() => setOpenTimeView(!openTimeView)}
-						>
-						<IonLabel>{props.i18n.t("open_time")}:</IonLabel>
-						<IonIcon
-							slot="end"
-							icon={openTimeView ? removeCircle : addCircle}
-							// color="primary" BOTTONE BIANCO CON TITOLO COLORATO
-						/>
-						</IonItem>
+						<IonCard>
+							<IonItem
+								color="primary" //TITOLO MENU COLORATO
+								lines={openTimeView ? "inset" : "none"}
+								onClick={() => setOpenTimeView(!openTimeView)}
+							>
+								<IonLabel>{props.i18n.t("open_time")}:</IonLabel>
+								<IonIcon
+									slot="end"
+									icon={openTimeView ? removeCircle : addCircle}
+									// color="primary" BOTTONE BIANCO CON TITOLO COLORATO
+								/>
+							</IonItem>
 
-						{openTimeView && (
-						<IonCardContent>
-							{!getOpenTime() && (
-							<IonNote color="danger">
-								{props.i18n.t("not_supported")}
-								<br />
-								<br />
-							</IonNote>
+							{openTimeView && (
+								<IonCardContent>
+									<IonLabel color="dark">
+										{ open_time }
+									</IonLabel>
+								</IonCardContent>
 							)}
-							<IonLabel color="dark">
-							{ReactHtmlParser(getOpenTimeFallback())}
-							</IonLabel>
-						</IonCardContent>
-						)}
-					</IonCard>
+						</IonCard>
 					</IonCol>
-				</IonRow> */}
+				</IonRow>
 
 				{/* SCHEDA BIGLIETTI */}
 				<IonRow>
@@ -284,7 +297,7 @@ function EventModal(props: {
 									</IonNote>
 								)}
 								<IonText color="dark" class="format-text">
-									{removeDoubleSlashN(getDescriptionFallback())}
+									{ ReactHtmlParser(removeDoubleSlashN(getDescriptionFallback())) }
 								</IonText>
 							</IonCardContent>
 						</IonCard>
