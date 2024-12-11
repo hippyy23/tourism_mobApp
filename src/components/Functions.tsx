@@ -1,9 +1,6 @@
-import { Device, DeviceId } from "@capacitor/device";
-import { Position } from "@capacitor/geolocation";
 import L from "leaflet";
-import { LOG_SERVER_DOMAIN, SERVER_DOMAIN, WEBAPP, WORKSPACE } from "../configVar";
-import { POI, POIDetails, POIMedia, Event, EventDetails, Tour, TourDetails } from "../types/app_types";
-import md5 from "crypto-js/md5";
+import { SERVER_DOMAIN, WEBAPP, WORKSPACE } from "../configVar";
+import { POI, POIDetails, POIMedia, Event, EventDetails, EventMedia, Tour, TourDetails, TourMedia } from "../types/app_types";
 
 // Trova il centro rispetto a tutti i punti di interesse
 export function findCenter(data: POI[]) {
@@ -39,25 +36,6 @@ export function findCenter(data: POI[]) {
 	return new L.LatLng(lan, lon);
 }
 
-var lastPos: Position;
-// Invia la posizione del device al server se ci si sposta di più di 100 metri oppure ogni 30 secondi
-export function sendPosition(id: DeviceId, pos: Position) {
-	if (lastPos) {
-		let lastPosll = L.latLng(lastPos.coords.latitude, lastPos.coords.longitude);
-		let posll = L.latLng(pos.coords.latitude, pos.coords.longitude);
-		let timeDiff = pos.timestamp - lastPos.timestamp;
-		if (posll.distanceTo(lastPosll) < 100 && timeDiff < 30000) return;
-	}
-	sendToLogServer("location", {
-		id: md5(id.identifier).toString,
-		timestamp: new Date(pos.timestamp).toISOString(),
-		coords: pos.coords,
-	}).catch(() => {
-		console.log("Impossibile contattare il server di log");
-	});
-	lastPos = pos;
-}
-
 /**
  * Scarica la lista di tutti i punti di interesse con le coordinate e i nomi e poi esegue la funzione callback
  * @param callback Funzione di callback
@@ -87,10 +65,7 @@ export function fetchPOIList(callback: (arg0: POI[]) => void) {
  * @param id_poi Identificativo del poi
  * @param callback Funzione di callback
  */
-export function fetchPOIDetails(
-	id_poi: string,
-	callback: (arg0: POIDetails) => void
-	) {
+export function fetchPOIDetails(id_poi: string,	callback: (arg0: POIDetails) => void) {
 	const classIdRequest =
 		SERVER_DOMAIN + WEBAPP + WORKSPACE +
 		"/ows?service=WFS&version=1.0.0" +
@@ -174,10 +149,7 @@ export function fetchEventList(callback: (arg0: Event[]) => void) {
  * @param id_event Identificativo dell'evento
  * @param callback Funzione di callback
  */
-export function fetchEventDetails(
-	id_event: string,
-	callback: (arg0: EventDetails) => void
-	) {
+export function fetchEventDetails(id_event: string,	callback: (arg0: EventDetails) => void) {
 	const classIdRequest =
 		SERVER_DOMAIN + WEBAPP + WORKSPACE +
 		"/ows?service=WFS&version=1.0.0" +
@@ -209,35 +181,27 @@ export function fetchEventDetails(
  * @param id_event Identificativo del poi
  * @param callback Funzione di callback
  */
-export function fetchEventMedia(
-	id_event: string,
-	callback: (arg0: string) => void
-	) {
+export function fetchEventMedia(id_event: string, callback: (arg0: EventMedia[]) => void) {
 	const classIdRequest =
 		SERVER_DOMAIN + WEBAPP + WORKSPACE +
 		"/ows?service=WFS&version=1.0.0" +
 		"&request=GetFeature" +
-		"&typeName=" + WORKSPACE + ":v_event_media" +
-		"&cql_filter=(event='" +
+		"&typeName=tourism:v_event_media" +
+		"&cql_filter=(linked_event='" +
 		id_event +
 		"')" +
 		"&outputFormat=json";
-
-	type EventMedia = {
-		numberReturned: number;
-		features: { properties: { path: string } }[];
+	
+	type EventMediaList = {
+		features: EventMedia[];
 	};
 
 	fetch(classIdRequest)
-		.then((response) => response.json())
-		.then((data: EventMedia) =>
-			data.numberReturned === 1
-				? callback(data.features[0].properties.path)
-				: Promise.reject())
-		.catch((e) => {
-			console.log(e);
-			console.log("Errore nella comunicazione con il server: fetchEventMedia");
-		});
+	.then((response) => response.json())
+	.then((data: EventMediaList) => callback(data.features))
+	.catch((e) => {
+		console.log("Errore nella comunicazione con il server: fetchEventMedia: " + e);
+	});
 }
 
 /**
@@ -269,10 +233,7 @@ export function fetchTourList(callback: (arg0: Tour[]) => void) {
  * @param id_tour Identificativo dell'itinerario
  * @param callback Funzione di callback
  */
-export function fetchTourDetails(
-	id_tour: string,
-	callback: (arg0: TourDetails) => void
-	) {
+export function fetchTourDetails(id_tour: string, callback: (arg0: TourDetails) => void) {
 	const classIdRequest =
 		SERVER_DOMAIN + WEBAPP + WORKSPACE +
 		"/ows?service=WFS&version=1.0.0" +
@@ -302,10 +263,7 @@ export function fetchTourDetails(
  * @param id_tour Identificativo del poi
  * @param callback Funzione di callback
  */
-export function fetchTourMedia(
-	id_tour: string,
-	callback: (arg0: string) => void
-	) {
+export function fetchTourMedia(id_tour: string,	callback: (arg0: TourMedia[]) => void) {
 	const classIdRequest =
 		SERVER_DOMAIN + WEBAPP + WORKSPACE +
 		"/ows?service=WFS&version=1.0.0" +
@@ -316,48 +274,14 @@ export function fetchTourMedia(
 		"')" +
 		"&outputFormat=json";
 
-	type TourMedia = {
-		numberReturned: number;
-		features: { properties: { path: string } }[];
+	type TourMediaList = {
+		features: TourMedia[];
 	};
 
 	fetch(classIdRequest)
-		.then((response) => response.json())
-		.then((data: TourMedia) =>
-			data.numberReturned === 1
-				? callback(data.features[0].properties.path)
-				: Promise.reject()
-		)
-		.catch((e) => {
-			console.log(e);
-			console.log("Errore nella comunicazione con il server: fetchTourMedia");
-		});
-}
-
-// export async function sendLanguage(chooseLng: string) {
-// 	let deviceId = await Device.getId();
-// 	let deviceInfo = await Device.getInfo();
-// 	let deviceLng = await Device.getLanguageCode();
-
-// 	sendToLogServer("language", {
-// 		id: md5(deviceId.uuid).toString(),
-// 		platform: deviceInfo.platform,
-// 		deviceLng: deviceLng.value.substring(0, 2),
-// 		chooseLng: chooseLng,
-// 	}).catch(() => {
-// 		console.log("Impossibile contattare il server di log");
-// 	});
-// }
-
-function sendToLogServer(path: string, data: any) {
-	data.key = md5(JSON.stringify(data)+"univrApp").toString();
-	return fetch(LOG_SERVER_DOMAIN + path, {
-		method: "POST",
-		mode: "cors",
-		cache: "no-cache",
-		headers: {
-			"Content-Type": "application/json",
-		},
-		body: JSON.stringify(data),
+	.then((response) => response.json())
+	.then((data: TourMediaList) => callback(data.features))
+	.catch((e) => {
+		console.log("Errore nella comunicazione con il server: fetchTourMedia: " + e);
 	});
 }
