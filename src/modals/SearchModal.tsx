@@ -26,14 +26,15 @@ import eventIcon from "../assets/images/bx-calendar-event.svg" // Icona evento f
 import toolbarIcon from "../assets/images/logo.png";
 import { i18n } from "i18next";
 import PopoverList from "../components/PopoverList";
-import { LanguageCode, POI, POIDetails, POIMedia, Event, EventDetails, TourDetails } from "../types/app_types";
+import { LanguageCode, POI, POIDetails, POIMedia, Event, EventDetails, EventMedia, TourDetails } from "../types/app_types";
 import POIModal from "./POIModal";
 import EventModal from "./EventModal";
-import { fetchPOIDetails, fetchEventDetails, fetchPOIMedia } from "../components/Functions";
+import { fetchPOIDetails, fetchEventDetails, fetchPOIMedia, fetchEventMedia } from "../components/Functions";
 
 var poi_details: POIDetails;
 var poi_media: POIMedia[];
 var event_details: EventDetails;
+var event_media: EventMedia[];
 
 function SearchModal(props: {
 	openCondition: boolean;
@@ -149,10 +150,13 @@ function SearchModal(props: {
 			<IonItem
 				key={ Event.properties.id_event }
 				onClick={() =>
+					{fetchEventMedia(Event.properties.id_event, (media: EventMedia[]) => {
+						event_media = media;
+					});
 					fetchEventDetails(Event.properties.id_event, (event_data: EventDetails) => {
 						event_details = event_data;
 						setShowEventModal(true);
-					})
+					})}
 				}
 				button
 				detail
@@ -201,10 +205,13 @@ function SearchModal(props: {
 		<IonItem
 			key={ Event.properties.id_event }
 			onClick={() =>
+				{fetchEventMedia(Event.properties.id_event, (media: EventMedia[]) => {
+					event_media = media;
+				});
 				fetchEventDetails(Event.properties.id_event, (event_data: EventDetails) => {
 					event_details = event_data;
 					setShowEventModal(true);
-				})
+				})}
 			}
 			button
 			detail
@@ -300,6 +307,7 @@ function SearchModal(props: {
 					openCondition={ showEventModal }
 					onDismissConditions={ setShowEventModal }
 					data={ event_details }
+					media={ event_media }
 					i18n={ props.i18n }
 					closeAllModals={() => {
 						props.closeAllModals();

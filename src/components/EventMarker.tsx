@@ -1,16 +1,17 @@
 import { IonLabel, IonButton, IonLoading, useIonToast } from "@ionic/react";
-import { Marker, Popup } from "react-leaflet";
+import { Marker } from "react-leaflet";
 import L from "leaflet";
 import { i18n } from "i18next";
-import { LanguageCode, Event, EventDetails } from "../types/app_types";
+import { LanguageCode, Event, EventDetails, EventMedia } from "../types/app_types";
 import eventIcon from "../assets/images/event.png"; // Icona attivita'
 import { useState } from "react";
 import EventModal from "../modals/EventModal";
 import { ConnectionStatus } from "@capacitor/network";
-import { fetchEventDetails } from "./Functions";
+import { fetchEventDetails, fetchEventMedia } from "./Functions";
 import CustomPopup from "./CustomPopup";
 
 var EventDetailsData: EventDetails;
+var EventMediaData: EventMedia[];
 var isLoading: boolean = false;
 
 function EventMarker(props: {
@@ -39,17 +40,19 @@ function EventMarker(props: {
 	 * @param id Identificatore del punto di interesse
 	 */
 	function getEventDetails(id: string) {
-		if (
-			props.connectionStatus.connected &&
+		if (props.connectionStatus.connected &&
 			((EventDetailsData !== undefined && EventDetailsData.classid !== id) ||
 			EventDetailsData === undefined)
 		) {
-		fetchEventDetails(id, (poi: EventDetails) => {
-			EventDetailsData = poi;
-			if (isLoading) {
-				setShowEventModal(true);
-			}
-		});
+			fetchEventDetails(id, (poi: EventDetails) => {
+				EventDetailsData = poi;
+				if (isLoading) {
+					setShowEventModal(true);
+				}
+			});
+			fetchEventMedia(id, (media: EventMedia[]) => {
+				EventMediaData = media;
+			})
 		}
 	}
 
@@ -73,21 +76,6 @@ function EventMarker(props: {
 			});
 		}
 	}
-
-	// /**
-	//  * Restituisce l'icona corretta in base alla categoria dell'evento
-	//  * @param category Categoria dell'evento
-	//  * @returns Icona
-	//  */
-	// const icon = (category: string) => {
-	// 	if (category === props.i18n.t("cat_event_show", { lng: "it" })) {
-	// 		return eventIcon;
-	// 	} else if (category === props.i18n.t("cat_event_trip", { lng: "it" })) {
-	// 		return eventIcon;
-	// 	} else if (category === props.i18n.t("cat_meeting", { lng: "it" })) {
-	// 		return eventIcon;
-	// 	}
-	// };
 
 	/**
 	 * Restituisce la variabile del filtro in base alla categoria dell'evento
@@ -173,6 +161,7 @@ function EventMarker(props: {
 				}}
 				onDismissConditions={setShowEventModal}
 				data={EventDetailsData}
+				media={EventMediaData}
 				i18n={props.i18n}
 				closeAllModals={() => {
 					setShowEventModal(false);

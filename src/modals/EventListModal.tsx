@@ -29,11 +29,12 @@ import {
 import toolbarIcon from "../assets/images/logo.png";
 import EventModal from "./EventModal";
 import { i18n } from "i18next";
-import { LanguageCode, Event, EventDetails } from "../types/app_types";
+import { LanguageCode, Event, EventDetails, EventMedia } from "../types/app_types";
 import PopoverList from "../components/PopoverList";
-import { fetchEventDetails } from "../components/Functions";
+import { fetchEventDetails, fetchEventMedia } from "../components/Functions";
 
 var event_details: EventDetails;
+var event_media: EventMedia[];
 
 function EventListModal(props: {
 	openCondition: boolean;
@@ -83,6 +84,10 @@ function EventListModal(props: {
 			event_details = event;
 			setShowEventModal(true);
 		});
+
+		fetchEventMedia(id_event, (media: EventMedia[]) => {
+			event_media = media;
+		})
 	}
 
 	/** Creazione delle sezioni delle categorie dei poi*/
@@ -157,6 +162,7 @@ function EventListModal(props: {
 				openCondition={ showEventModal }
 				onDismissConditions={ setShowEventModal }
 				data={ event_details }
+				media={ event_media }
 				i18n={ props.i18n }
 				closeAllModals={() => {
 					props.closeAllModals();
