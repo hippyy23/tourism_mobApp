@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import {
 	IonButton,
 	IonCard,
@@ -17,42 +17,39 @@ import {
 	IonHeader,
 	useIonPopover,
 	IonButtons,
-	IonThumbnail,
 	IonNote,
 	IonList,
 } from "@ionic/react";
 import { Swiper, SwiperSlide } from 'swiper/react';
-import { Keyboard } from 'swiper/modules';
+import { Keyboard, Pagination, Navigation } from 'swiper/modules';
+import "swiper/css";
+import 'swiper/css/keyboard';
+import 'swiper/css/pagination';
+import 'swiper/css/navigation';
+import "@ionic/react/css/ionic-swiper.css";
 import {
 	addCircle,
 	arrowBack,
 	chevronBack,
 	ellipsisHorizontal,
 	ellipsisVertical,
+	link,
 	removeCircle,
 	volumeHigh,
   	volumeMute,
 } from "ionicons/icons";
 import ReactHtmlParser from "html-react-parser";
-import { fetchTourDetails } from "../components/Functions";
+import { fetchTourDetails, fetchTourMedia } from "../components/Functions";
 import { TextToSpeech } from "@capacitor-community/text-to-speech";
-import "swiper/css";
-import 'swiper/css/autoplay';
-import 'swiper/css/keyboard';
-import 'swiper/css/pagination';
-import 'swiper/css/scrollbar';
-import 'swiper/css/zoom';
-import "@ionic/react/css/ionic-swiper.css";
 import PopoverList from "../components/PopoverList";
 import TourModal from "./TourModal";
 import { i18n } from "i18next";
-import { LanguageCode, POIDetails, TourDetails, POIMedia } from "../types/app_types";
+import { LanguageCode, POIDetails, TourDetails, POIMedia, TourMedia } from "../types/app_types";
 import { SERVER_MEDIA } from "../configVar";
-
-import 'swiper/css';
 
 
 var tour_details: TourDetails;
+var tour_media: TourMedia[];
 
 function POIModal(props: {
 	openCondition: boolean;
@@ -69,6 +66,7 @@ function POIModal(props: {
 	const [toursView, setToursView] = useState<boolean>(false); // Mostra o nascondi il testo relativo agli itinerari
 	const [textPlaying, setTextPlaying] = useState<boolean>(false); // Controlla se il TTS è in riproduzione o no
 	const [showTourModal, setShowTourModal] = useState<boolean>(false); // Mostra o nascondi il modale dell'itinerario
+	const [linkView, setLinkView] = useState<boolean>(false); // Mostra o nascondi il testo relativo ai collegamenti esterni
 
 	/**
 	 * Conta il numero di itinerari in cui il punto di interesse è presente
@@ -156,6 +154,10 @@ function POIModal(props: {
 			tour_details = tour;
 			setShowTourModal(true);
 		});
+
+		fetchTourMedia(id_tour, (media: TourMedia[]) => {
+			tour_media = media;
+		})
 	}
 
 	/** Creazione della lista di itinerari cliccabili */
@@ -204,12 +206,6 @@ function POIModal(props: {
 			}}
 			onWillPresent={() => {
 				props.onPresent?.(false);
-				// fetchPOIMedia(props.data.classid, (poiMediaList: POIMedia[]) => {
-				// 	console.log(poiMediaList);
-				// 	// for (var path of poiMediaList) {
-				// 	// 	console.log(path.properties.path);
-				// 	// }
-				// });
 			}}
 		>
 		{showTourModal && (
@@ -217,6 +213,7 @@ function POIModal(props: {
 				openCondition={showTourModal}
 				onDismissConditions={setShowTourModal}
 				data={tour_details}
+				media={tour_media}
 				i18n={props.i18n}
 				setTourDetails={props.setTourDetails}
 				closeAllModals={() => {
@@ -267,7 +264,11 @@ function POIModal(props: {
 			<IonRow className="ion-align-items-center">
 				<IonCol>
 					<Swiper
-						modules={ [ Keyboard] }
+						pagination={{
+							type: 'fraction',
+						}}
+						navigation={ true }
+						modules={ [ Keyboard, Pagination, Navigation ] }
 						keyboard={ true }
 					>
 						{ slides }
@@ -311,39 +312,41 @@ function POIModal(props: {
 			</IonRow>
 
 			{/* SCHEDA BIGLIETTI */}
-			<IonRow>
-				<IonCol>
-					<IonCard>
-						<IonItem
-							color="primary" //TITOLO MENU COLORATO
-							lines={ticketsView ? "inset" : "none"}
-							onClick={() => setTicketsView(!ticketsView)}
-						>
-						<IonLabel>{props.i18n.t("tickets")}:</IonLabel>
-						<IonIcon
-							slot="end"
-							icon={ticketsView ? removeCircle : addCircle}
-							// color="primary" BOTTONE BIANCO CON TITOLO COLORATO
-						/>
-						</IonItem>
+			{ props.data.category_name_it != "Attività" && (
+				<IonRow>
+					<IonCol>
+						<IonCard>
+							<IonItem
+								color="primary" //TITOLO MENU COLORATO
+								lines={ticketsView ? "inset" : "none"}
+								onClick={() => setTicketsView(!ticketsView)}
+							>
+							<IonLabel>{props.i18n.t("tickets")}:</IonLabel>
+							<IonIcon
+								slot="end"
+								icon={ticketsView ? removeCircle : addCircle}
+								// color="primary" BOTTONE BIANCO CON TITOLO COLORATO
+							/>
+							</IonItem>
 
-						{ticketsView && (
-							<IonCardContent>
-								{!getTickets() && (
-									<IonNote color="danger">
-										{props.i18n.t("not_supported")}
-										<br />
-										<br />
-									</IonNote>
-								)}
-								<IonLabel color="dark">
-									{ ReactHtmlParser(getTicketsFallback()) }
-								</IonLabel>
-							</IonCardContent>
-						)}
-					</IonCard>
-				</IonCol>
-			</IonRow>
+							{ticketsView && (
+								<IonCardContent>
+									{!getTickets() && (
+										<IonNote color="danger">
+											{props.i18n.t("not_supported")}
+											<br />
+											<br />
+										</IonNote>
+									)}
+									<IonLabel color="dark">
+										{ ReactHtmlParser(getTicketsFallback()) }
+									</IonLabel>
+								</IonCardContent>
+							)}
+						</IonCard>
+					</IonCol>
+				</IonRow>
+			)}
 
 			{/* SCHEDA ITINERARI */}
 			{n_tours > 0 && (
@@ -366,6 +369,35 @@ function POIModal(props: {
 							{toursView && (
 								<IonCardContent className="ion-no-padding">
 									<IonList className="ion-no-padding">{ listItems }</IonList>
+								</IonCardContent>
+							)}
+						</IonCard>
+					</IonCol>
+				</IonRow>
+			)}
+
+			{/* SCHEDA COLLEGAMENTI ESTERNI */}
+			{ props.data.link && (
+				<IonRow>
+					<IonCol>
+						<IonCard>
+							<IonItem
+								color="primary" //TITOLO MENU COLORATO
+								lines={linkView ? "inset" : "none"}
+								onClick={() => setLinkView(!linkView)}
+							>
+								<IonLabel>{props.i18n.t("link")}:</IonLabel>
+								<IonIcon
+									slot="end"
+									icon={linkView ? removeCircle : addCircle}
+								/>
+							</IonItem>
+
+							{linkView && (
+								<IonCardContent>
+									<IonLabel className="ion-no-padding">
+										{ ReactHtmlParser(props.data.link) }
+									</IonLabel>
 								</IonCardContent>
 							)}
 						</IonCard>
