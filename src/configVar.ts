@@ -1,7 +1,9 @@
-export const SERVER_DOMAIN = "https://appturismogeo.comune.verona.it/";
-export const LOG_SERVER_DOMAIN = "http://localhost:32325/";
+export const SERVER_DOMAIN = "https://gis.baldoutdoor.it/";
+export const SERVER_MEDIA = "https://admin.baldoutdoor.it/media/";
+export const WORKSPACE = "baldoutdoor";
+export const WEBAPP = "";
 export const LANGUAGES = ["en", "it", "de", "fr", "es"];
 export const LOCATION_BOUNDS: [[number, number], [number, number]] = [
-  [45.4568, 10.9625],
-  [45.4203, 11.0227],
+  [45.87370985181731, 10.886737372388415],
+  [45.57812109436166, 10.828075144070649],
 ];
