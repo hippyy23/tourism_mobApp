@@ -132,14 +132,14 @@ function TourOnMap(props: {
 		positions.push([props.tourDetails.geometry.coordinates[0][i][0], props.tourDetails.geometry.coordinates[0][i][1], props.tourDetails.geometry.coordinates[0][i][2]]);
 		if (currElevation + 100 < props.tourDetails.geometry.coordinates[0][i][2] || currElevation - 100 > props.tourDetails.geometry.coordinates[0][i][2]) {
 			var color = getColor(currElevation);
-			polylines.push(<Polyline eventHandlers={{ click:hadlePolylineClick }} key={i} pathOptions={{ color: color }}  positions={ positions } />);
+			polylines.push(<Polyline weight={6} eventHandlers={{ click:hadlePolylineClick }} key={i} pathOptions={{ color: color }}  positions={ positions } />);
 			currElevation = props.tourDetails.geometry.coordinates[0][i][2];
 			positions = [];
 		}
 	}
 	if (polylines.length === 0) {
 		color = getColor(positions[0][2]);
-		polylines.push(<Polyline key={i} pathOptions={{ color: color }}  positions={ positions } />);
+		polylines.push(<Polyline key={i} weight={6} pathOptions={{ color: color }}  positions={ positions } />);
 	}
 
 	return (
