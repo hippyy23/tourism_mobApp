@@ -26,6 +26,8 @@
     "@capacitor/status-bar": "6.0.1",
     "@ionic/react": "^8.0.0",
     "@ionic/react-router": "^8.0.0",
+    "@turf/nearest-point-on-line": "^7.1.0",
+    "@turf/turf": "^7.1.0",
     "@types/react-router": "^5.1.20",
     "@types/react-router-dom": "^5.3.3",
     "crypto-js": "^4.2.0",
