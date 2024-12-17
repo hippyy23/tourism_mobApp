@@ -333,7 +333,6 @@ function TourModal(props: {
 								</IonNote>
 							)}
 							<IonText
-								color="dark"
 								class="format-text"
 								id="description-text"
 							>
