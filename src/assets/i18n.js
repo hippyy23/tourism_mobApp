@@ -54,6 +54,8 @@ i18n.use(initReactI18next).init({
 				"Sei sicuro di voler chiudere la mappa dell'itinerario?",
 				event_find_btn: "Cerca",
 				event_clear_btn: "Cancella",
+				altitude: "Altitudine",
+				meters: "metri",
 			},
 		},
 		en: {
@@ -103,6 +105,8 @@ i18n.use(initReactI18next).init({
 				"Are you sure you want to close the route map?",
 				event_find_btn: "Find",
 				event_clear_btn: "Clear",
+				altitude: "Altitude",
+				meters: "meters",
 			},
 		},
 		de: {
@@ -152,6 +156,8 @@ i18n.use(initReactI18next).init({
 				"Bist du sicher, dass du die Kartenansicht der Route schließen möchtest?",
 				event_find_btn: "Suchen",
 				event_clear_btn: "Löschen",
+				altitude: "Höhenlage",
+				meters: "meter",
 			},
 		},
 		fr: {
@@ -199,8 +205,10 @@ i18n.use(initReactI18next).init({
 				tour_alert_title: "Attention",
 				tour_alert_message:
 				"Êtes-vous sûr de vouloir fermer la carte de l'itinéraire?",
-				event_find_btn: "Rechercher", //end
-				event_clear_btn: "Effacer	",
+				event_find_btn: "Rechercher",
+				event_clear_btn: "Effacer",
+				altitude: "Altitude",
+				meters: "mètres",
 			},
 		},
 		es: {
@@ -248,8 +256,10 @@ i18n.use(initReactI18next).init({
 				tour_alert_title: "Atención",
 				tour_alert_message:
 				"¿Estás seguro de que deseas cerrar el mapa del itinerario?",
-				event_find_btn: "Buscar", //end
+				event_find_btn: "Buscar",
 				event_clear_btn: "Borrar",
+				altitude: "Altitud",
+				meters: "metros",
 			},
 		},
 	},
