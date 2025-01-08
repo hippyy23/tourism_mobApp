@@ -206,7 +206,7 @@ const Home: React.FC = () => {
                 <IonRow class="home">
 					<IonCol className="header" size="12" sizeMd="12">
 						<h1 className="home">Esplora il Monte Baldo<br/>con BaldOutdoor</h1>
-						<p className="home">L'atmosfera unica del Monte&nbsp;Baldo ti&nbsp;aspetta:<br/>BaldOutdoor e' l'opportunita' perfetta per&nbsp;te</p>
+						<p className="home">L'atmosfera unica del Monte&nbsp;Baldo ti&nbsp;aspetta:<br/>BaldOutdoor è l'opportunità perfetta per&nbsp;te</p>
 					</IonCol>
                     <IonCol size="12" sizeMd="6">
 						<IonCard
@@ -245,7 +245,7 @@ const Home: React.FC = () => {
 								Tour
 							</IonCardTitle>
 							<IonCardContent className="home">
-								Clicca per scoprire tutti gli eventi imperdibili!
+								Clicca per esplorare tutti i tour disponibili!
 							</IonCardContent>
 						</IonCard>
 					</IonCol>
@@ -259,7 +259,7 @@ const Home: React.FC = () => {
 								Eventi
 							</IonCardTitle>
 							<IonCardContent className="home">
-								Clicca per esplorare tutti i tour disponibili!
+								Clicca per scoprire tutti gli eventi imperdibili!
 							</IonCardContent>
 						</IonCard>
 					</IonCol>
