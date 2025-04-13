@@ -51,6 +51,7 @@ ion-card-content.home {
 	color: white;
 	font-size: clamp(1rem, 4vw, 1.25rem);
 	padding: 0 40px 40px 40px;
+	line-height: normal;
 }
 
 ion-col.home {
@@ -105,4 +106,19 @@ p.home {
 
 .format-text {
 	white-space: pre-line !important;
+}
+
+.info-alert {
+	white-space: pre-line;
+}
+
+.info-alert .alert-button-group {
+	padding-top: 0;
+	background-image: url("https://www.fondazionecariverona.org/wp-content/uploads/2023/06/FCVR_marchio_IST_RGB.svg");
+	background-position: center;
+	background-repeat: no-repeat;
+}
+
+.info-alert .alert-message {
+	padding-bottom: 15px;
 }
