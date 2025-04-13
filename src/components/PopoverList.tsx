@@ -1,7 +1,6 @@
 import { IonAlert, IonIcon, IonItem, IonLabel, IonList } from "@ionic/react";
 import { informationCircle, language } from "ionicons/icons";
 import { useState } from "react";
-import { alertController } from "@ionic/core";
 import { useTranslation } from "react-i18next";
 import '../assets/i18n'
 import LanguageAlert from "./LanguageAlert";
