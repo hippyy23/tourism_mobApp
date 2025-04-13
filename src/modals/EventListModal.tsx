@@ -216,7 +216,7 @@ function EventListModal(props: {
 				<IonRow>
 					<IonCol>
 						<IonTitle>
-							<h1>{ props.i18n.t("events") }</h1>
+							<h1>{ props.i18n.t("search_events") }</h1>
 						</IonTitle>
 					</IonCol>
 				</IonRow>
@@ -230,7 +230,7 @@ function EventListModal(props: {
 							locale={ locale }
 							min={ minDate }
 							max={ maxDate }
-							onIonChange={ (e) => setStartDate(e.detail.value!) }
+							onIonChange={ (e) => setStartDate(e.detail.value! as string) }
 						/>
 					</IonCol>
 					<IonCol class="event-date">
@@ -241,7 +241,7 @@ function EventListModal(props: {
 							locale={ locale }
 							min={ minDate }
 							max={ maxDate }
-							onIonChange={ (e) => setEndDate(e.detail.value!) }
+							onIonChange={ (e) => setEndDate(e.detail.value! as string) }
 						/>
 					</IonCol>
 				</IonRow>
